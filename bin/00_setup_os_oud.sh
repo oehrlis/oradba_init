@@ -49,12 +49,14 @@ groupadd --gid 1010 oinstall
 useradd --create-home --gid oinstall \
     --shell /bin/bash oracle
 
+# set the default password for the oracle user
+echo "manager" | passwd --stdin oracle
+
 # create the directory tree
 install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${ORACLE_ROOT} \
-        ${ORACLE_DATA} \ 
+        ${ORACLE_DATA} \
         ${ORACLE_BASE} \
-        ${ORADBA_BASE} \
         ${SOFTWARE} \
         ${DOWNLOAD}
 
@@ -89,11 +91,9 @@ mkdir -p ${ORADBA_RSP}
 chown -R oracle:oinstall ${ORACLE_BASE} ${SOFTWARE}
 
 # add 3DES_EDE_CBC for Oracle EUS
-JAVA_SECURITY=$(find /usr/java -name java.db)
-if [ -f ${JAVA_SECURITY} ]; then
+JAVA_SECURITY=$(find /usr/java -name java.db 2>/dev/null)
+if [ ! -z ${JAVA_SECURITY} ] && [ -f ${JAVA_SECURITY} ]; then
     sed -i 's/, 3DES_EDE_CBC//' ${JAVA_SECURITY}
-else
-    echo "nix"
 fi
 
 # --- EOF --------------------------------------------------------------------

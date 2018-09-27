@@ -20,7 +20,6 @@
 # - Customization -----------------------------------------------------------
  
 # - End of Customization ----------------------------------------------------
-curl -f https://codeload.github.com/oehrlis/oradba_init/zip/master -o oradba_init.zip
 
 # - Environment Variables ---------------------------------------------------
 # - Set default values for environment variables if not yet defined. 
@@ -32,6 +31,7 @@ export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and bi
 export ORACLE_DATA=${ORACLE_DATA:-/u01}     # Oracle data folder eg volume for docker
 export ORACLE_ARCH=${ORACLE_ARCH:-/u02}     # Oracle arch folder eg volume for docker
 export ORACLE_BASE=${ORACLE_BASE:-$ORACLE_ROOT/app/oracle}
+export ORACLE_INVENTORY=${ORACLE_INVENTORY:-$ORACLE_ROOT/app/oraInventory}
 export SOFTWARE="/opt/stage"
 export DOWNLOAD="/tmp/download"
 export CLEANUP=${CLEANUP:-true}             # Flag to set yum clean up
@@ -58,6 +58,9 @@ useradd --create-home --gid oinstall \
     --groups osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
     --shell /bin/bash oracle
 
+# set the default password for the oracle user
+echo "manager" | passwd --stdin oracle
+
 # create the directory tree
 install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${ORACLE_ROOT} \
@@ -66,6 +69,7 @@ install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${ORACLE_BASE} \
         ${ORADBA_BASE} \
         ${SOFTWARE} \
+        ${ORACLE_INVENTORY} \
         ${DOWNLOAD}
 
 # create a softlink for init script usually just used for docker init
