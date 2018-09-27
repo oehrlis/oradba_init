@@ -43,12 +43,10 @@ if [ $EUID -ne 0 ]; then
 fi
 
 # create necessary groups
-groupadd --gid 1000 oracle
 groupadd --gid 1010 oinstall
 
 # create the oracle OS user
-useradd --create-home --gid oracle \
-    --groups oinstall \
+useradd --create-home --gid oinstall \
     --shell /bin/bash oracle
 
 # create the directory tree
@@ -75,7 +73,7 @@ yum install -y libaio gzip tar
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
     echo "clean up yum cache"
-    yum clean all
+    yum clean all 
     rm -rf /var/cache/yum
 else
     echo "yum cache is not cleaned up"

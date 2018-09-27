@@ -45,7 +45,6 @@ if [ $EUID -ne 0 ]; then
 fi
 
 # create necessary groups
-groupadd --gid 1000 oracle
 groupadd --gid 1010 oinstall
 groupadd --gid 1020 osdba
 groupadd --gid 1030 osoper
@@ -55,8 +54,8 @@ groupadd --gid 1060 osdgdba
 groupadd --gid 1070 osracdba
 
 # create the oracle OS user
-useradd --create-home --gid oracle \
-    --groups oinstall,osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
+useradd --create-home --gid oinstall \
+    --groups osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
     --shell /bin/bash oracle
 
 # create the directory tree
@@ -87,6 +86,14 @@ yum install -y \
     oracle-rdbms-server-12cR1-preinstall \
     oracle-database-server-12cR2-preinstall \
     oracle-database-preinstall-18c
+
+# remove the groups created by oracle
+groupdel dba
+groupdel oper
+groupdel backupdba
+groupdel dgdba
+groupdel kmdba
+roupdel racdba
 
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then

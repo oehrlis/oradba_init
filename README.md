@@ -52,3 +52,9 @@ mv /opt/oradba_init-master /opt/oradba
 mv /opt/oradba/README.md /opt/oradba/doc
 rm -rf /tmp/oradba_init.zip
 ```
+
+Start using the Scripts.
+
+```bash
+cd /opt/oradba/bin
+```
