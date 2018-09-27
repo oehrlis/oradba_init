@@ -3,13 +3,13 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: 00_setup_os_db.sh 
+# Name.......: 00_setup_os_oud.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2018.09.27
 # Revision...: 
-# Purpose....: Script to configure OEL for Oracle Database installations.
-# Notes......: Script would like to be executed as root :-).
+# Purpose....: Script to setup and configure OUD Base.
+# Notes......: Script would like to be executed as oracle :-)
 # Reference..: --
 # License....: Licensed under the Universal Permissive License v 1.0 as 
 #              shown at http://oss.oracle.com/licenses/upl.
@@ -29,7 +29,6 @@ export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"
 export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and binaries
 export ORACLE_DATA=${ORACLE_DATA:-/u01}     # Oracle data folder eg volume for docker
-export ORACLE_ARCH=${ORACLE_ARCH:-/u02}     # Oracle arch folder eg volume for docker
 export ORACLE_BASE=${ORACLE_BASE:-$ORACLE_ROOT/app/oracle}
 export SOFTWARE="/opt/stage"
 export DOWNLOAD="/tmp/download"
@@ -46,25 +45,18 @@ fi
 # create necessary groups
 groupadd --gid 1000 oracle
 groupadd --gid 1010 oinstall
-groupadd --gid 1020 osdba
-groupadd --gid 1030 osoper
-groupadd --gid 1040 osbackupdba
-groupadd --gid 1050 oskmdba
-groupadd --gid 1060 osdgdba
-groupadd --gid 1070 osracdba
 
 # create the oracle OS user
 useradd --create-home --gid oracle \
-    --groups oinstall,osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
+    --groups oinstall \
     --shell /bin/bash oracle
 
 # create the directory tree
 install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${ORACLE_ROOT} \
-        ${ORACLE_DATA} \
-        ${ORACLE_ARCH} \
+        ${ORACLE_DATA} \ 
         ${ORACLE_BASE} \
-        ${ORADBA_BASE} \
+        ${ORADBA} \
         ${SOFTWARE} \
         ${DOWNLOAD}
 
@@ -78,14 +70,7 @@ echo "%_install_langs   en" >>/etc/rpm/macros.lang && \
 yum upgrade -y
 
 # install basic utilities
-yum install -y zip unzip gzip tar which
-
-# install the oracle preinstall stuff
-yum install -y \
-    oracle-rdbms-server-11gR2-preinstall \
-    oracle-rdbms-server-12cR1-preinstall \
-    oracle-database-server-12cR2-preinstall \
-    oracle-database-preinstall-18c
+yum install -y libaio gzip tar
 
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
@@ -99,14 +84,16 @@ fi
 # create a bunch of other directories
 mkdir -p ${ORACLE_BASE}/etc
 mkdir -p ${ORACLE_BASE}/tmp
-mkdir -p ${ORADBA_BIN}
-mkdir -p ${ORADBA_RSP}
-
-# create a softlink for oratab
-touch ${ORACLE_BASE}/etc/oratab
-ln -sf ${ORACLE_BASE}/etc/oratab /etc/oratab
 
 # change owner of ORACLE_BASE
-chown -R oracle:oinstall ${ORACLE_BASE}
+chown -R oracle:oinstall ${ORACLE_BASE} ${SOFTWARE}
+
+# add 3DES_EDE_CBC for Oracle EUS
+JAVA_SECURITY=$(find /usr/java -name java.db)
+if [ -f ${JAVA_SECURITY} ]; then
+    sed -i 's/, 3DES_EDE_CBC//' ${JAVA_SECURITY}
+else
+    echo "nix"
+fi
 
 # --- EOF --------------------------------------------------------------------

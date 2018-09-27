@@ -18,10 +18,10 @@ A few hints and rules for using the scripts:
 
 Scripts are located in the *bin* folder.
 
-| Script                                         | Runas  | Description                                                                                |
-| ---------------------------------------------- | ------ | ------------------------------------------------------------------------------------------ |
-| [00_setup_os_db.sh](bin/00_setup_os_db.sh)     | root   | Helper script to setup Oracle Enterprise Linux for Oracle Database installations.          |
-| [00_setup_os_oud.sh](bin/00_setup_os_oud.sh)   | root   | Helper script to setup Oracle Enterprise Linux for Oracle Unified Directory installations. |
+| Script                                         | Runas  | Description                                                                             |
+| ---------------------------------------------- | ------ | --------------------------------------------------------------------------------------- |
+| [00_setup_os_db.sh](bin/00_setup_os_db.sh)     | root   | Script to configure Oracle Enterprise Linux for Oracle Database installations.          |
+| [00_setup_os_oud.sh](bin/00_setup_os_oud.sh)   | root   | Script to configure Oracle Enterprise Linux for Oracle Unified Directory installations. |
 | [01_setup_db_11.2.sh](bin/01_setup_db_11.2.sh) | oracle | Helper script to  |
 | [01_setup_db_12.1.sh](bin/01_setup_db_12.1.sh) | oracle | Helper script to  |
 | [01_setup_db_12.2.sh](bin/01_setup_db_12.2.sh) | oracle | Helper script to  |

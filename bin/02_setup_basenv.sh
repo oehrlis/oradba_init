@@ -3,13 +3,13 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: 00_setup_os_oud.sh 
+# Name.......: 02_setup_basenv.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2018.09.27
 # Revision...: 
-# Purpose....: Script to configure OEL for Oracle Unified Directory installations.
-# Notes......: Script would like to be executed as root :-).
+# Purpose....: Script to setup and configure TVD-Basenv.
+# Notes......: Script would like to be executed as oracle :-)
 # Reference..: --
 # License....: Licensed under the Universal Permissive License v 1.0 as 
 #              shown at http://oss.oracle.com/licenses/upl.
@@ -30,72 +30,49 @@ export ORADBA_RSP="${ORADBA_BASE}/rsp"
 export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and binaries
 export ORACLE_DATA=${ORACLE_DATA:-/u01}     # Oracle data folder eg volume for docker
 export ORACLE_BASE=${ORACLE_BASE:-$ORACLE_ROOT/app/oracle}
+export ORACLE_LOCAL=${ORACLE_LOCAL:-${ORACLE_BASE}/local}
+export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
+export BASENV_PKG=${BASENV_PKG:-basenv-18.05.final.b.zip}
 export SOFTWARE="/opt/stage"
 export DOWNLOAD="/tmp/download"
-export CLEANUP=${CLEANUP:-true}             # Flag to set yum clean up
+
+# set the default ORACLE_HOME based on find results for oraenv
+export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product -name oraenv |sort -r|head -1)))}
+export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-$(basename ${ORACLE_HOME})}
 
 # - EOF Environment Variables -----------------------------------------------
 
 # Make sure only root can run our script
-if [ $EUID -ne 0 ]; then
-   echo "This script must be run as root" 1>&2
+if [ ! $EUID -ne 0 ]; then
+   echo "This script must not be run as root" 1>&2
    exit 1
 fi
 
-# create necessary groups
-groupadd --gid 1000 oracle
-groupadd --gid 1010 oinstall
-
-# create the oracle OS user
-useradd --create-home --gid oracle \
-    --groups oinstall \
-    --shell /bin/bash oracle
-
-# create the directory tree
-install --owner oracle --group oinstall --mode=775 --verbose --directory \
-        ${ORACLE_ROOT} \
-        ${ORACLE_DATA} \ 
-        ${ORACLE_BASE} \
-        ${ORADBA_BASE} \
-        ${SOFTWARE} \
-        ${DOWNLOAD}
-
-# create a softlink for init script usually just used for docker init
-ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d && \
-
-# limit installation language / locals to EN
-echo "%_install_langs   en" >>/etc/rpm/macros.lang && \
-
-# upgrade the installation
-yum upgrade -y
-
-# install basic utilities
-yum install -y libaio gzip tar
-
-# clean up yum repository
-if [ "${CLEANUP^^}" == "TRUE" ]; then
-    echo "clean up yum cache"
-    yum clean all
-    rm -rf /var/cache/yum
-else
-    echo "yum cache is not cleaned up"
+echo " - Get Trivadis toolbox binaries --------------------------------------"
+# Get the oracle binaries if they are not there yet
+if [ ! -s "${SOFTWARE}/${BASENV_PKG}" ]; then
+    echo "download ${DOWNLOAD}/${BASENV_PKG} from orarepo"
+    curl -f http://orarepo/${BASENV_PKG} -o ${DOWNLOAD}/${BASENV_PKG}
+else 
+    echo "use local copy of ${SOFTWARE}/${BASENV_PKG}"
 fi
 
-# create a bunch of other directories
-mkdir -p ${ORACLE_BASE}/etc
-mkdir -p ${ORACLE_BASE}/tmp
-mkdir -p ${ORADBA_BIN}
-mkdir -p ${ORADBA_RSP}
+echo " - Install Trivadis toolbox -------------------------------------------"
+# prepare response file
+cp ${ORADBA_RSP}/base_install.rsp.tmpl ${ORADBA_RSP}/base_install.rsp
+sed -i -e "s|###ORACLE_BASE###|${ORACLE_BASE}|g"    ${ORADBA_RSP}/base_install.rsp
+sed -i -e "s|###ORACLE_HOME###|${ORACLE_HOME}|g"    ${ORADBA_RSP}/base_install.rsp
+sed -i -e "s|###TNS_ADMIN###|${TNS_ADMIN}|g"        ${ORADBA_RSP}/base_install.rsp
+sed -i -e "s|###ORACLE_LOCAL###|${ORACLE_LOCAL}|g"  ${ORADBA_RSP}/base_install.rsp
 
-# change owner of ORACLE_BASE
-chown -R oracle:oinstall ${ORACLE_BASE} ${SOFTWARE}
+# unpack Oracle binary package
+mkdir -p ${ORACLE_BASE}/local
+unzip -o ${DOWNLOAD}/${BASENV_PKG} -d ${ORACLE_LOCAL}
 
-# add 3DES_EDE_CBC for Oracle EUS
-JAVA_SECURITY=$(find /usr/java -name java.db)
-if [ -f ${JAVA_SECURITY} ]; then
-    sed -i 's/, 3DES_EDE_CBC//' ${JAVA_SECURITY}
-else
-    echo "nix"
-fi
+# install basenv
+${ORACLE_LOCAL}/runInstaller -responseFile ${ORADBA_RSP}/base_install.rsp -silent
+
+# cleanup basenv
+rm -rf ${ORACLE_LOCAL}/basenv-* ${ORACLE_LOCAL}/runInstaller*
 
 # --- EOF --------------------------------------------------------------------
