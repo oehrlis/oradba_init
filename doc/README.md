@@ -41,3 +41,13 @@ Response files are located in the *rsp* folder.
 | [oud_install.rsp.tmpl](rsp/oud_install.rsp.tmpl)   | Generic response file for OUD and OUDSM installations  |
 | [db_install.rsp.tmpl](rsp/db_install.rsp.tmpl)     | Response file for Oracle database binary installations |
 
+## Install the Scripts
+
+The scripts can be downloaded directly from GitHub. Usually done to ``/tmp`` folder and extracted to ``/opt``.
+
+```bash
+curl -f https://codeload.github.com/oehrlis/oradba_init/zip/master -o /tmp/oradba_init.zip
+unzip -o /tmp/oradba_init.zip -d /opt
+mv /opt/oradba_init-master /opt/oradba
+rm -rf /tmp/oradba_init.zip /opt/oradba/README.md
+```
