@@ -20,6 +20,7 @@
 # - Customization -----------------------------------------------------------
  
 # - End of Customization ----------------------------------------------------
+curl -f https://codeload.github.com/oehrlis/oradba_init/zip/master -o oradba_init.zip
 
 # - Environment Variables ---------------------------------------------------
 # - Set default values for environment variables if not yet defined. 
