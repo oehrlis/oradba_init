@@ -88,12 +88,10 @@ yum install -y \
     oracle-database-preinstall-18c
 
 # remove the groups created by oracle
-groupdel dba
-groupdel oper
-groupdel backupdba
-groupdel dgdba
-groupdel kmdba
-roupdel racdba
+for i in dba oper backupdba dgdba kmdba racdba; do
+    echo "removing group $i"
+    groupdel $i
+done
 
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
@@ -107,6 +105,7 @@ fi
 # create a bunch of other directories
 mkdir -p ${ORACLE_BASE}/etc
 mkdir -p ${ORACLE_BASE}/tmp
+mkdir -p ${ORACLE_DATA}/scripts
 mkdir -p ${ORADBA_BIN}
 mkdir -p ${ORADBA_RSP}
 
