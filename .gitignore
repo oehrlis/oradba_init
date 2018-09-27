@@ -1,0 +1,14 @@
+# ignore binary packages and files
+**/*.rpm
+**/*.jar
+**/*.zip
+**/*.tar.gz
+**/*.tgz
+
+# ignore mac OS resource forks
+**/*.DS_Store
+
+# Eclipse stuff
+/.pydevproject
+/.project
+/.vscode

@@ -1,0 +1,32 @@
+# ---------------------------------------------------------------------------
+# Trivadis AG, Infrastructure Managed Services
+# Saegereistrasse 29, 8152 Glattbrugg, Switzerland
+# ---------------------------------------------------------------------------
+# Name.......: base_install.rsp.tmpl
+# Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
+# Editor.....: Stefan Oehrli
+# Date.......: 2018.09.27
+# Revision...: 
+# Purpose....: Response file for Trivadis BasEnv installation.
+# Notes......: --
+# Reference..: --
+# License....: Licensed under the Universal Permissive License v 1.0 as 
+#              shown at http://oss.oracle.com/licenses/upl.
+# ---------------------------------------------------------------------------
+# Modified...:
+# see git revision history for more information on changes/updates
+# ---------------------------------------------------------------------------
+Be_Etc="###ORACLE_BASE###/etc"
+Install_Dir="###ORACLE_LOCAL###"
+Install_Profile="R"
+Names_Default_Domain="###DEFAULT_DOMAIN###"
+Oracle_Base="###ORACLE_BASE###"
+Oracle_Home="###ORACLE_HOME###"
+Perl_binary="###ORACLE_HOME###/perl/bin/perl"
+Tns_Admin="###TNS_ADMIN###"
+Use_Oracleperl="YES"
+Use_Tvdperl="NO"
+config_oinstall="YES"
+Config_Tns=0
+
+# --- EOF --------------------------------------------------------------------
