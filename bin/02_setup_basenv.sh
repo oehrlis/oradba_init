@@ -41,38 +41,59 @@ export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/prod
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-$(basename ${ORACLE_HOME})}
 
 # - EOF Environment Variables -----------------------------------------------
+# - Functions ---------------------------------------------------------------
+# ---------------------------------------------------------------------------
+function get_software {
+# Purpose....: Verify if the software package is available if not try to 
+#              download it from $SOFTWARE_REPO
+# ---------------------------------------------------------------------------
+    PKG=$1
+    if [ ! -s "${SOFTWARE}/${PKG}" ]; then
+        if [ ! -z "${SOFTWARE_REPO}" ]; then
+            echo "WARNING: Try to download ${PKG} from ${SOFTWARE_REPO}"
+            curl -f ${SOFTWARE_REPO}${PKG} -o ${DOWNLOAD}/${PKG}
+        else
+            echo "WARNING: No software repository specified"
+            return 1
+        fi
+    else
+        echo "Found package ${PKG} for installation."
+        return 0
+    fi
+}
+# - EOF Functions -----------------------------------------------------------
 
+# - Initialization ----------------------------------------------------------
 # Make sure only root can run our script
 if [ ! $EUID -ne 0 ]; then
    echo "This script must not be run as root" 1>&2
    exit 1
 fi
 
-echo " - Get Trivadis toolbox binaries --------------------------------------"
-# Get the oracle binaries if they are not there yet
-if [ ! -s "${SOFTWARE}/${BASENV_PKG}" ]; then
-    echo "download ${DOWNLOAD}/${BASENV_PKG} from orarepo"
-    curl -f http://orarepo/${BASENV_PKG} -o ${DOWNLOAD}/${BASENV_PKG}
-else 
-    echo "use local copy of ${SOFTWARE}/${BASENV_PKG}"
-fi
-
-echo " - Install Trivadis toolbox -------------------------------------------"
 # prepare response file
-cp ${ORADBA_RSP}/base_install.rsp.tmpl ${ORADBA_RSP}/base_install.rsp
-sed -i -e "s|###ORACLE_BASE###|${ORACLE_BASE}|g"    ${ORADBA_RSP}/base_install.rsp
-sed -i -e "s|###ORACLE_HOME###|${ORACLE_HOME}|g"    ${ORADBA_RSP}/base_install.rsp
-sed -i -e "s|###TNS_ADMIN###|${TNS_ADMIN}|g"        ${ORADBA_RSP}/base_install.rsp
-sed -i -e "s|###ORACLE_LOCAL###|${ORACLE_LOCAL}|g"  ${ORADBA_RSP}/base_install.rsp
+cp ${ORADBA_RSP}/base_install.rsp.tmpl /tmp/base_install.rsp
+sed -i -e "s|###ORACLE_BASE###|${ORACLE_BASE}|g"    /tmp/base_install.rsp
+sed -i -e "s|###ORACLE_HOME###|${ORACLE_HOME}|g"    /tmp/base_install.rsp
+sed -i -e "s|###TNS_ADMIN###|${TNS_ADMIN}|g"        /tmp/base_install.rsp
+sed -i -e "s|###ORACLE_LOCAL###|${ORACLE_LOCAL}|g"  /tmp/base_install.rsp
+# - EOF Initialization ------------------------------------------------------
 
-# unpack Oracle binary package
-mkdir -p ${ORACLE_BASE}/local
-unzip -o ${DOWNLOAD}/${BASENV_PKG} -d ${ORACLE_LOCAL}
-
-# install basenv
-${ORACLE_LOCAL}/runInstaller -responseFile ${ORADBA_RSP}/base_install.rsp -silent
-
-# cleanup basenv
-rm -rf ${ORACLE_LOCAL}/basenv-* ${ORACLE_LOCAL}/runInstaller*
+# - Main --------------------------------------------------------------------
+# - Install Trivadis toolbox ------------------------------------------------
+echo " - Install Trivadis toolbox -------------------------------------------"
+if [ -n "${BASENV_PKG}" ]; then
+    if get_software "${DB_BASE_PKG}"; then          # Check and get binaries
+        mkdir -p ${ORACLE_LOCAL}
+        unzip -o ${SOFTWARE}/${BASENV_PKG} -d ${ORACLE_LOCAL}
+        # Install basenv binaries
+        ${ORACLE_LOCAL}/runInstaller -responseFile /tmp/base_install.rsp -silent
+        # cleanup basenv
+        rm -rf ${ORACLE_LOCAL}/basenv-* ${ORACLE_LOCAL}/runInstaller* /tmp/*.rsp
+        if [ "${DOCKER^^}" == "TRUE" ]; then rm -rf ${SOFTWARE}/${BASENV_PKG}; fi
+    else
+        echo "ERROR:   No base software package specified. Abort installation."
+        exit 1
+    fi
+fi
 
 # --- EOF --------------------------------------------------------------------

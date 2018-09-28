@@ -28,7 +28,7 @@
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"12.2.0.1"}
 # define the software packages
 export DB_BASE_PKG=${DB_BASE_PKG:-"linuxx64_12201_database.zip"}
-export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-""}
+export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-"linuxx64_12201_examples.zip"}
 export DB_RU_PKG=${DB_RU_PKG:-"p28163133_122010_Linux-x86-64.zip"}
 export DB_OJVM_PKG=${DB_OJVM_PKG:-"p27923353_122010_Linux-x86-64.zip"}
 export OPATCH_PKG=${OPATCH_PKG:-"p6880880_122010_Linux-x86-64.zip"}
@@ -110,6 +110,7 @@ sed -i -e "s|^oracle.install.responseFileVersion.*|$RESPONSFILE_VERSION|" /tmp/d
 cp ${ORADBA_RSP}/db_examples_install.rsp.tmpl /tmp/db_examples_install.rsp
 sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"          /tmp/db_examples_install.rsp
 sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"          /tmp/db_examples_install.rsp
+sed -i -e "s|^oracle.install.responseFileVersion.*|$RESPONSFILE_VERSION|" /tmp/db_examples_install.rsp
 
 # - Install database binaries -----------------------------------------------
 echo " - Install Oracle DB binaries -----------------------------------------"
@@ -117,13 +118,14 @@ if [ -n "${DB_BASE_PKG}" ]; then
     if get_software "${DB_BASE_PKG}"; then          # Check and get binaries
         mkdir -p ${ORACLE_HOME}
         unzip -o ${SOFTWARE}/${DB_BASE_PKG} \
-            -d ${ORACLE_HOME}/                      # unpack Oracle binary package
+            -d ${DOWNLOAD}                      # unpack Oracle binary package
         # Install Oracle binaries
-        ${ORACLE_HOME}/runInstaller -silent -force \
+        ${DOWNLOAD}/database/runInstaller -silent -force \
             -waitforcompletion \
             -responsefile /tmp/db_install.rsp \
             -ignorePrereqFailure
         # remove files on docker builds
+        rm -rf ${DOWNLOAD}/database
         if [ "${DOCKER^^}" == "TRUE" ]; then rm -rf ${SOFTWARE}/${DB_BASE_PKG}; fi
     else
         echo "ERROR:   No base software package specified. Abort installation."
@@ -138,7 +140,7 @@ if [ -n "${DB_EXAMPLE_PKG}" ]; then
         unzip -o ${SOFTWARE}/${DB_EXAMPLE_PKG} \
             -d ${DOWNLOAD}/                             # unpack Oracle binary package
         # Install Oracle binaries
-        ${ORACLE_HOME}/runInstaller -silent -force \
+        ${DOWNLOAD}/examples/runInstaller -silent -force \
             -waitforcompletion \
             -responsefile /tmp/db_examples_install.rsp \
             -ignorePrereqFailure
@@ -227,7 +229,10 @@ rm -rf ${ORACLE_HOME}/lib/*.zip
 
 # Temp locations
 rm -rf ${DOWNLOAD}
-rm -rf /tmp/db_install.rsp
+rm -rf /tmp/*.rsp
+rm -rf /tmp/InstallActions*
+rm -rf /tmp/CVU*oracle
+rm -rf /tmp/OraInstall*
 
 # remove all the logs....
 find ${ORACLE_BASE}/cfgtoollogs . -name *.log -exec rm {} \;

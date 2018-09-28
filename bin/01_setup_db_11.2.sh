@@ -3,12 +3,12 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: 01_setup_db_18.3.sh
+# Name.......: 01_setup_db_11.2.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2018.09.27
 # Revision...: 
-# Purpose....: Script to install Oracle Database 18.3.
+# Purpose....: Script to install Oracle Database 11.2.
 # Notes......: Script would like to be executed as oracle :-).
 # Reference..: --
 # License....: Licensed under the Universal Permissive License v 1.0 as 
@@ -25,14 +25,14 @@
 # - Set default values for environment variables if not yet defined. 
 # ---------------------------------------------------------------------------
 # Version dependend settings
-export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.3.0.0"}
+export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"11.2.0.4"}
 # define the software packages
-export DB_BASE_PKG=${DB_BASE_PKG:-"LINUX.X64_180000_db_home.zip"}
-export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-"LINUX.X64_180000_examples.zip"}
+export DB_BASE_PKG=${DB_BASE_PKG:-""}
+export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-""}
 export DB_RU_PKG=${DB_RU_PKG:-""}
 export DB_OJVM_PKG=${DB_OJVM_PKG:-""}
-export OPATCH_PKG=${OPATCH_PKG:-"p6880880_180000_Linux-x86-64.zip"}
-export RESPONSFILE_VERSION="oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v18.0.0"
+export OPATCH_PKG=${OPATCH_PKG:-""}
+export RESPONSFILE_VERSION="oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v11.2.0"
 
 # other stuff
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
@@ -118,13 +118,14 @@ if [ -n "${DB_BASE_PKG}" ]; then
     if get_software "${DB_BASE_PKG}"; then          # Check and get binaries
         mkdir -p ${ORACLE_HOME}
         unzip -o ${SOFTWARE}/${DB_BASE_PKG} \
-            -d ${ORACLE_HOME}/                      # unpack Oracle binary package
+            -d ${DOWNLOAD}                      # unpack Oracle binary package
         # Install Oracle binaries
-        ${ORACLE_HOME}/runInstaller -silent -force \
+        ${DOWNLOAD}/database/runInstaller -silent -force \
             -waitforcompletion \
             -responsefile /tmp/db_install.rsp \
             -ignorePrereqFailure
         # remove files on docker builds
+        rm -rf ${DOWNLOAD}/database
         if [ "${DOCKER^^}" == "TRUE" ]; then rm -rf ${SOFTWARE}/${DB_BASE_PKG}; fi
     else
         echo "ERROR:   No base software package specified. Abort installation."
@@ -236,7 +237,7 @@ rm -rf /tmp/OraInstall*
 # remove all the logs....
 find ${ORACLE_BASE}/cfgtoollogs . -name *.log -exec rm {} \;
 find ${ORACLE_BASE}/local . -name *.log -exec rm {} \;
-find ${ORACLE_INVENTORY} . -name *.log -exec rm {} \;
+find ${ORACLE_BASE}/oraInventory . -name *.log -exec rm {} \;
 find ${ORACLE_BASE}/product . -name *.log -exec rm {} \;
 
 if [ "${SLIM^^}" == "TRUE" ]; then
