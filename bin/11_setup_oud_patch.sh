@@ -26,16 +26,16 @@
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
-export OUD_PATCH_PKG=${DB_PATCH_PKG:-""}
-export OUD_OJVM_PKG=${DB_OJVM_PKG:-""}
-export OUD_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_180000_Linux-x86-64.zip"}
+export OUD_PATCH_PKG=${OUD_PATCH_PKG:-""}
+export FMW_PATCH_PKG=${FMW_PATCH_PKG:-""}
+export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-""}
 
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 
 # define Oracle specific variables
-export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.3.0.0"}
+export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"oud11.1.2.3.0"}
 export ORACLE_HOME="${ORACLE_HOME:-${ORACLE_BASE}/product/${ORACLE_HOME_NAME}}"
 
 # define generic variables for software, download etc
@@ -58,65 +58,67 @@ fi
 # - Main --------------------------------------------------------------------
 # - Install OPatch ----------------------------------------------------------
 echo " - Install OPatch -----------------------------------------------------"
-if [ -n "${DB_OPATCH_PKG}" ]; then
-    if get_software "${DB_OPATCH_PKG}"; then           # Check and get binaries
-        rm -rf ${ORACLE_HOME}/OPatch                # remove old OPatch
-        unzip -o ${SOFTWARE}/${DB_OPATCH_PKG} \
-            -d ${ORACLE_HOME}/                      # unpack OPatch binary package
-        # remove files on docker builds
-        running_in_docker && rm -rf ${SOFTWARE}/${DB_OPATCH_PKG}
+if [ -n "${OUD_OPATCH_PKG}" ]; then
+    if get_software "${OUD_OPATCH_PKG}"; then       # Check and get binaries
+        unzip -o ${SOFTWARE}/${OUD_OPATCH_PKG} \
+            -d ${DOWNLOAD}/                         # unpack OPatch binary package
+        # install the OPatch using java
+        $JAVA_HOME/bin/java -jar ${DOWNLOAD}/6880880/opatch_generic.jar \
+            -silent oracle_home=${ORACLE_HOME}
+        rm -rf ${DOWNLOAD}/6880880
+        running_in_docker && rm -rf ${SOFTWARE}/${OUD_OPATCH_PKG}
     else
         echo "WARNING: Skip OPatch update."
     fi
 fi
 
-# - Install database patch (RU/PSU) -----------------------------------------
-echo " - Install database patch (RU/PSU) ------------------------------------"
-if [ -n "${DB_PATCH_PKG}" ]; then
-    if get_software "${DB_PATCH_PKG}"; then         # Check and get binaries
-        DB_PATCH_ID=$(echo ${DB_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        unzip -o ${SOFTWARE}/${DB_PATCH_PKG} \
+# - Install FMW patch -------------------------------------------------------
+echo " - Install FMW patch --------------------------------------------------"
+if [ -n "${FMW_PATCH_PKG}" ]; then
+    if get_software "${FMW_PATCH_PKG}"; then        # Check and get binaries
+        FMW_PATCH_ID=$(echo ${FMW_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
+        unzip -o ${SOFTWARE}/${FMW_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
-        cd ${DOWNLOAD}/${DB_PATCH_ID}
+        cd ${DOWNLOAD}/${FMW_PATCH_ID}
         ${ORACLE_HOME}/OPatch/opatch apply -silent
-        # remove files on docker builds
-        running_in_docker && rm -rf ${SOFTWARE}/${DB_PATCH_PKG}
-        rm -rf ${DOWNLOAD}/${DB_PATCH_ID}           # remove the binary packages
+        # remove binary packages on docker builds
+        running_in_docker && rm -rf ${SOFTWARE}/${FMW_PATCH_PKG}
+        rm -rf ${DOWNLOAD}/${FMW_PATCH_ID}          # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Skip database patch (RU/PSU) installation."
+        echo "WARNING: Skip FMW patch installation."
     fi
 fi
 
-# - Install OJVM RU ---------------------------------------------------------
-echo " - Install OJVM RU ----------------------------------------------------"
-if [ -n "${DB_OJVM_PKG}" ]; then
-    if get_software "${DB_OJVM_PKG}"; then          # Check and get binaries
-        DB_OJVM_ID=$(echo ${DB_OJVM_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        unzip -o ${SOFTWARE}/${DB_OJVM_PKG} \
+# - Install OUD patch -------------------------------------------------------
+echo " - Install OUD patch --------------------------------------------------"
+if [ -n "${OUD_PATCH_PKG}" ]; then
+    if get_software "${OUD_PATCH_PKG}"; then        # Check and get binaries
+        OUD_PATCH_ID=$(echo ${OUD_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
+        unzip -o ${SOFTWARE}/${OUD_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
-        cd ${DOWNLOAD}/${DB_OJVM_ID}
+        cd ${DOWNLOAD}/${OUD_PATCH_ID}
         ${ORACLE_HOME}/OPatch/opatch apply -silent
         # remove files on docker builds
-        running_in_docker && rm -rf ${SOFTWARE}/${DB_OJVM_PKG}
-        rm -rf ${DOWNLOAD}/${DB_OJVM_ID}            # remove the binary packages
+        running_in_docker && rm -rf ${SOFTWARE}/${OUD_PATCH_PKG}
+        rm -rf ${DOWNLOAD}/${OUD_PATCH_ID}          # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Skip OJVM installation."
+        echo "WARNING: Skip OUD patch installation."
     fi
 fi
 
 echo " - CleanUp installation -----------------------------------------------"
 # Temp locations
-rm -rf ${DOWNLOAD}
+rm -rf ${DOWNLOAD}/*
 rm -rf /tmp/*.rsp
 rm -rf /tmp/InstallActions*
 rm -rf /tmp/CVU*oracle
 rm -rf /tmp/OraInstall*
 
 # remove all the logs....
-find ${ORACLE_BASE}/cfgtoollogs . -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/local . -name *.log -exec rm {} \;
-find ${ORACLE_INVENTORY} . -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/product . -name *.log -exec rm {} \;
+find ${ORACLE_BASE}/cfgtoollogs . -type f -name *.log -exec rm {} \;
+find ${ORACLE_BASE}/local . -type f -name *.log -exec rm {} \;
+find ${ORACLE_INVENTORY} . -type f -name *.log -exec rm {} \;
+find ${ORACLE_BASE}/product . -type f -name *.log -exec rm {} \;
 # --- EOF --------------------------------------------------------------------

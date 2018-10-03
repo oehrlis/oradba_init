@@ -144,7 +144,10 @@ tbd
 
 ## Todo
 
-* java install script
-* unique patch script for all
 * start script for java after oud
 * start patch after oud or db
+
+* db create scripts
+* oudabase issue bash profile update
+* oudbse issue right home when oud und oudsm
+* 

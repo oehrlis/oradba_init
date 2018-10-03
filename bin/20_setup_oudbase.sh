@@ -38,8 +38,8 @@ export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}     # root folder for ORACLE_BASE and 
 export ORACLE_DATA=${ORACLE_DATA:-"/u01"}     # Oracle data folder eg volume for docker
 export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}
 # set the default ORACLE_HOME based on find results for oraenv
-export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product -name oud-setup |sort -r|head -1)2>/dev/null)2>/dev/null)}
-export ORACLE_FMW_HOME=${ORACLE_FMW_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product -name product.xml |sort -r|head -1)2>/dev/null)2>/dev/null)}
+export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product -name oud-setup 2>/dev/null|sort -r|head -1) 2>/dev/null) 2>/dev/null)}
+export ORACLE_FMW_HOME=${ORACLE_FMW_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product -name product.xml 2>/dev/null|sort -r|head -1) 2>/dev/null) 2>/dev/null)}
 export JAVA_HOME=${JAVA_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE} /usr/java -name javac 2>/dev/null|sort -r|head -1) 2>/dev/null) 2>/dev/null)}
 
 # define generic variables for software, download etc
@@ -61,15 +61,17 @@ curl -f --location-trusted ${OUDBASE_URL} -o ${DOWNLOAD}/${OUDBASE_PKG}
 #adapt permissions
 chmod 755 ${DOWNLOAD}/${OUDBASE_PKG}
 
-TEST=${ORACLE_BASE:+"-b ${ORACLE_BASE}"}
-
 # install OUD base use commandline parameter if environment variables are defined
-${DOWNLOAD}/${OUDBASE_PKG} -va \
-    ${ORACLE_BASE:+"-b ${ORACLE_BASE}"} \
-    ${ORACLE_HOME:+"-m ${ORACLE_HOME}"} \
-    ${ORACLE_FMW_HOME:+"-f ${ORACLE_FMW_HOME}"} \
-    ${JAVA_HOME:+"-j ${JAVA_HOME}"} \
-    ${ORACLE_DATA:+"-d ${ORACLE_DATA}"}
+
+# show what we will create later on...
+echo "OUDBASE_PKG       =${OUDBASE_PKG}" && \
+echo "ORACLE_BASE       =${ORACLE_BASE}" && \
+echo "ORACLE_HOME       =${ORACLE_HOME}" && \
+echo "ORACLE_FMW_HOME   =${ORACLE_FMW_HOME}" && \
+echo "JAVA_HOME         =${JAVA_HOME}" && \
+echo "ORACLE_DATA       =${ORACLE_DATA}"
+
+${DOWNLOAD}/${OUDBASE_PKG} -va -b ${ORACLE_BASE} -j ${JAVA_HOME} -d ${ORACLE_DATA}
 
 # clean up
 rm -rf ${DOWNLOAD}/${OUDBASE_PKG} ${DOWNLOAD}/oudbase_install.log

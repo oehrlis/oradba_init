@@ -127,7 +127,7 @@ if [ -n "${OUD_BASE_PKG}" ]; then
 fi
 
 # install patch any of the patch variable is if defined
-if [ ! -z "${OUD_PATCH_PKG}" ] || [ ! -z "${OUD_OPATCH_PKG}" ]; then 
+if [ ! -z "${OUD_PATCH_PKG}" ] || [ ! -z "${OUD_OPATCH_PKG}" ] || [ ! -z "${FMW_PATCH_PKG}" ]; then 
     ${ORADBA_BIN}/11_setup_oud_patch.sh
 else
     echo "INFO:    Skip patch installation. No patch packages specified."
@@ -146,10 +146,10 @@ rm -rf /tmp/CVU*oracle
 rm -rf /tmp/OraInstall*
 
 # remove all the logs....
-find ${ORACLE_BASE}/cfgtoollogs . -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/local . -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/oraInventory . -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/product . -name *.log -exec rm {} \;
+find ${ORACLE_BASE}/cfgtoollogs . -type f -name *.log -exec rm {} \;
+find ${ORACLE_BASE}/local . -type f -name *.log -exec rm {} \;
+find ${ORACLE_INVENTORY} . -type f -name *.log -exec rm {} \;
+find ${ORACLE_BASE}/product . -type f -name *.log -exec rm {} \;
 
 if [ "${SLIM^^}" == "TRUE" ]; then
     rm -rf ${ORACLE_HOME}/inventory                 # remove inventory
