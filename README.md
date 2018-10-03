@@ -116,9 +116,15 @@ To setup a database server you have to run the following scripts
 * execute *01_setup_os_java.sh* to configure your Java
 * execute *10_setup_oud_xx.sh* to install your DB binaries. The script will implicit call the patch script
 * execute *20_setup_oudbase.sh* to configure OUD BasEnv
-* execute *3x_setup_xxx.sh* to create a database 
-* execute *4x_setup_xxx.sh* to configure your database
 
+```bash
+/opt/oradba/bin/01_setup_os_oud.sh
+su - oracle
+/opt/oradba/bin/01_setup_os_java.sh
+/opt/oradba/bin/10_setup_oud_12c.sh
+/opt/oradba/bin/10_setup_oudsm_12c.sh
+/opt/oradba/bin/20_setup_oudbase.sh
+```
 
 ### Remove DB Stuff
 

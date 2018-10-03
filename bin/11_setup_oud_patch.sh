@@ -39,6 +39,7 @@ export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"oud11.1.2.3.0"}
 export ORACLE_HOME="${ORACLE_HOME:-${ORACLE_BASE}/product/${ORACLE_HOME_NAME}}"
 
 # define generic variables for software, download etc
+export JAVA_HOME=${JAVA_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE} /usr/java -name javac 2>/dev/null|sort -r|head -1) 2>/dev/null) 2>/dev/null)}
 export OPT_DIR=${OPT_DIR:-"/opt"}
 export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallback
