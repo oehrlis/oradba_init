@@ -106,7 +106,7 @@ echo " - CleanUp installation -----------------------------------------------"
 rm -rf ${ORACLE_HOME}/inventory/backup/*            # OUI backup
 
 # Temp locations
-rm -rf ${DOWNLOAD}
+rm -rf ${DOWNLOAD}/*
 rm -rf /tmp/*.rsp
 rm -rf /tmp/*.loc
 rm -rf /tmp/InstallActions*

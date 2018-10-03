@@ -61,8 +61,8 @@ if [ -n "${JAVA_PKG}" ]; then
 fi
 
 # add 3DES_EDE_CBC for Oracle EUS
-JAVA_SECURITY=$(find /usr/java -name java.db 2>/dev/null)
+JAVA_SECURITY=$(find ${JAVA_BASE} -name java.security 2>/dev/null)
 if [ ! -z ${JAVA_SECURITY} ] && [ -f ${JAVA_SECURITY} ]; then
-    sed -i 's/, 3DES_EDE_CBC//' ${JAVA_SECURITY}
+    sed -i 's/3DES_EDE_CBC//' ${JAVA_SECURITY}
 fi
 # --- EOF --------------------------------------------------------------------

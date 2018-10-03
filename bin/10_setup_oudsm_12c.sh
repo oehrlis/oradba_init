@@ -61,6 +61,7 @@ fi
 # Replace place holders in responce file
 echo " - Prepare response files ---------------------------------------------"
 cp ${ORADBA_RSP}/oud_install.rsp.tmpl /tmp/oud_install.rsp
+mkdir -p ${DOWNLOAD}
 
 echo "inventory_loc=${ORACLE_INVENTORY}"   >/tmp/oraInst.loc
 echo "inst_group=oinstall"                 >>/tmp/oraInst.loc
@@ -137,7 +138,7 @@ echo " - CleanUp installation -----------------------------------------------"
 rm -rf ${ORACLE_HOME}/inventory/backup/*            # OUI backup
 
 # Temp locations§
-rm -rf ${DOWNLOAD}
+rm -rf ${DOWNLOAD}/*
 rm -rf /tmp/*.rsp
 rm -rf /tmp/*.loc
 rm -rf /tmp/InstallActions*

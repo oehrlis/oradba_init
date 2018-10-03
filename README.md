@@ -136,8 +136,6 @@ yum -y erase oracle-rdbms-server-11gR2-preinstall \
     oracle-rdbms-server-12cR1-preinstall \
     oracle-database-server-12cR2-preinstall \
     oracle-database-preinstall-18c
-
-rm -rf /opt/oradba
 ```
 
 ## Customization

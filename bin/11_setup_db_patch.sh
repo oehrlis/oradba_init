@@ -108,7 +108,7 @@ fi
 
 echo " - CleanUp installation -----------------------------------------------"
 # Temp locations
-rm -rf ${DOWNLOAD}
+rm -rf ${DOWNLOAD}/*
 rm -rf /tmp/*.rsp
 rm -rf /tmp/InstallActions*
 rm -rf /tmp/CVU*oracle

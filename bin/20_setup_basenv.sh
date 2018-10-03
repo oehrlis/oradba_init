@@ -31,6 +31,7 @@ export BASENV_PKG=${BASENV_PKG:-basenv-18.05.final.b.zip}
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
+export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 
 # define Oracle specific variables
 export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and binaries
