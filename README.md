@@ -158,10 +158,14 @@ tbd
 
 ## Todo
 
-* start script for java after oud
-* start patch after oud or db
-
 * db create scripts
-* oudabase issue bash profile update
-* oudbse issue right home when oud und oudsm
-* 
+    * enable unified audit
+    * setup links for network stuff
+    * create scripts
+    * create training folder
+    * test kerberos
+* oudbase issue bash profile update
+* Windows AD
+    * putty config 
+    * putty agent auto start
+    * 

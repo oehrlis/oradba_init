@@ -56,8 +56,10 @@ useradd --create-home --gid oinstall \
 echo "manager" | passwd --stdin oracle
 
 # copy autorized keys 
+mkdir -p /home/oracle/.ssh/
 cp ${HOME}/.ssh/authorized_keys /home/oracle/.ssh/
-chown oracle:oinstall /home/oracle/.ssh/authorized_keys
+chown oracle:oinstall -R /home/oracle/.ssh
+chmod 700 /home/oracle/.ssh/
 
 # show what we will create later on...
 echo "ORACLE_ROOT       =${ORACLE_ROOT}" && \
