@@ -3,7 +3,7 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: 00_setup_os_db.sh 
+# Name.......: 01_setup_os_db.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2018.09.27
@@ -17,25 +17,28 @@
 # Modified...:
 # see git revision history for more information on changes/updates
 # ---------------------------------------------------------------------------
-# - Customization -----------------------------------------------------------
- 
-# - End of Customization ----------------------------------------------------
 
 # - Environment Variables ---------------------------------------------------
-# - Set default values for environment variables if not yet defined. 
-# ---------------------------------------------------------------------------
+# source genric environment variables and functions
+source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
+
+# define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-export ORADBA_RSP="${ORADBA_BASE}/rsp"
-export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and binaries
-export ORACLE_DATA=${ORACLE_DATA:-/u01}     # Oracle data folder eg volume for docker
-export ORACLE_ARCH=${ORACLE_ARCH:-/u02}     # Oracle arch folder eg volume for docker
-export ORACLE_BASE=${ORACLE_BASE:-$ORACLE_ROOT/app/oracle}
-export ORACLE_INVENTORY=${ORACLE_INVENTORY:-$ORACLE_ROOT/app/oraInventory}
-export SOFTWARE="/opt/stage"
-export DOWNLOAD="/tmp/download"
-export CLEANUP=${CLEANUP:-true}             # Flag to set yum clean up
+export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 
+# define Oracle specific variables
+export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
+export ORACLE_DATA=${ORACLE_DATA:-"/u01"}       # Oracle data folder eg volume for docker
+export ORACLE_ARCH=${ORACLE_ARCH:-"/u02"}       # Oracle arch folder eg volume for docker
+export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}
+export ORACLE_INVENTORY=${ORACLE_INVENTORY:-"${ORACLE_ROOT}/app/oraInventory"}
+
+# define generic variables for software, download etc
+export OPT_DIR=${OPT_DIR:-"/opt"}
+export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
+export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
+export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 # - EOF Environment Variables -----------------------------------------------
 
 # Make sure only root can run our script
@@ -67,9 +70,9 @@ install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${ORACLE_DATA} \
         ${ORACLE_ARCH} \
         ${ORACLE_BASE} \
+        ${ORACLE_INVENTORY} \
         ${ORADBA_BASE} \
         ${SOFTWARE} \
-        ${ORACLE_INVENTORY} \
         ${DOWNLOAD}
 
 # create a softlink for init script usually just used for docker init
@@ -117,7 +120,6 @@ mkdir -p ${ORADBA_RSP}
 touch ${ORACLE_BASE}/etc/oratab
 ln -sf ${ORACLE_BASE}/etc/oratab /etc/oratab
 
-# change owner of ORACLE_BASE
-chown -R oracle:oinstall ${ORACLE_BASE}
-
+# change owner of ORACLE_BASE and ORACLE_INVENTORY
+chown -R oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
 # --- EOF --------------------------------------------------------------------

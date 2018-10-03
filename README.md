@@ -59,3 +59,10 @@ Start using the Scripts.
 ```bash
 cd /opt/oradba/bin
 ```
+
+## Todo
+
+* java install script
+* unique patch script for all
+* start script for java after oud
+* start patch after oud or db

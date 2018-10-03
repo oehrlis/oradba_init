@@ -3,13 +3,13 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: 00_setup_os_oud.sh 
+# Name.......: 01_setup_os_oud.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2018.09.27
 # Revision...: 
-# Purpose....: Script to setup and configure OUD Base.
-# Notes......: Script would like to be executed as oracle :-)
+# Purpose....: Script to configure OEL for Oracle Unified Directory installations.
+# Notes......: Script would like to be executed as root :-).
 # Reference..: --
 # License....: Licensed under the Universal Permissive License v 1.0 as 
 #              shown at http://oss.oracle.com/licenses/upl.
@@ -17,23 +17,26 @@
 # Modified...:
 # see git revision history for more information on changes/updates
 # ---------------------------------------------------------------------------
-# - Customization -----------------------------------------------------------
- 
-# - End of Customization ----------------------------------------------------
-
 # - Environment Variables ---------------------------------------------------
-# - Set default values for environment variables if not yet defined. 
-# ---------------------------------------------------------------------------
+# source genric environment variables and functions
+source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
+
+# define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-export ORADBA_RSP="${ORADBA_BASE}/rsp"
-export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and binaries
-export ORACLE_DATA=${ORACLE_DATA:-/u01}     # Oracle data folder eg volume for docker
-export ORACLE_BASE=${ORACLE_BASE:-$ORACLE_ROOT/app/oracle}
-export SOFTWARE="/opt/stage"
-export DOWNLOAD="/tmp/download"
-export CLEANUP=${CLEANUP:-true}             # Flag to set yum clean up
+export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 
+# define Oracle specific variables
+export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
+export ORACLE_DATA=${ORACLE_DATA:-"/u01"}       # Oracle data folder eg volume for docker
+export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}
+export ORACLE_INVENTORY=${ORACLE_INVENTORY:-"${ORACLE_ROOT}/app/oraInventory"}
+
+# define generic variables for software, download etc
+export OPT_DIR=${OPT_DIR:-"/opt"}
+export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
+export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
+export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 # - EOF Environment Variables -----------------------------------------------
 
 # Make sure only root can run our script
@@ -43,20 +46,21 @@ if [ $EUID -ne 0 ]; then
 fi
 
 # create necessary groups
-groupadd --gid 1000 oracle
 groupadd --gid 1010 oinstall
 
 # create the oracle OS user
-useradd --create-home --gid oracle \
-    --groups oinstall \
+useradd --create-home --gid oinstall \
     --shell /bin/bash oracle
+
+# set the default password for the oracle user
+echo "manager" | passwd --stdin oracle
 
 # create the directory tree
 install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${ORACLE_ROOT} \
-        ${ORACLE_DATA} \ 
+        ${ORACLE_DATA} \
         ${ORACLE_BASE} \
-        ${ORADBA} \
+        ${ORACLE_INVENTORY} \
         ${SOFTWARE} \
         ${DOWNLOAD}
 
@@ -72,10 +76,13 @@ yum upgrade -y
 # install basic utilities
 yum install -y libaio gzip tar
 
+# remove openJDK
+yum erase -y java-1.8.0-openjdk java-1.8.0-openjdk-headless
+
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
     echo "clean up yum cache"
-    yum clean all
+    yum clean all 
     rm -rf /var/cache/yum
 else
     echo "yum cache is not cleaned up"
@@ -84,16 +91,16 @@ fi
 # create a bunch of other directories
 mkdir -p ${ORACLE_BASE}/etc
 mkdir -p ${ORACLE_BASE}/tmp
+mkdir -p ${ORACLE_DATA}/scripts
+mkdir -p ${ORADBA_BIN}
+mkdir -p ${ORADBA_RSP}
 
-# change owner of ORACLE_BASE
-chown -R oracle:oinstall ${ORACLE_BASE} ${SOFTWARE}
+# change owner of ORACLE_BASE and ORACLE_INVENTORY
+chown -R oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
 
 # add 3DES_EDE_CBC for Oracle EUS
-JAVA_SECURITY=$(find /usr/java -name java.db)
-if [ -f ${JAVA_SECURITY} ]; then
+JAVA_SECURITY=$(find /usr/java -name java.db 2>/dev/null)
+if [ ! -z ${JAVA_SECURITY} ] && [ -f ${JAVA_SECURITY} ]; then
     sed -i 's/, 3DES_EDE_CBC//' ${JAVA_SECURITY}
-else
-    echo "nix"
 fi
-
 # --- EOF --------------------------------------------------------------------

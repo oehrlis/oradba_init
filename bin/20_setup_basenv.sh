@@ -3,13 +3,17 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: 02_setup_basenv.sh 
+# Name.......: 20_setup_basenv.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2018.09.27
 # Revision...: 
 # Purpose....: Script to setup and configure TVD-Basenv.
-# Notes......: Script would like to be executed as oracle :-)
+# Notes......: - Script would like to be executed as oracle :-)
+#              - If the required software is not in /opt/stage, an attempt is
+#                made to download the software package with curl from 
+#                ${SOFTWARE_REPO} In this case, the environment variable must 
+#                point to a corresponding URL.
 # Reference..: --
 # License....: Licensed under the Universal Permissive License v 1.0 as 
 #              shown at http://oss.oracle.com/licenses/upl.
@@ -17,54 +21,36 @@
 # Modified...:
 # see git revision history for more information on changes/updates
 # ---------------------------------------------------------------------------
-# - Customization -----------------------------------------------------------
- 
-# - End of Customization ----------------------------------------------------
-
 # - Environment Variables ---------------------------------------------------
-# - Set default values for environment variables if not yet defined. 
-# ---------------------------------------------------------------------------
+# source genric environment variables and functions
+source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
+
+# define the software packages
+export BASENV_PKG=${BASENV_PKG:-basenv-18.05.final.b.zip}
+
+# define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-export ORADBA_RSP="${ORADBA_BASE}/rsp"
+
+# define Oracle specific variables
 export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and binaries
-export ORACLE_DATA=${ORACLE_DATA:-/u01}     # Oracle data folder eg volume for docker
 export ORACLE_BASE=${ORACLE_BASE:-$ORACLE_ROOT/app/oracle}
 export ORACLE_LOCAL=${ORACLE_LOCAL:-${ORACLE_BASE}/local}
 export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
-export BASENV_PKG=${BASENV_PKG:-basenv-18.05.final.b.zip}
-export SOFTWARE="/opt/stage"
-export DOWNLOAD="/tmp/download"
-
 # set the default ORACLE_HOME based on find results for oraenv
 export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product -name oraenv |sort -r|head -1)))}
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-$(basename ${ORACLE_HOME})}
 
+# define generic variables for software, download etc
+export OPT_DIR=${OPT_DIR:-"/opt"}
+export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
+export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallback
+export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
+export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 # - EOF Environment Variables -----------------------------------------------
-# - Functions ---------------------------------------------------------------
-# ---------------------------------------------------------------------------
-function get_software {
-# Purpose....: Verify if the software package is available if not try to 
-#              download it from $SOFTWARE_REPO
-# ---------------------------------------------------------------------------
-    PKG=$1
-    if [ ! -s "${SOFTWARE}/${PKG}" ]; then
-        if [ ! -z "${SOFTWARE_REPO}" ]; then
-            echo "WARNING: Try to download ${PKG} from ${SOFTWARE_REPO}"
-            curl -f ${SOFTWARE_REPO}${PKG} -o ${DOWNLOAD}/${PKG}
-        else
-            echo "WARNING: No software repository specified"
-            return 1
-        fi
-    else
-        echo "Found package ${PKG} for installation."
-        return 0
-    fi
-}
-# - EOF Functions -----------------------------------------------------------
 
 # - Initialization ----------------------------------------------------------
-# Make sure only root can run our script
+# Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
    echo "This script must not be run as root" 1>&2
    exit 1
@@ -82,7 +68,7 @@ sed -i -e "s|###ORACLE_LOCAL###|${ORACLE_LOCAL}|g"  /tmp/base_install.rsp
 # - Install Trivadis toolbox ------------------------------------------------
 echo " - Install Trivadis toolbox -------------------------------------------"
 if [ -n "${BASENV_PKG}" ]; then
-    if get_software "${DB_BASE_PKG}"; then          # Check and get binaries
+    if get_software "${BASENV_PKG}"; then          # Check and get binaries
         mkdir -p ${ORACLE_LOCAL}
         unzip -o ${SOFTWARE}/${BASENV_PKG} -d ${ORACLE_LOCAL}
         # Install basenv binaries
@@ -95,5 +81,4 @@ if [ -n "${BASENV_PKG}" ]; then
         exit 1
     fi
 fi
-
 # --- EOF --------------------------------------------------------------------
