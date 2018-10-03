@@ -27,7 +27,7 @@ export OPT_DIR="/opt"
 export ORACLE_ROOT="/u00"         # root folder for ORACLE_BASE and binaries
 export ORACLE_DATA="/u01"         # Oracle data folder eg volume for docker
 export ORACLE_ARCH="/u02"         # Oracle arch folder eg volume for docker
-export ORACLE_BASE=-"${ORACLE_ROOT}/app/oracle"
+export ORACLE_BASE="${ORACLE_ROOT}/app/oracle"
 export ORACLE_INVENTORY="${ORACLE_ROOT}/app/oraInventory"
 # - End of Customization ----------------------------------------------------
 

@@ -66,6 +66,8 @@ chmod 755 /tmp/00_setup_oradba_init.sh
 
 /tmp/00_setup_oradba_init.sh
 
+ls -alR /opt/oradba
+
 rm /tmp/00_setup_oradba_init.sh
 ```
 
@@ -115,6 +117,24 @@ To setup a database server you have to run the following scripts
 * execute *20_setup_oudbase.sh* to configure OUD BasEnv
 * execute *3x_setup_xxx.sh* to create a database 
 * execute *4x_setup_xxx.sh* to configure your database
+
+
+### Remove DB Stuff
+
+For test purpose I did have to remove all the stuff a couple of times.
+
+```bash
+rm -rf /u00 /u01 /u02
+rm -rf /home/oracle
+rm -rf rm -rf /var/mail/oracle
+userdel oracle
+for i in $(grep -i '^os' /etc/group|cut -d: -f1) oinstall; do groupdel $i; done
+yum -y erase zip unzip gzip tar which \
+    oracle-rdbms-server-11gR2-preinstall \
+    oracle-rdbms-server-12cR1-preinstall \
+    oracle-database-server-12cR2-preinstall \
+    oracle-database-preinstall-18c
+```
 
 ## Customization
 

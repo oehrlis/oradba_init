@@ -64,7 +64,16 @@ useradd --create-home --gid oinstall \
 # set the default password for the oracle user
 echo "manager" | passwd --stdin oracle
 
-# create the directory tree
+# show what we will create later on...
+echo "ORACLE_ROOT       =${ORACLE_ROOT}" && \
+echo "ORACLE_DATA       =${ORACLE_DATA}" && \
+echo "ORACLE_ARCH       =${ORACLE_ARCH}" && \
+echo "ORACLE_BASE       =${ORACLE_BASE}" && \
+echo "ORACLE_INVENTORY  =${ORACLE_INVENTORY}" && \
+echo "ORADBA_BASE       =${ORADBA_BASE}" && \
+echo "SOFTWARE          =${SOFTWARE}" && \
+echo "DOWNLOAD          =${DOWNLOAD}" 
+
 install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${ORACLE_ROOT} \
         ${ORACLE_DATA} \
