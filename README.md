@@ -135,7 +135,7 @@ su - oracle
 ```
 ### Remove DB Stuff
 
-For test purpose I did have to remove all the stuff a couple of times.
+For test purpose I did have to remove all the stuff a couple of times. Just be aware this is **highly critical**. You will remove your DB, binaries etc on your system.
 
 ```bash
 rm -rf /u00 /u01 /u02
