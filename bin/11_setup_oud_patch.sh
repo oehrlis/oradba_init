@@ -26,9 +26,9 @@
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
-export OUD_PATCH_PKG=${OUD_PATCH_PKG:-"p28245820_122130_Generic.zip"}
-export FMW_PATCH_PKG=${FMW_PATCH_PKG:-"p27912627_122130_Generic.zip"}
-export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-"p28186730_139400_Generic.zip"}
+export OUD_PATCH_PKG=${OUD_PATCH_PKG:-""}
+export FMW_PATCH_PKG=${FMW_PATCH_PKG:-""}
+export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-""}
 
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
@@ -65,6 +65,7 @@ if [ -n "${OUD_OPATCH_PKG}" ]; then
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         # install the OPatch using java
         $JAVA_HOME/bin/java -jar ${DOWNLOAD}/6880880/opatch_generic.jar \
+            -ignoreSysPrereqs -force \
             -silent oracle_home=${ORACLE_HOME}
         rm -rf ${DOWNLOAD}/6880880
         running_in_docker && rm -rf ${SOFTWARE}/${OUD_OPATCH_PKG}
