@@ -68,7 +68,7 @@ chmod 755 /tmp/00_setup_oradba_init.sh
 
 ls -alR /opt/oradba
 
-rm /tmp/00_setup_oradba_init.sh
+rm -rf /tmp/00_setup_oradba_init.sh
 ```
 
 Now you can proceed to setup your environment using the scripts in the *bin* folder.
@@ -100,6 +100,7 @@ To setup a database server you have to run the following scripts
 * customize *00_setup_oradba_init.sh* or set adequate environment variables for your software, patch, home etc.
 * put the software respective ZIP files to a local folder e.g *SOFTWARE* or provide an url for a software repository e.g. *SOFTWARE_REPO*.
 * execute *01_setup_os_db.sh* to configure your OS
+* change to user oracle
 * execute *10_setup_db_xx.x.sh* to install your DB binaries. The script will implicit call the patch script
 * execute *20_setup_basenv.sh* to configure TVD-BasEnv
 * execute *3x_setup_xxx.sh* to create a database 
@@ -126,14 +127,17 @@ For test purpose I did have to remove all the stuff a couple of times.
 ```bash
 rm -rf /u00 /u01 /u02
 rm -rf /home/oracle
-rm -rf rm -rf /var/mail/oracle
+rm -rf /var/mail/oracle
+rm -rf /docker-entrypoint-initdb.d
+rm -rf /opt/oradba
 userdel oracle
 for i in $(grep -i '^os' /etc/group|cut -d: -f1) oinstall; do groupdel $i; done
-yum -y erase zip unzip gzip tar which \
-    oracle-rdbms-server-11gR2-preinstall \
+yum -y erase oracle-rdbms-server-11gR2-preinstall \
     oracle-rdbms-server-12cR1-preinstall \
     oracle-database-server-12cR2-preinstall \
     oracle-database-preinstall-18c
+
+rm -rf /opt/oradba
 ```
 
 ## Customization

@@ -85,10 +85,10 @@ install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${DOWNLOAD}
 
 # create a softlink for init script usually just used for docker init
-ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d && \
+running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 
 # limit installation language / locals to EN
-echo "%_install_langs   en" >>/etc/rpm/macros.lang && \
+echo "%_install_langs   en" >>/etc/rpm/macros.lang
 
 # upgrade the installation
 yum upgrade -y

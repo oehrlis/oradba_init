@@ -9,7 +9,7 @@
 # Date.......: 2018.09.27
 # Revision...: 
 # Purpose....: Script to install Oracle server jre.
-# Notes......: Script would like to be executed as root :-).
+# Notes......: --
 # Reference..: --
 # License....: Licensed under the Universal Permissive License v 1.0 as 
 #              shown at http://oss.oracle.com/licenses/upl.
@@ -36,12 +36,6 @@ export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallb
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 # - EOF Environment Variables -----------------------------------------------
-
-# Make sure only root can run our script
-if [ $EUID -ne 0 ]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
-fi
 
 # - Install database binaries -----------------------------------------------
 echo " - Oracle Java 1.8 -----------------------------------------"

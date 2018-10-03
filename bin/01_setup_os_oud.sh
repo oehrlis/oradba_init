@@ -55,6 +55,14 @@ useradd --create-home --gid oinstall \
 # set the default password for the oracle user
 echo "manager" | passwd --stdin oracle
 
+# show what we will create later on...
+echo "ORACLE_ROOT       =${ORACLE_ROOT}" && \
+echo "ORACLE_DATA       =${ORACLE_DATA}" && \
+echo "ORACLE_BASE       =${ORACLE_BASE}" && \
+echo "ORACLE_INVENTORY  =${ORACLE_INVENTORY}" && \
+echo "SOFTWARE          =${SOFTWARE}" && \
+echo "DOWNLOAD          =${DOWNLOAD}" 
+
 # create the directory tree
 install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${ORACLE_ROOT} \
@@ -65,10 +73,10 @@ install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${DOWNLOAD}
 
 # create a softlink for init script usually just used for docker init
-ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d && \
+running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 
 # limit installation language / locals to EN
-echo "%_install_langs   en" >>/etc/rpm/macros.lang && \
+echo "%_install_langs   en" >>/etc/rpm/macros.lang
 
 # upgrade the installation
 yum upgrade -y
