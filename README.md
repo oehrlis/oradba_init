@@ -106,6 +106,14 @@ To setup a database server you have to run the following scripts
 * execute *3x_setup_xxx.sh* to create a database 
 * execute *4x_setup_xxx.sh* to configure your database
 
+```bash
+/opt/oradba/bin/01_setup_os_db.sh
+su - oracle
+/opt/oradba/bin/10_setup_db_18.3.sh
+/opt/oradba/bin/10_setup_db_12.2.sh
+/opt/oradba/bin/20_setup_basenv.sh
+```
+
 ### Setup a OUD Server
 
 To setup a database server you have to run the following scripts
