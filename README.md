@@ -133,8 +133,7 @@ su - oracle
 /opt/oradba/bin/10_setup_oudsm_12c.sh
 /opt/oradba/bin/20_setup_oudbase.sh
 ```
-
-### Remove DB Stuff
+### Remove DB Stuff
 
 For test purpose I did have to remove all the stuff a couple of times.
 
