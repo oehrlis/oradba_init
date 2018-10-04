@@ -118,7 +118,6 @@ running_in_docker && rm -rf ${ORACLE_HOME}/.patch_storage       # remove patch s
 running_in_docker && rm -rf ${ORACLE_HOME}/inventory/backup/*   # OUI backup
 
 # remove all the logs....
-find ${ORACLE_BASE}/cfgtoollogs . -type f -name *.log -exec rm {} \;
 find ${ORACLE_INVENTORY} . -type f -name *.log -exec rm {} \;
 find ${ORACLE_BASE}/product . -type f -name *.log -exec rm {} \;
 # --- EOF --------------------------------------------------------------------

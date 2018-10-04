@@ -93,8 +93,6 @@ sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"          /tmp/db_examples_install
 sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"          /tmp/db_examples_install.rsp
 sed -i -e "s|^oracle.install.responseFileVersion.*|$RESPONSFILE_VERSION|" /tmp/db_examples_install.rsp
 
-cat /tmp/db_install.rsp
-id 
 # - Install database binaries -----------------------------------------------
 # handle pre and post 18c
 echo " - Install Oracle DB binaries -----------------------------------------"

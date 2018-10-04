@@ -58,7 +58,7 @@ groupadd --gid 1070 osracdba
 
 # create the oracle OS user
 useradd --create-home --gid oinstall \
-    --groups osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
+    --groups oinstall,osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
     --shell /bin/bash oracle
 
 # do some stuff on none docker environments
