@@ -91,6 +91,10 @@ if [ $EUID -ne 0 ]; then
     exit 1
 fi
 
+# create a software depot
+mkdir -p ${SOFTWARE}
+chmod 777 ${SOFTWARE}
+
 # - Get oradba init scripts -----------------------------------------------
 echo " - Get oradba init scripts --------------------------------------------"
 mkdir -p ${DOWNLOAD}                                    # create download folder

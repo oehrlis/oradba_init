@@ -59,7 +59,6 @@ The scripts can be downloaded directly from GitHub. Usually done to ``/tmp`` fol
 The ``00_setup_oradba_init.sh`` script itself can be used to download and setup the init scripts. All you need to do is load the script from GitHub, set permissions and execute it.
 
 ```bash
-cd /tmp
 curl -Lsf https://github.com/oehrlis/oradba_init/raw/master/bin/00_setup_oradba_init.sh \
     -o /tmp/00_setup_oradba_init.sh
 chmod 755 /tmp/00_setup_oradba_init.sh
@@ -133,6 +132,7 @@ su - oracle
 /opt/oradba/bin/10_setup_oudsm_12c.sh
 /opt/oradba/bin/20_setup_oudbase.sh
 ```
+
 ### Remove DB Stuff
 
 For test purpose I did have to remove all the stuff a couple of times. Just be aware this is **highly critical**. You will remove your DB, binaries etc on your system.
