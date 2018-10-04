@@ -54,6 +54,10 @@ if [ ! $EUID -ne 0 ]; then
    echo "This script must not be run as root" 1>&2
    exit 1
 fi
+
+# fuser issue see MOS Note 2429708.1 OPatch Fails with Error "fuser could not be located"
+running_in_docker && export OPATCH_NO_FUSER=true
+
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
@@ -119,8 +123,6 @@ rm -rf /tmp/CVU*oracle
 rm -rf /tmp/OraInstall*
 
 # remove all the logs....
-find ${ORACLE_BASE}/cfgtoollogs . -type f -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/local . -type f -name *.log -exec rm {} \;
 find ${ORACLE_INVENTORY} . -type f -name *.log -exec rm {} \;
 find ${ORACLE_BASE}/product . -type f -name *.log -exec rm {} \;
 # --- EOF --------------------------------------------------------------------
