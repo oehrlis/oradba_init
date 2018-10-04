@@ -62,6 +62,9 @@ if [ ! running_in_docker ]; then
     cp ${HOME}/.ssh/authorized_keys /home/oracle/.ssh/
     chown oracle:oinstall -R /home/oracle/.ssh
     chmod 700 /home/oracle/.ssh/
+
+    # remove openJDK
+    yum erase -y java-1.8.0-openjdk java-1.8.0-openjdk-headless
 fi
 
 # show what we will create later on...
@@ -91,10 +94,7 @@ echo "%_install_langs   en" >>/etc/rpm/macros.lang
 yum upgrade -y
 
 # install basic utilities
-yum install -y libaio gzip tar
-
-# remove openJDK
-yum erase -y java-1.8.0-openjdk java-1.8.0-openjdk-headless
+yum install -y libaio gzip tar zip unzip
 
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
