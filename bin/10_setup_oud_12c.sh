@@ -115,8 +115,8 @@ rm -rf /tmp/CVU*oracle
 rm -rf /tmp/OraInstall*
 
 # remove all the logs....
-find ${ORACLE_INVENTORY} . -type f -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/product . -type f -name *.log -exec rm {} \;
+find ${ORACLE_INVENTORY} -type f -name *.log -exec rm {} \;
+find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
 
 if [ "${SLIM^^}" == "TRUE" ]; then
     rm -rf ${ORACLE_HOME}/inventory                 # remove inventory
