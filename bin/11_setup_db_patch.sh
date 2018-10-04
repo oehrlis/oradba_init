@@ -106,7 +106,7 @@ if [ -n "${DB_OJVM_PKG}" ]; then
     fi
 fi
 
-echo " - CleanUp installation -----------------------------------------------"
+echo " - CleanUp DB patch installation --------------------------------------"
 # Temp locations
 rm -rf ${DOWNLOAD}/*
 rm -rf /tmp/*.rsp
@@ -114,9 +114,11 @@ rm -rf /tmp/InstallActions*
 rm -rf /tmp/CVU*oracle
 rm -rf /tmp/OraInstall*
 
+running_in_docker && rm -rf ${ORACLE_HOME}/.patch_storage       # remove patch storage
+running_in_docker && rm -rf ${ORACLE_HOME}/inventory/backup/*   # OUI backup
+
 # remove all the logs....
 find ${ORACLE_BASE}/cfgtoollogs . -type f -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/local . -type f -name *.log -exec rm {} \;
 find ${ORACLE_INVENTORY} . -type f -name *.log -exec rm {} \;
 find ${ORACLE_BASE}/product . -type f -name *.log -exec rm {} \;
 # --- EOF --------------------------------------------------------------------

@@ -114,13 +114,16 @@ if [ -n "${OUD_PATCH_PKG}" ]; then
     fi
 fi
 
-echo " - CleanUp installation -----------------------------------------------"
+echo " - CleanUp OUD patch installation -------------------------------------"
 # Temp locations
 rm -rf ${DOWNLOAD}/*
 rm -rf /tmp/*.rsp
 rm -rf /tmp/InstallActions*
 rm -rf /tmp/CVU*oracle
 rm -rf /tmp/OraInstall*
+
+running_in_docker && rm -rf ${ORACLE_HOME}/.patch_storage       # remove patch storage
+running_in_docker && rm -rf ${ORACLE_HOME}/inventory/backup/*   # OUI backup
 
 # remove all the logs....
 find ${ORACLE_INVENTORY} . -type f -name *.log -exec rm {} \;

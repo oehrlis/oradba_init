@@ -134,7 +134,7 @@ else
     echo "INFO:    Skip patch installation. No patch packages specified."
 fi
 
-echo " - CleanUp installation -----------------------------------------------"
+echo " - CleanUp OUDSM installation -----------------------------------------"
 # Remove not needed components
 rm -rf ${ORACLE_HOME}/inventory/backup/*            # OUI backup
 
