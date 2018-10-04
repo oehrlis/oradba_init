@@ -98,7 +98,7 @@ chmod 777 ${SOFTWARE}
 # - Get oradba init scripts -----------------------------------------------
 echo " - Get oradba init scripts --------------------------------------------"
 mkdir -p ${DOWNLOAD}                                    # create download folder
-curl -Lsf ${ORADBA_INIT} -o ${DOWNLOAD}/${ORADBA_PKG}
+curl -Lf ${ORADBA_INIT} -o ${DOWNLOAD}/${ORADBA_PKG}
 
 # check if we do have an unzip command
 if [ ! -z $(command -v unzip) ]; then 
@@ -107,9 +107,11 @@ if [ ! -z $(command -v unzip) ]; then
 else 
     # missing unzip fallback to a simple phyton script as python seems
     # to be available on Docker image oraclelinx:7-slim
+    echo "no unzip available, fallback to python script"
     echo "import zipfile" >${DOWNLOAD}/unzipfile.py
     echo "with zipfile.ZipFile('${DOWNLOAD}/${ORADBA_PKG}', 'r') as z:" >>${DOWNLOAD}/unzipfile.py
     echo "   z.extractall('${OPT_DIR}')">>${DOWNLOAD}/unzipfile.py
+    python ${DOWNLOAD}/unzipfile.py
 fi
 
 mv ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
