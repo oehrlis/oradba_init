@@ -114,7 +114,7 @@ else
     python ${DOWNLOAD}/unzipfile.py
 
     # adjust file mods
-    chmod 755 ${OPT_DIR}/oradba/bin/*.sh
+    find ${OPT_DIR} -type f -name *.sh -exec chmod 755 {} \;
 fi
 
 mv ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
