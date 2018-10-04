@@ -54,7 +54,7 @@ function get_software {
     if [ ! -s "${SOFTWARE}/${PKG}" ]; then
         if [ ! -z "${SOFTWARE_REPO}" ]; then
             echo "WARNING: Try to download ${PKG} from ${SOFTWARE_REPO}"
-            curl -f ${SOFTWARE_REPO}/${PKG} -o ${DOWNLOAD}/${PKG}
+            curl -f ${SOFTWARE_REPO}/${PKG} -o ${SOFTWARE}/${PKG}
         else
             echo "WARNING: No software repository specified"
             return 1
