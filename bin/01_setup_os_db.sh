@@ -61,14 +61,17 @@ useradd --create-home --gid oinstall \
     --groups osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
     --shell /bin/bash oracle
 
-# set the default password for the oracle user
-echo "manager" | passwd --stdin oracle
+# do some stuff on none docker environments
+if [ ! running_in_docker ]; then
+    # set the default password for the oracle user
+    echo "manager" | passwd --stdin oracle
 
-# copy autorized keys 
-mkdir -p /home/oracle/.ssh/
-cp ${HOME}/.ssh/authorized_keys /home/oracle/.ssh/
-chown oracle:oinstall -R /home/oracle/.ssh
-chmod 700 /home/oracle/.ssh/
+    # copy autorized keys 
+    mkdir -p /home/oracle/.ssh/
+    cp ${HOME}/.ssh/authorized_keys /home/oracle/.ssh/
+    chown oracle:oinstall -R /home/oracle/.ssh
+    chmod 700 /home/oracle/.ssh/
+fi
 
 # show what we will create later on...
 echo "ORACLE_ROOT       =${ORACLE_ROOT}" && \
