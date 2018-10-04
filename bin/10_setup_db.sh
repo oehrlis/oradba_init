@@ -28,7 +28,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
 export DB_BASE_PKG=${DB_BASE_PKG:-"LINUX.X64_180000_db_home.zip"}
-export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-"LINUX.X64_180000_examples.zip"}
+export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-""}
 export DB_PATCH_PKG=${DB_PATCH_PKG:-""}
 export DB_OJVM_PKG=${DB_OJVM_PKG:-""}
 export DB_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_180000_Linux-x86-64.zip"}
@@ -93,6 +93,8 @@ sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"          /tmp/db_examples_install
 sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"          /tmp/db_examples_install.rsp
 sed -i -e "s|^oracle.install.responseFileVersion.*|$RESPONSFILE_VERSION|" /tmp/db_examples_install.rsp
 
+cat /tmp/db_install.rsp
+id 
 # - Install database binaries -----------------------------------------------
 # handle pre and post 18c
 echo " - Install Oracle DB binaries -----------------------------------------"

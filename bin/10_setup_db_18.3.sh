@@ -24,7 +24,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
 export DB_BASE_PKG=${DB_BASE_PKG:-"LINUX.X64_180000_db_home.zip"}
-export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-"LINUX.X64_180000_examples.zip"}
+export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-""}
 export DB_PATCH_PKG=${DB_PATCH_PKG:-""}
 export DB_OJVM_PKG=${DB_OJVM_PKG:-""}
 export DB_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_180000_Linux-x86-64.zip"}
