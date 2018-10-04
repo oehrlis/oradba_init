@@ -112,6 +112,9 @@ else
     echo "with zipfile.ZipFile('${DOWNLOAD}/${ORADBA_PKG}', 'r') as z:" >>${DOWNLOAD}/unzipfile.py
     echo "   z.extractall('${OPT_DIR}')">>${DOWNLOAD}/unzipfile.py
     python ${DOWNLOAD}/unzipfile.py
+
+    # adjust file mods
+    chmod 755 ${OPT_DIR}/oradba/bin/*.sh
 fi
 
 mv ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
