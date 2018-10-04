@@ -101,6 +101,13 @@ if [ -n "${DB_BASE_PKG}" ]; then
         mkdir -p ${ORACLE_HOME}
         unzip -o ${SOFTWARE}/${DB_BASE_PKG} \
             -d ${ORACLE_HOME}                       # unpack Oracle binary package
+        
+        # Workaround for 12.1 with 2 zip files
+        if [ -n "${DB_BASE2_PKG}" ]; then
+            if get_software "${DB_BASE2_PKG}"; then
+                unzip -o ${SOFTWARE}/${DB_BASE2_PKG} -d ${ORACLE_HOME}
+            fi
+        fi
         # check if we have a legacy installer (pre 18c)
         if [ -d "${ORACLE_HOME}/database" ]; then
             echo "INFO:    Legacy OUI software setup"
@@ -110,7 +117,7 @@ if [ -n "${DB_BASE_PKG}" ]; then
             echo "INFO:    New OUI inplace software setup"
             SETUP_PATH="${ORACLE_HOME}"
         fi
-        # Install Oracle binaries
+        # Install Oracle binaries -ignorePrereqFailure/-ignoreSysPrereqs
         ${SETUP_PATH}/runInstaller -silent -force \
             -waitforcompletion \
             -responsefile /tmp/db_install.rsp \
@@ -118,6 +125,7 @@ if [ -n "${DB_BASE_PKG}" ]; then
         rm -rf "${ORACLE_HOME}/../database"         # remove software for legacy OUI
         # remove files on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${DB_BASE_PKG}
+        running_in_docker && rm -rf ${SOFTWARE}/${DB_BASE2_PKG}
     else
         echo "ERROR:   No base software package specified. Abort installation."
         exit 1
