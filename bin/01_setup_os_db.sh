@@ -106,7 +106,7 @@ yum upgrade -y
 yum install -y zip unzip gzip tar which
 
 # install the oracle preinstall stuff
-yum install -y \
+yum install -y make \
     oracle-rdbms-server-11gR2-preinstall \
     oracle-rdbms-server-12cR1-preinstall \
     oracle-database-server-12cR2-preinstall \
