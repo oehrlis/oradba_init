@@ -91,13 +91,13 @@ sed -i -e "s|^oracle.install.responseFileVersion.*|$RESPONSFILE_VERSION|" /tmp/d
 
 # adjust response file for 11.2 and 12.1
 if [ ${ORACLE_MAJOR_RELEASE} -eq 112 ]; then
-    sed -i -e "s|oracle.install.db.BACKUPDBA_GROUP|d"       /tmp/db_install.rsp
-    sed -i -e "s|oracle.install.db.DGDBA_GROUP|d"           /tmp/db_install.rsp
-    sed -i -e "s|oracle.install.db.KMDBA_GROUP|d"           /tmp/db_install.rsp
-    sed -i -e "s|oracle.install.db.OSRACDBA_GROUP|d"        
-    sed -i -e "s|oracle.install.db.InstallEdition|a oracle.install.db.EEOptionsSelection=false" /tmp/db_install.rsp
+    sed -i -e "/oracle.install.db.BACKUPDBA_GROUP/d"       /tmp/db_install.rsp
+    sed -i -e "/oracle.install.db.DGDBA_GROUP/d"           /tmp/db_install.rsp
+    sed -i -e "/oracle.install.db.KMDBA_GROUP/d"           /tmp/db_install.rsp
+    sed -i -e "/oracle.install.db.OSRACDBA_GROUP/d"        /tmp/db_install.rsp
+    echo "oracle.install.db.EEOptionsSelection=false"      >>/tmp/db_install.rsp
 elif [ ${ORACLE_MAJOR_RELEASE} -eq 121 ]; then
-    sed -i -e "s|oracle.install.db.OSRACDBA_GROUP|d"        /tmp/db_install.rsp
+    sed -i -e "/oracle.install.db.OSRACDBA_GROUP/d"        /tmp/db_install.rsp
 fi
 
 cat /tmp/db_install.rsp
