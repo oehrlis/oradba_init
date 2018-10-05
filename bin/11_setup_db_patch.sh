@@ -61,6 +61,11 @@ if [ ${ORACLE_MAJOR_RELEASE} -eq 112 ]; then
     OPATCH_RSP="-ocmrf /tmp/ocm.rsp"
 fi
 
+# add oracle perl to the PATH for env without perl e.g. docker
+if [ ! -n "$(command -v perl)" ]; then
+    export PATH=$PATH:$ORACLE_HOME/perl/bin
+fi
+
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
