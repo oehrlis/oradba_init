@@ -100,10 +100,10 @@ elif [ ${ORACLE_MAJOR_RELEASE} -eq 121 ]; then
     sed -i -e "/oracle.install.db.OSRACDBA_GROUP/d"        /tmp/db_install.rsp
 fi
 
-cat /tmp/db_install.rsp
 cp ${ORADBA_RSP}/db_examples_install.rsp.tmpl /tmp/db_examples_install.rsp
-sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"          /tmp/db_examples_install.rsp
-sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"          /tmp/db_examples_install.rsp
+sed -i -e "s|###ORACLE_INVENTORY###|$ORACLE_INVENTORY|g"    /tmp/db_examples_install.rsp
+sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"              /tmp/db_examples_install.rsp
+sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"              /tmp/db_examples_install.rsp
 sed -i -e "s|^oracle.install.responseFileVersion.*|$RESPONSFILE_VERSION|" /tmp/db_examples_install.rsp
 
 # - Install database binaries -----------------------------------------------
