@@ -89,6 +89,18 @@ sed -i -e "s|###ORACLE_INVENTORY###|$ORACLE_INVENTORY|g"    /tmp/db_install.rsp
 sed -i -e "s|###ORACLE_EDITION###|$ORACLE_EDITION|g"        /tmp/db_install.rsp
 sed -i -e "s|^oracle.install.responseFileVersion.*|$RESPONSFILE_VERSION|" /tmp/db_install.rsp
 
+# adjust response file for 11.2 and 12.1
+if [ ${ORACLE_MAJOR_RELEASE} -eq 112 ]; then
+    sed -i -e "s|oracle.install.db.BACKUPDBA_GROUP|d"       /tmp/db_install.rsp
+    sed -i -e "s|oracle.install.db.DGDBA_GROUP|d"           /tmp/db_install.rsp
+    sed -i -e "s|oracle.install.db.KMDBA_GROUP|d"           /tmp/db_install.rsp
+    sed -i -e "s|oracle.install.db.OSRACDBA_GROUP|d"        
+    sed -i -e "s|oracle.install.db.InstallEdition|a oracle.install.db.EEOptionsSelection=false" /tmp/db_install.rsp
+elif [ ${ORACLE_MAJOR_RELEASE} -eq 121 ]; then
+    sed -i -e "s|oracle.install.db.OSRACDBA_GROUP|d"        /tmp/db_install.rsp
+fi
+
+cat /tmp/db_install.rsp
 cp ${ORADBA_RSP}/db_examples_install.rsp.tmpl /tmp/db_examples_install.rsp
 sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"          /tmp/db_examples_install.rsp
 sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"          /tmp/db_examples_install.rsp
@@ -149,17 +161,26 @@ if [ -n "${DB_EXAMPLE_PKG}" ]; then
         echo " - unzip ${SOFTWARE}/${DB_EXAMPLE_PKG} to ${DOWNLOAD}"
         unzip -q -o ${SOFTWARE}/${DB_EXAMPLE_PKG} \
             -d ${DOWNLOAD}/                             # unpack Oracle binary package
+        
+        # Install Oracle binaries -ignorePrereqFailure/-ignoreSysPrereqs
+        PREREQ="-ignorePrereqFailure"
+        if [ ${ORACLE_MAJOR_RELEASE} -le 121 ]; then
+            PREREQ="-ignoresysprereqs -ignoreprereq"
+        fi
+        
         # Install Oracle binaries
         ${DOWNLOAD}/examples/runInstaller -silent -force \
             -waitforcompletion \
             -responsefile /tmp/db_examples_install.rsp \
-            -ignorePrereqFailure
+            ${PREREQ}
         # remove files on docker builds
         rm -rf ${DOWNLOAD}/examples
         running_in_docker && rm -rf ${SOFTWARE}/${DB_EXAMPLE_PKG}
     else
-        echo "WARNING: Skip example installation."
+        echo "WARNING: Could not find local or remote example package. Skip example installation."
     fi
+else
+    echo "INFO:    No example package specified. Skip example installation."
 fi
 
 # install patch any of the patch variable is if defined

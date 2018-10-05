@@ -75,8 +75,10 @@ if [ -n "${OUD_OPATCH_PKG}" ]; then
         rm -rf ${DOWNLOAD}/6880880
         running_in_docker && rm -rf ${SOFTWARE}/${OUD_OPATCH_PKG}
     else
-        echo "WARNING: Skip OPatch update."
+        echo "WARNING: Could not find local or remote OPatch package. Skip OPatch update."
     fi
+else
+    echo "INFO:    No OPatch package specified. Skip OPatch update."
 fi
 
 # - Install FMW patch -------------------------------------------------------
@@ -94,8 +96,10 @@ if [ -n "${FMW_PATCH_PKG}" ]; then
         rm -rf ${DOWNLOAD}/${FMW_PATCH_ID}          # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Skip FMW patch installation."
+        echo "WARNING: Could not find local or remote FMW patch package. Skip FMW patch installation."
     fi
+else
+    echo "INFO:    No FMW patch package specified. Skip FMW patch installation."
 fi
 
 # - Install OUD patch -------------------------------------------------------
@@ -113,8 +117,10 @@ if [ -n "${OUD_PATCH_PKG}" ]; then
         rm -rf ${DOWNLOAD}/${OUD_PATCH_ID}          # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Skip OUD patch installation."
+        echo "WARNING: Could not find local or remote OUD patch package. Skip OUD patch installation."
     fi
+else
+    echo "INFO:    No OUD patch package specified. Skip OUD patch installation."
 fi
 
 echo " - CleanUp OUD patch installation -------------------------------------"

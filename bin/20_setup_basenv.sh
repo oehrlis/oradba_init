@@ -71,7 +71,8 @@ echo " - Install Trivadis toolbox -------------------------------------------"
 if [ -n "${BASENV_PKG}" ]; then
     if get_software "${BASENV_PKG}"; then          # Check and get binaries
         mkdir -p ${ORACLE_LOCAL}
-        unzip -o ${SOFTWARE}/${BASENV_PKG} -d ${ORACLE_LOCAL}
+        echo " - unzip ${SOFTWARE}/${BASENV_PKG} to ${ORACLE_LOCAL}"
+        unzip -q -o ${SOFTWARE}/${BASENV_PKG} -d ${ORACLE_LOCAL}
         # Install basenv binaries
         ${ORACLE_LOCAL}/runInstaller -responseFile /tmp/base_install.rsp -silent
         # cleanup basenv
