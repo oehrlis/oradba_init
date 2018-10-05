@@ -100,13 +100,15 @@ echo " - Install Oracle DB binaries -----------------------------------------"
 if [ -n "${DB_BASE_PKG}" ]; then
     if get_software "${DB_BASE_PKG}"; then          # Check and get binaries
         mkdir -p ${ORACLE_HOME}
-        unzip -o ${SOFTWARE}/${DB_BASE_PKG} \
+        echo " - unzip ${SOFTWARE}/${DB_BASE_PKG} to ${ORACLE_HOME}"
+        unzip -q -o ${SOFTWARE}/${DB_BASE_PKG} \
             -d ${ORACLE_HOME}                       # unpack Oracle binary package
         
         # Workaround for 12.1 with 2 zip files
         if [ -n "${DB_BASE2_PKG}" ]; then
             if get_software "${DB_BASE2_PKG}"; then
-                unzip -o ${SOFTWARE}/${DB_BASE2_PKG} -d ${ORACLE_HOME}
+                echo " - unzip ${SOFTWARE}/${DB_BASE2_PKG} to ${ORACLE_HOME}"
+                unzip -q  -o ${SOFTWARE}/${DB_BASE2_PKG} -d ${ORACLE_HOME}
             fi
         fi
         # check if we have a legacy installer (pre 18c)
@@ -131,7 +133,9 @@ if [ -n "${DB_BASE_PKG}" ]; then
         rm -rf "${ORACLE_HOME}/../database"         # remove software for legacy OUI
         # remove files on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${DB_BASE_PKG}
-        running_in_docker && rm -rf ${SOFTWARE}/${DB_BASE2_PKG}
+        if [ -n "${DB_BASE2_PKG}" ]; then
+            running_in_docker && rm -rf ${SOFTWARE}/${DB_BASE2_PKG}
+        fi
     else
         echo "ERROR:   No base software package specified. Abort installation."
         exit 1
@@ -142,7 +146,8 @@ fi
 echo " - Install Oracle DB examples -----------------------------------------"
 if [ -n "${DB_EXAMPLE_PKG}" ]; then
     if get_software "${DB_EXAMPLE_PKG}"; then           # Check and get binaries
-        unzip -o ${SOFTWARE}/${DB_EXAMPLE_PKG} \
+        echo " - unzip ${SOFTWARE}/${DB_EXAMPLE_PKG} to ${DOWNLOAD}"
+        unzip -q -o ${SOFTWARE}/${DB_EXAMPLE_PKG} \
             -d ${DOWNLOAD}/                             # unpack Oracle binary package
         # Install Oracle binaries
         ${DOWNLOAD}/examples/runInstaller -silent -force \

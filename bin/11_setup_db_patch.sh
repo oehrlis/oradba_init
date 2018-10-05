@@ -61,7 +61,8 @@ echo " - Install OPatch -----------------------------------------------------"
 if [ -n "${DB_OPATCH_PKG}" ]; then
     if get_software "${DB_OPATCH_PKG}"; then           # Check and get binaries
         rm -rf ${ORACLE_HOME}/OPatch                # remove old OPatch
-        unzip -o ${SOFTWARE}/${DB_OPATCH_PKG} \
+        echo " - unzip ${SOFTWARE}/${DB_OPATCH_PKG} to ${ORACLE_HOME}"
+        unzip -q -o ${SOFTWARE}/${DB_OPATCH_PKG} \
             -d ${ORACLE_HOME}/                      # unpack OPatch binary package
         # remove files on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${DB_OPATCH_PKG}
@@ -75,7 +76,8 @@ echo " - Install database patch (RU/PSU) ------------------------------------"
 if [ -n "${DB_PATCH_PKG}" ]; then
     if get_software "${DB_PATCH_PKG}"; then         # Check and get binaries
         DB_PATCH_ID=$(echo ${DB_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        unzip -o ${SOFTWARE}/${DB_PATCH_PKG} \
+        echo " - unzip ${SOFTWARE}/${DB_PATCH_PKG} to ${DOWNLOAD}"
+        unzip -q -o ${SOFTWARE}/${DB_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         cd ${DOWNLOAD}/${DB_PATCH_ID}
         ${ORACLE_HOME}/OPatch/opatch apply -silent
@@ -93,7 +95,8 @@ echo " - Install OJVM RU ----------------------------------------------------"
 if [ -n "${DB_OJVM_PKG}" ]; then
     if get_software "${DB_OJVM_PKG}"; then          # Check and get binaries
         DB_OJVM_ID=$(echo ${DB_OJVM_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        unzip -o ${SOFTWARE}/${DB_OJVM_PKG} \
+        echo " - unzip ${SOFTWARE}/${DB_OJVM_PKG} to ${DOWNLOAD}"
+        unzip -q -o ${SOFTWARE}/${DB_OJVM_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         cd ${DOWNLOAD}/${DB_OJVM_ID}
         ${ORACLE_HOME}/OPatch/opatch apply -silent

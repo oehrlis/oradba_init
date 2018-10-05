@@ -65,7 +65,8 @@ running_in_docker && export OPATCH_NO_FUSER=true
 echo " - Install OPatch -----------------------------------------------------"
 if [ -n "${OUD_OPATCH_PKG}" ]; then
     if get_software "${OUD_OPATCH_PKG}"; then       # Check and get binaries
-        unzip -o ${SOFTWARE}/${OUD_OPATCH_PKG} \
+        echo " - unzip ${SOFTWARE}/${OUD_OPATCH_PKG} to ${DOWNLOAD}"
+        unzip -q -o ${SOFTWARE}/${OUD_OPATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         # install the OPatch using java
         $JAVA_HOME/bin/java -jar ${DOWNLOAD}/6880880/opatch_generic.jar \
@@ -83,7 +84,8 @@ echo " - Install FMW patch --------------------------------------------------"
 if [ -n "${FMW_PATCH_PKG}" ]; then
     if get_software "${FMW_PATCH_PKG}"; then        # Check and get binaries
         FMW_PATCH_ID=$(echo ${FMW_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        unzip -o ${SOFTWARE}/${FMW_PATCH_PKG} \
+        echo " - unzip ${SOFTWARE}/${FMW_PATCH_PKG} to ${DOWNLOAD}"
+        unzip -q -o ${SOFTWARE}/${FMW_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         cd ${DOWNLOAD}/${FMW_PATCH_ID}
         ${ORACLE_HOME}/OPatch/opatch apply -silent
@@ -101,7 +103,8 @@ echo " - Install OUD patch --------------------------------------------------"
 if [ -n "${OUD_PATCH_PKG}" ]; then
     if get_software "${OUD_PATCH_PKG}"; then        # Check and get binaries
         OUD_PATCH_ID=$(echo ${OUD_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        unzip -o ${SOFTWARE}/${OUD_PATCH_PKG} \
+        echo " - unzip ${SOFTWARE}/${OUD_PATCH_PKG} to ${DOWNLOAD}"
+        unzip -q -o ${SOFTWARE}/${OUD_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         cd ${DOWNLOAD}/${OUD_PATCH_ID}
         ${ORACLE_HOME}/OPatch/opatch apply -silent
