@@ -33,6 +33,7 @@ export DB_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_180000_Linux-x86-64.zip"}
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
+export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 
 # define Oracle specific variables
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.3.0.0"}
@@ -53,6 +54,12 @@ if [ ! $EUID -ne 0 ]; then
    echo "This script must not be run as root" 1>&2
    exit 1
 fi
+
+# prepare 11.2 OPatch response file
+if [ ${ORACLE_MAJOR_RELEASE} -eq 112 ]; then
+    cp ${ORADBA_RSP}/ocm.rsp.tmpl /tmp/ocm.rsp
+    OPATCH_RSP="-ocmrf /tmp/ocm.rsp"
+then
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
@@ -82,7 +89,8 @@ if [ -n "${DB_PATCH_PKG}" ]; then
         unzip -q -o ${SOFTWARE}/${DB_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         cd ${DOWNLOAD}/${DB_PATCH_ID}
-        ${ORACLE_HOME}/OPatch/opatch apply -silent
+
+        ${ORACLE_HOME}/OPatch/opatch apply -silent $OPATCH_RSP
         # remove files on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${DB_PATCH_PKG}
         rm -rf ${DOWNLOAD}/${DB_PATCH_ID}           # remove the binary packages
@@ -103,7 +111,7 @@ if [ -n "${DB_OJVM_PKG}" ]; then
         unzip -q -o ${SOFTWARE}/${DB_OJVM_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         cd ${DOWNLOAD}/${DB_OJVM_ID}
-        ${ORACLE_HOME}/OPatch/opatch apply -silent
+        ${ORACLE_HOME}/OPatch/opatch apply -silent $OPATCH_RSP
         # remove files on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${DB_OJVM_PKG}
         rm -rf ${DOWNLOAD}/${DB_OJVM_ID}            # remove the binary packages
