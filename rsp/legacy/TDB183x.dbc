@@ -1,0 +1,100 @@
+<?xml version = '1.0'?>
+<DatabaseTemplate name="TDB183x" description="" version="18.0.0.0.0">
+   <CommonAttributes>
+      <option name="OMS" value="true" includeInPDBs="true"/>
+      <option name="JSERVER" value="true" includeInPDBs="true"/>
+      <option name="SPATIAL" value="true" includeInPDBs="true"/>
+      <option name="IMEDIA" value="true" includeInPDBs="true"/>
+      <option name="ORACLE_TEXT" value="true" includeInPDBs="true">
+         <tablespace id="SYSAUX"/>
+      </option>
+      <option name="SAMPLE_SCHEMA" value="true" includeInPDBs="false">
+         <tablespace id="SYSAUX"/>
+      </option>
+      <option name="CWMLITE" value="true" includeInPDBs="true">
+         <tablespace id="SYSAUX"/>
+      </option>
+      <option name="APEX" value="false" includeInPDBs="false"/>
+      <option name="DV" value="true" includeInPDBs="true"/>
+   </CommonAttributes>
+   <Variables/>
+   <CustomScripts Execute="false"/>
+   <InitParamAttributes>
+      <InitParams>
+         <initParam name="db_name" value="TDB183x"/>
+         <initParam name="dispatchers" value="(PROTOCOL=TCP) (SERVICE=TDB183xXDB)"/>
+         <initParam name="audit_file_dest" value="/u00/app/oracle/admin/TDB183x/adump"/>
+         <initParam name="compatible" value="18.0.0"/>
+         <initParam name="remote_login_passwordfile" value="EXCLUSIVE"/>
+         <initParam name="processes" value="300"/>
+         <initParam name="local_listener" value="LISTENER_TDB183X"/>
+         <initParam name="undo_tablespace" value="UNDOTBS1"/>
+         <initParam name="control_files" value="(&quot;/u01/oradata/TDB183X/control01TDB183X.dbf&quot;, &quot;/u01/oradata/TDB183X/control02TDB183X.dbf&quot;)"/>
+         <initParam name="diagnostic_dest" value="/u00/app/oracle"/>
+         <initParam name="db_recovery_file_dest" value="/u01/fast_recovery_area/TDB183X"/>
+         <initParam name="audit_trail" value="db"/>
+         <initParam name="log_archive_format" value="%t_%s_%r.dbf"/>
+         <initParam name="memory_target" value="1024" unit="MB"/>
+         <initParam name="nls_territory" value="AMERICA"/>
+         <initParam name="db_block_size" value="8192"/>
+         <initParam name="open_cursors" value="300"/>
+         <initParam name="nls_language" value="AMERICAN"/>
+         <initParam name="db_recovery_file_dest_size" value="2000" unit="MB"/>
+      </InitParams>
+      <MiscParams>
+         <databaseType>MULTIPURPOSE</databaseType>
+         <maxUserConn>20</maxUserConn>
+         <percentageMemTOSGA>40</percentageMemTOSGA>
+         <customSGA>false</customSGA>
+         <dataVaultEnabled>false</dataVaultEnabled>
+         <characterSet>AL32UTF8</characterSet>
+         <nationalCharacterSet>AL16UTF16</nationalCharacterSet>
+         <archiveLogMode>true</archiveLogMode>
+         <initParamFileName>{ORACLE_BASE}/admin/{DB_UNIQUE_NAME}/pfile/init.ora</initParamFileName>
+      </MiscParams>
+      <SPfile useSPFile="true">{ORACLE_HOME}/dbs/spfile{SID}.ora</SPfile>
+   </InitParamAttributes>
+   <StorageAttributes>
+      <DataFiles>
+         <Location>{ORACLE_HOME}/assistants/dbca/templates/Seed_Database.dfb</Location>
+         <SourceDBName cdb="true">seeddata</SourceDBName>
+         <Name id="3" Tablespace="SYSAUX" Contents="PERMANENT" Size="400" autoextend="true" blocksize="8192" con_id="1">/u01/oradata/TDB183X/sysaux01{DB_UNIQUE_NAME}.dbf</Name>
+         <Name id="1" Tablespace="SYSTEM" Contents="PERMANENT" Size="830" autoextend="true" blocksize="8192" con_id="1">/u01/oradata/TDB183X/system01{DB_UNIQUE_NAME}.dbf</Name>
+         <Name id="4" Tablespace="UNDOTBS1" Contents="UNDO" Size="25" autoextend="true" blocksize="8192" con_id="1">/u01/oradata/TDB183X/undotbs01{DB_UNIQUE_NAME}.dbf</Name>
+         <Name id="7" Tablespace="USERS" Contents="PERMANENT" Size="5" autoextend="true" blocksize="8192" con_id="1">/u01/oradata/TDB183X/users01{DB_UNIQUE_NAME}.dbf</Name>
+      </DataFiles>
+      <TempFiles>
+         <Name id="1" Tablespace="TEMP" Contents="TEMPORARY" Size="20" con_id="1">/u01/oradata/TDB183X/temp01{DB_UNIQUE_NAME}.dbf</Name>
+      </TempFiles>
+      <ControlfileAttributes id="Controlfile">
+         <maxDatafiles>100</maxDatafiles>
+         <maxLogfiles>16</maxLogfiles>
+         <maxLogMembers>3</maxLogMembers>
+         <maxLogHistory>1</maxLogHistory>
+         <maxInstances>8</maxInstances>
+         <image name="control01{DB_UNIQUE_NAME}.dbf" filepath="/u01/oradata/TDB183X/"/>
+         <image name="control02{DB_UNIQUE_NAME}.dbf" filepath="/u01/oradata/TDB183X/"/>
+      </ControlfileAttributes>
+      <RedoLogGroupAttributes id="1">
+         <reuse>false</reuse>
+         <fileSize unit="KB">204800</fileSize>
+         <Thread>1</Thread>
+         <member ordinal="0" memberName="redog1m1{DB_UNIQUE_NAME}.dbf" filepath="/u01/oradata/TDB183X/"/>
+         <member ordinal="0" memberName="redog1m2{DB_UNIQUE_NAME}.dbf" filepath="/u01/oradata/TDB183X/"/>
+      </RedoLogGroupAttributes>
+      <RedoLogGroupAttributes id="2">
+         <reuse>false</reuse>
+         <fileSize unit="KB">204800</fileSize>
+         <Thread>1</Thread>
+         <member ordinal="0" memberName="redog2m1{DB_UNIQUE_NAME}.dbf" filepath="/u01/oradata/TDB183X/"/>
+         <member ordinal="0" memberName="redog2m2{DB_UNIQUE_NAME}.dbf" filepath="/u01/oradata/TDB183X/"/>
+      </RedoLogGroupAttributes>
+      <RedoLogGroupAttributes id="3">
+         <reuse>false</reuse>
+         <fileSize unit="KB">204800</fileSize>
+         <Thread>1</Thread>
+         <member ordinal="0" memberName="redog3m1{DB_UNIQUE_NAME}.dbf" filepath="/u01/oradata/TDB183X/"/>
+         <member ordinal="0" memberName="redog3m2{DB_UNIQUE_NAME}.dbf" filepath="/u01/oradata/TDB183X/"/>
+      </RedoLogGroupAttributes>
+   </StorageAttributes>
+</DatabaseTemplate>
