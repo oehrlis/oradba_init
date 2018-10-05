@@ -1,19 +1,20 @@
-# ---------------------------------------------------------------------------
-# Trivadis AG, Infrastructure Managed Services
-# Saegereistrasse 29, 8152 Glattbrugg, Switzerland
-# ---------------------------------------------------------------------------
-# Name.......: db_install.rsp.tmpl
-# Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
-# Editor.....: Stefan Oehrli
-# Date.......: 2018.09.27
-# Revision...: 
-# Purpose....: Response file for Oracle database binary installations.
-# Notes......: ###TAG### have to be replaced with correct values
-# Reference..: --
-# License....: Licensed under the Universal Permissive License v 1.0 as 
-#              shown at http://oss.oracle.com/licenses/upl.
-# ---------------------------------------------------------------------------
-
+##############################################################################
+##                                                                          ##
+##                            DBCA response file                            ##
+##                            ------------------                            ##
+## Copyright(c) Oracle Corporation 1998,2017. All rights reserved.          ##
+##                                                                          ##
+## Specify values for the variables listed below to customize 			    ##
+## your installation.                                         			    ##
+##                                                            			    ##
+## Each variable is associated with a comment. The comment    			    ##
+## can help to populate the variables with the appropriate   			    ##
+## values.                                                  			    ##
+##                                                               			##
+## IMPORTANT NOTE: This file contains plain text passwords and   			##
+## should be secured to have read permission only by oracle user 			##
+## or db administrator who owns this installation.               			##
+##############################################################################
 #-------------------------------------------------------------------------------
 # Do not change the following system generated value. 
 #-------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ createAsContainerDatabase=###CONTAINER###
 # Name          : numberOfPDBs
 # Datatype      : Number
 # Description   : Specify the number of pdb to be created
-# Valid values  : 0 to 252
+# Valid values  : 0 to 4094
 # Default value : 0
 # Mandatory     : No
 #-----------------------------------------------------------------------------
@@ -143,36 +144,6 @@ emExpressPort=5500
 dbsnmpPassword=###ORACLE_PWD###
 
 #-----------------------------------------------------------------------------
-# Name          : datafileJarLocation 
-# Datatype      : String
-# Description   : Location of the data file jar 
-# Valid values  : Directory containing compressed datafile jar
-# Default value : None
-# Mandatory     : No
-#-----------------------------------------------------------------------------
-datafileJarLocation={ORACLE_HOME}/assistants/dbca/templates/
-
-#-----------------------------------------------------------------------------
-# Name          : datafileDestination 
-# Datatype      : String
-# Description   : Location of the data file's
-# Valid values  : Directory for all the database files
-# Default value : $ORACLE_BASE/oradata
-# Mandatory     : No
-#-----------------------------------------------------------------------------
-datafileDestination=###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/
-
-#-----------------------------------------------------------------------------
-# Name          : recoveryAreaDestination
-# Datatype      : String
-# Description   : Location of the data file's
-# Valid values  : Recovery Area location
-# Default value : $ORACLE_BASE/flash_recovery_area
-# Mandatory     : No
-#-----------------------------------------------------------------------------
-recoveryAreaDestination=###ORACLE_ARCH###/fast_recovery_area/{DB_UNIQUE_NAME}
-
-#-----------------------------------------------------------------------------
 # Name          : characterSet
 # Datatype      : String
 # Description   : Character set of the database
@@ -193,6 +164,15 @@ characterSet=###ORACLE_CHARACTERSET###
 nationalCharacterSet=AL16UTF16
 
 #-----------------------------------------------------------------------------
+# Name          : initParams
+# Datatype      : String
+# Description   : comma separated list of name=value pairs. Overrides initialization parameters defined in templates
+# Default value : None
+# Mandatory     : NO
+#-----------------------------------------------------------------------------
+initParams=audit_trail=none,audit_sys_operations=false
+
+#-----------------------------------------------------------------------------
 # Name          : listeners
 # Datatype      : String
 # Description   : Specifies list of listeners to register the database with.
@@ -201,46 +181,7 @@ nationalCharacterSet=AL16UTF16
 # Valid values  : The list should be comma separated like "listener1,listener2".
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-listeners=LISTENER
-
-#-----------------------------------------------------------------------------
-# Name          : variablesFile 
-# Datatype      : String
-# Description   : Location of the file containing variable value pair
-# Valid values  : A valid file-system file. The variable value pair format in this file 
-#		  is <variable>=<value>. Each pair should be in a new line.
-# Default value : None
-# Mandatory     : NO
-#-----------------------------------------------------------------------------
-variablesFile=
-
-#-----------------------------------------------------------------------------
-# Name          : variables
-# Datatype      : String
-# Description   : comma separated list of name=value pairs. Overrides variables defined in variablefile and templates
-# Default value : None
-# Mandatory     : NO
-#-----------------------------------------------------------------------------
-variables=ORACLE_BASE_HOME=###ORACLE_HOME###,DB_UNIQUE_NAME=###ORACLE_SID###,ORACLE_BASE=###ORACLE_BASE###,PDB_NAME=###ORACLE_PDB###,DB_NAME=###ORACLE_SID###,ORACLE_HOME=###ORACLE_HOME###,SID=###ORACLE_SID###
-
-#-----------------------------------------------------------------------------
-# Name          : initParams
-# Datatype      : String
-# Description   : comma separated list of name=value pairs. Overrides initialization parameters defined in templates
-# Default value : None
-# Mandatory     : NO
-#-----------------------------------------------------------------------------
-initParams=control_files=("###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf", "###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf"),
-
-#-----------------------------------------------------------------------------
-# Name          : sampleSchema
-# Datatype      : Boolean
-# Description   : Specifies whether or not to add the Sample Schemas to your database
-# Valid values  : TRUE \ FALSE
-# Default value : FASLE
-# Mandatory     : No
-#-----------------------------------------------------------------------------
-sampleSchema=true
+#listeners=LISTENER
 
 #-----------------------------------------------------------------------------
 # Name          : automaticMemoryManagement
@@ -260,4 +201,4 @@ automaticMemoryManagement=FALSE
 # Default value : 
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-totalMemory=1024
+totalMemory=2048
