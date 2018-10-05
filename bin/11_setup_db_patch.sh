@@ -59,7 +59,8 @@ fi
 if [ ${ORACLE_MAJOR_RELEASE} -eq 112 ]; then
     cp ${ORADBA_RSP}/ocm.rsp.tmpl /tmp/ocm.rsp
     OPATCH_RSP="-ocmrf /tmp/ocm.rsp"
-then
+fi
+
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
