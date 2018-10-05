@@ -48,6 +48,7 @@ export ORACLE_INVENTORY=${ORACLE_INVENTORY:-"${ORACLE_ROOT}/app/oraInventory"}
 export ORACLE_EDITION=${ORACLE_EDITION:-"EE"}   # Oracle edition
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.3.0.0"}
 export ORACLE_HOME="${ORACLE_HOME:-${ORACLE_BASE}/product/${ORACLE_HOME_NAME}}"
+export ORACLE_MAJOR_RELEASE=${ORACLE_MAJOR_RELEASE:-"180"}
 
 # define generic variables for software, download etc
 export OPT_DIR=${OPT_DIR:-"/opt"}
@@ -118,10 +119,15 @@ if [ -n "${DB_BASE_PKG}" ]; then
             SETUP_PATH="${ORACLE_HOME}"
         fi
         # Install Oracle binaries -ignorePrereqFailure/-ignoreSysPrereqs
+        PREREQ="-ignorePrereqFailure"
+        if [ ${ORACLE_MAJOR_RELEASE} -le 121 ]; then
+            PREREQ="-ignoresysprereqs -ignoreprereq"
+        fi
+        
         ${SETUP_PATH}/runInstaller -silent -force \
             -waitforcompletion \
             -responsefile /tmp/db_install.rsp \
-            -ignorePrereqFailure
+            ${PREREQ}
         rm -rf "${ORACLE_HOME}/../database"         # remove software for legacy OUI
         # remove files on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${DB_BASE_PKG}

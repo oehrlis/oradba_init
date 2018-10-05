@@ -30,6 +30,7 @@ export DB_OJVM_PKG=${DB_OJVM_PKG:-""}
 export DB_OPATCH_PKG=${DB_OPATCH_PKG:-""}
 export RESPONSFILE_VERSION=${RESPONSFILE_VERSION:-"oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v12.2.0"}
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"12.2.0.1"}
+export ORACLE_MAJOR_RELEASE="122"
 
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
