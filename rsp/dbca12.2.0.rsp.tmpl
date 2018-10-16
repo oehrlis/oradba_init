@@ -2,7 +2,7 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: db_install.rsp.tmpl
+# Name.......: dbca12.2.0.rsp.tmpl
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2018.09.27
@@ -17,7 +17,7 @@
 #-------------------------------------------------------------------------------
 # Do not change the following system generated value. 
 #-------------------------------------------------------------------------------
-responseFileVersion=/oracle/assistants/rspfmt_dbca_response_schema_v18.0.0
+responseFileVersion=/oracle/assistants/rspfmt_dbca_response_schema_v12.2.0
 
 #-----------------------------------------------------------------------------
 # Name          : gdbName
@@ -170,7 +170,7 @@ datafileDestination=###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/
 # Default value : $ORACLE_BASE/flash_recovery_area
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-recoveryAreaDestination=###ORACLE_ARCH###/fast_recovery_area/{DB_UNIQUE_NAME}
+recoveryAreaDestination=###ORACLE_ARCH###/fast_recovery_area
 
 #-----------------------------------------------------------------------------
 # Name          : characterSet

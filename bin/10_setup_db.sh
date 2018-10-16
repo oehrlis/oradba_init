@@ -116,7 +116,7 @@ if [ -n "${DB_BASE_PKG}" ]; then
         unzip -q -o ${SOFTWARE}/${DB_BASE_PKG} \
             -d ${ORACLE_HOME}                       # unpack Oracle binary package
         
-        # Workaround for 12.1 with 2 zip files
+        # Workaround for 11.2 and 12.1 with 2 zip files
         if [ -n "${DB_BASE2_PKG}" ]; then
             if get_software "${DB_BASE2_PKG}"; then
                 echo " - unzip ${SOFTWARE}/${DB_BASE2_PKG} to ${ORACLE_HOME}"
