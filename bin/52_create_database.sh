@@ -3,7 +3,7 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: 50_create_database.sh 
+# Name.......: 52_create_database.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2017.12.04
@@ -81,7 +81,7 @@ echo "${ORACLE_PWD}" > "${ORACLE_BASE}/admin/${ORACLE_SID}/etc/${ORACLE_SID}_pas
 echo "ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ORACLE_PWD";
 
 # Replace place holders in response file
-cp -v ${ORADBA_RSP}/dbca.rsp.tmpl ${ORACLE_BASE}/tmp/dbca.rsp
+cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORACLE_BASE}/tmp/dbca.rsp
 sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
 sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
 sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
