@@ -33,7 +33,7 @@ export ORACLE_INVENTORY=${ORACLE_INVENTORY:-${ORACLE_ROOT}/app/oraInventory}
 
 # - Environment Variables ---------------------------------------------------
 # define the oradba url and package name
-export ORADBA_INIT="https://codeload.github.com/oehrlis/oradba_init/zip/master"
+export GITHUB_URL="https://codeload.github.com/oehrlis/oradba_init/zip/master"
 export ORADBA_PKG="oradba_init.zip"
 
 # define the defaults for software, download etc
@@ -98,7 +98,7 @@ chmod 777 ${SOFTWARE}
 # - Get oradba init scripts -----------------------------------------------
 echo " - Get oradba init scripts --------------------------------------------"
 mkdir -p ${DOWNLOAD}                                    # create download folder
-curl -Lf ${ORADBA_INIT} -o ${DOWNLOAD}/${ORADBA_PKG}
+curl -Lf ${GITHUB_URL} -o ${DOWNLOAD}/${ORADBA_PKG}
 
 # check if we do have an unzip command
 if [ ! -z $(command -v unzip) ]; then 
