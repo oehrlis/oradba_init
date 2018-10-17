@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 # ---------------------------------------------------------------------------
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
@@ -114,7 +113,7 @@ dbca -silent -createDatabase -responseFile ${ORACLE_BASE}/tmp/dbca.rsp ||
 
 echo "$ORACLE_SID= 
     (DESCRIPTION = 
-        (ADDRESS = (PROTOCOL = TCP)(HOST =${HOST})(PORT = 1521))
+        (ADDRESS = (PROTOCOL = TCP)(HOST=${HOST})(PORT = 1521))
             (CONNECT_DATA =
                 (SERVER = DEDICATED)
             (SERVICE_NAME = $ORACLE_SID)

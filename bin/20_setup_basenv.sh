@@ -33,6 +33,8 @@ export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 
+export DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-$(hostname -d 2>/dev/null ||cat /etc/domainname ||echo "postgasse.org")}
+
 # define Oracle specific variables
 export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and binaries
 export ORACLE_BASE=${ORACLE_BASE:-$ORACLE_ROOT/app/oracle}
@@ -59,10 +61,12 @@ fi
 
 # prepare response file
 cp ${ORADBA_RSP}/base_install.rsp.tmpl /tmp/base_install.rsp
-sed -i -e "s|###ORACLE_BASE###|${ORACLE_BASE}|g"    /tmp/base_install.rsp
-sed -i -e "s|###ORACLE_HOME###|${ORACLE_HOME}|g"    /tmp/base_install.rsp
-sed -i -e "s|###TNS_ADMIN###|${TNS_ADMIN}|g"        /tmp/base_install.rsp
-sed -i -e "s|###ORACLE_LOCAL###|${ORACLE_LOCAL}|g"  /tmp/base_install.rsp
+sed -i -e "s|###ORACLE_BASE###|${ORACLE_BASE}|g"        /tmp/base_install.rsp
+sed -i -e "s|###ORACLE_HOME###|${ORACLE_HOME}|g"        /tmp/base_install.rsp
+sed -i -e "s|###TNS_ADMIN###|${TNS_ADMIN}|g"            /tmp/base_install.rsp
+sed -i -e "s|###ORACLE_LOCAL###|${ORACLE_LOCAL}|g"      /tmp/base_install.rsp
+sed -i -e "s|###DEFAULT_DOMAIN###|${DEFAULT_DOMAIN}|g"  /tmp/base_install.rsp
+
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
