@@ -37,8 +37,8 @@ export ORADBA_BIN="${ORADBA_INIT}"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca18.0.0.rsp.tmpl"} # oradba init response file
-
-export TEMPLATE=General_Purpose.dbc
+export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"dbca18.0.0.dbc.tmpl"}
+export TEMPLATE=$(basename $ORADBA_DBC_FILE .tmpl)
 export ORACLE_PWD=${ORACLE_PWD:-""}             # Default admin password
 
 HOSTNAME_BIN=$(command -v hostname)                             # get the binary for hostname
@@ -92,6 +92,13 @@ sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                    ${ORACLE_BASE}/t
 sed -i -e "s|###CONTAINER###|$CONTAINER|g"                      ${ORACLE_BASE}/tmp/dbca.rsp
 sed -i -e "s|###TEMPLATE###|$TEMPLATE|g"                        ${ORACLE_BASE}/tmp/dbca.rsp
 sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"  ${ORACLE_BASE}/tmp/dbca.rsp
+
+# Replace place holders in response file
+cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
+sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
+sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
+sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
+sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                    ${ORACLE_BASE}/tmp/dbca.rsp
 
 # If there is greater than 8 CPUs default back to dbca memory calculations
 # dbca will automatically pick 40% of available memory for Oracle DB
