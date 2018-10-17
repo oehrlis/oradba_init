@@ -1,5 +1,5 @@
 <?xml version = '1.0'?>
-<DatabaseTemplate name="###ORACLE_SID###" description="" version="18.0.0.0.0">
+<DatabaseTemplate name="###ORACLE_SID###" description="" version="12.2.0.1.0">
    <CommonAttributes>
       <option name="OMS" value="true" includeInPDBs="true"/>
       <option name="JSERVER" value="true" includeInPDBs="true"/>
@@ -24,7 +24,7 @@
          <initParam name="db_name" value="###ORACLE_SID###"/>
          <initParam name="dispatchers" value="(PROTOCOL=TCP) (SERVICE=###ORACLE_SID###XDB)"/>
          <initParam name="audit_file_dest" value="/u00/app/oracle/admin/###ORACLE_SID###/adump"/>
-         <initParam name="compatible" value="18.0.0"/>
+         <initParam name="compatible" value="12.2.0"/>
          <initParam name="remote_login_passwordfile" value="EXCLUSIVE"/>
          <initParam name="processes" value="300"/>
          <initParam name="local_listener" value="LISTENER_{DB_UNIQUE_NAME}"/>
