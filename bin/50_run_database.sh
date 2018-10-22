@@ -117,7 +117,7 @@ function move_files {
 
     # move network config files
     for i in sqlnet.ora listener.ora ldap.ora tnsnames.ora; do
-        ${ORACLE_HOME}/network/admin/${i} ${TNS_ADMIN}/${i}
+        ln -s ${ORACLE_HOME}/network/admin/${i} ${TNS_ADMIN}/${i}
     done
     mv ${ORACLE_HOME}/ldap/admin/dsi.ora ${TNS_ADMIN}/dsi.ora
 
