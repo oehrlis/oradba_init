@@ -81,6 +81,7 @@ echo "${ORACLE_PWD}" > "${ORACLE_BASE}/admin/${ORACLE_SID}/etc/${ORACLE_SID}_pas
 echo "ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ORACLE_PWD";
 
 # Replace place holders in response file
+mkdir -p ${ORACLE_BASE}/tmp/
 cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORACLE_BASE}/tmp/dbca.rsp
 sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
 sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
@@ -95,10 +96,10 @@ sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"  ${ORACLE_BASE}/t
 
 # Replace place holders in response file
 cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
-sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                    ${ORACLE_BASE}/tmp/dbca.rsp
+sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"  ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
+sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"  ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
+sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"  ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
+sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"    ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
 
 # If there is greater than 8 CPUs default back to dbca memory calculations
 # dbca will automatically pick 40% of available memory for Oracle DB
@@ -113,7 +114,7 @@ fi;
 sed -i -e "s|<HOSTNAME>|${HOST}|g" ${TNS_ADMIN}/listener.ora
 
 # Start LISTENER and run DBCA
-lsnrctl start && 
+lsnrctl status || lsnrctl start
 dbca -silent -createDatabase -responseFile ${ORACLE_BASE}/tmp/dbca.rsp ||
     cat ${ORACLE_BASE}/cfgtoollogs/dbca/$ORACLE_SID/$ORACLE_SID.log ||
     cat ${ORACLE_BASE}/cfgtoollogs/dbca/$ORACLE_SID.log
