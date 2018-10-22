@@ -22,22 +22,27 @@
 # - Environment Variables ---------------------------------------------------
 # - Set default values for environment variables if not yet defined. 
 # ---------------------------------------------------------------------------
+# source genric environment variables and functions
+source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
+
 export ORACLE_SID=${1:-TDB183C}                 # Default name for Oracle database
 export ORACLE_PDB=${2:-PDB1}                    # Check whether ORACLE_PDB is passed on
+export CONTAINER=${3:-"false"}                  # Check whether CONTAINER is passed on
+
 export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
 export ORACLE_DATA=${ORACLE_DATA:-"/u01"}       # Oracle data folder eg volume for docker
-export ORACLE_ARCH=${ORACLE_DATA:-"/u01"}       # Oracle arch folder eg volume for docker
+export ORACLE_ARCH=${ORACLE_DATA:-"/u02"}       # Oracle arch folder eg volume for docker
 export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.3.0.0"}
 export ORACLE_HOME="${ORACLE_HOME:-${ORACLE_BASE}/product/${ORACLE_HOME_NAME}}"
+export ORACLE_VERSION="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release\|Version'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
 
-export CONTAINER=${3:-"false"}                  # Check whether CONTAINER is passed on
 # define oradba specific variables
-export ORADBA_BIN="${ORADBA_INIT}"
+export ORADBA_BIN=${ORADBA_INIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)}
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
-export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca18.0.0.rsp.tmpl"} # oradba init response file
-export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"dbca18.0.0.dbc.tmpl"}
+export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca${ORACLE_VERSION}.rsp.tmpl"} # oradba init response file
+export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"dbca${ORACLE_VERSION}.dbc.tmpl"}
 export TEMPLATE=$(basename $ORADBA_DBC_FILE .tmpl)
 export ORACLE_PWD=${ORACLE_PWD:-""}             # Default admin password
 
