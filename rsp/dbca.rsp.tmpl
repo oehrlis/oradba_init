@@ -2,7 +2,7 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: dbca12.2.0.rsp.tmpl
+# Name.......: dbca.rsp.tmpl
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2018.09.27
@@ -17,7 +17,7 @@
 #-------------------------------------------------------------------------------
 # Do not change the following system generated value. 
 #-------------------------------------------------------------------------------
-responseFileVersion=/oracle/assistants/rspfmt_dbca_response_schema_v12.2.0
+responseFileVersion=/oracle/assistants/rspfmt_dbca_response_schema_v###ORACLE_RELEASE###
 
 #-----------------------------------------------------------------------------
 # Name          : gdbName
@@ -129,7 +129,7 @@ emConfiguration=DBEXPRESS
 # Mandatory     : No, will be picked up from DBEXPRESS_HTTPS_PORT env variable
 #                 or auto generates a free port between 5500 and 5599
 #-----------------------------------------------------------------------------
-emExpressPort=5500
+#emExpressPort=5500
 
 #-----------------------------------------------------------------------------
 # Name          : dbsnmpPassword
@@ -150,7 +150,7 @@ dbsnmpPassword=###ORACLE_PWD###
 # Default value : None
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-datafileJarLocation={ORACLE_HOME}/assistants/dbca/templates/
+datafileJarLocation=###ORACLE_HOME###/assistants/dbca/templates/
 
 #-----------------------------------------------------------------------------
 # Name          : datafileDestination 

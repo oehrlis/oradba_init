@@ -1,5 +1,5 @@
 <?xml version = '1.0'?>
-<DatabaseTemplate name="###ORACLE_SID###" description="" version="12.2.0.1.0">
+<DatabaseTemplate name="###ORACLE_SID###" description="" version="###ORACLE_RELEASE###.0.0">
    <CommonAttributes>
       <option name="OMS" value="true" includeInPDBs="true"/>
       <option name="JSERVER" value="true" includeInPDBs="true"/>
@@ -23,11 +23,10 @@
       <InitParams>
          <initParam name="db_name" value="###ORACLE_SID###"/>
          <initParam name="dispatchers" value="(PROTOCOL=TCP) (SERVICE=###ORACLE_SID###XDB)"/>
-         <initParam name="audit_file_dest" value="/u00/app/oracle/admin/###ORACLE_SID###/adump"/>
-         <initParam name="compatible" value="12.2.0"/>
+         <initParam name="audit_file_dest" value="###ORACLE_BASE###/admin/###ORACLE_SID###/adump"/>
+         <initParam name="compatible" value="###ORACLE_RELEASE###.0.0"/>
          <initParam name="remote_login_passwordfile" value="EXCLUSIVE"/>
          <initParam name="processes" value="300"/>
-         <initParam name="local_listener" value="LISTENER_{DB_UNIQUE_NAME}"/>
          <initParam name="undo_tablespace" value="UNDOTBS1"/>
          <initParam name="control_files" value="(&quot;###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf&quot;, &quot;###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf&quot;)"/>
          <initParam name="diagnostic_dest" value="/u00/app/oracle"/>
@@ -50,13 +49,13 @@
          <characterSet>AL32UTF8</characterSet>
          <nationalCharacterSet>AL16UTF16</nationalCharacterSet>
          <archiveLogMode>true</archiveLogMode>
-         <initParamFileName>{ORACLE_BASE}/admin/{DB_UNIQUE_NAME}/pfile/init.ora</initParamFileName>
+         <initParamFileName>###ORACLE_BASE###/admin/{DB_UNIQUE_NAME}/pfile/init.ora</initParamFileName>
       </MiscParams>
-      <SPfile useSPFile="true">{ORACLE_HOME}/dbs/spfile{SID}.ora</SPfile>
+      <SPfile useSPFile="true">###ORACLE_HOME###/dbs/spfile{SID}.ora</SPfile>
    </InitParamAttributes>
    <StorageAttributes>
       <DataFiles>
-         <Location>{ORACLE_HOME}/assistants/dbca/templates/Seed_Database.dfb</Location>
+         <Location>###ORACLE_HOME###/assistants/dbca/templates/Seed_Database.dfb</Location>
          <SourceDBName cdb="true">seeddata</SourceDBName>
          <Name id="3" Tablespace="SYSAUX" Contents="PERMANENT" Size="400" autoextend="true" blocksize="8192" con_id="1">###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/sysaux01{DB_UNIQUE_NAME}.dbf</Name>
          <Name id="1" Tablespace="SYSTEM" Contents="PERMANENT" Size="830" autoextend="true" blocksize="8192" con_id="1">###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/system01{DB_UNIQUE_NAME}.dbf</Name>

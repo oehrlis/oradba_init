@@ -29,20 +29,17 @@ export ORACLE_SID=${1:-TDB183C}                 # Default name for Oracle databa
 export ORACLE_PDB=${2:-PDB1}                    # Check whether ORACLE_PDB is passed on
 export CONTAINER=${3:-"false"}                  # Check whether CONTAINER is passed on
 
-export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
-export ORACLE_DATA=${ORACLE_DATA:-"/u01"}       # Oracle data folder eg volume for docker
-export ORACLE_ARCH=${ORACLE_DATA:-"/u02"}       # Oracle arch folder eg volume for docker
-export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.3.0.0"}
 export ORACLE_HOME="${ORACLE_HOME:-${ORACLE_BASE}/product/${ORACLE_HOME_NAME}}"
-export ORACLE_VERSION="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release\|Version'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
+export ORACLE_VERSION="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release\|Version'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
+export ORACLE_RELEASE="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
 
 # define oradba specific variables
 export ORADBA_BIN=${ORADBA_INIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)}
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
-export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca${ORACLE_VERSION}.rsp.tmpl"} # oradba init response file
-export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"dbca${ORACLE_VERSION}.dbc.tmpl"}
+export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca.rsp.tmpl"} # oradba init response file
+export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"dbca.dbc.tmpl"}
 export TEMPLATE=$(basename $ORADBA_DBC_FILE .tmpl)
 export ORACLE_PWD=${ORACLE_PWD:-""}             # Default admin password
 
@@ -79,32 +76,38 @@ else
 fi
 
 # write password file
-mkdir -p "${ORACLE_BASE}/admin/${ORACLE_SID}/etc"
+export ORACLE_SID_ADMIN_ETC="${ORACLE_BASE}/admin/${ORACLE_SID}/etc"
+mkdir -p ${ORACLE_SID_ADMIN_ETC}
 export ORACLE_PWD=$s
 echo "${ORACLE_PWD}" > "${ORACLE_BASE}/admin/${ORACLE_SID}/etc/${ORACLE_SID}_password.txt"
 
 echo "ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ORACLE_PWD";
 
 # Replace place holders in response file
-mkdir -p ${ORACLE_BASE}/tmp/
-cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                  ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                    ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                    ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                    ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###CONTAINER###|$CONTAINER|g"                      ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###TEMPLATE###|$TEMPLATE|g"                        ${ORACLE_BASE}/tmp/dbca.rsp
-sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"  ${ORACLE_BASE}/tmp/dbca.rsp
+cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
+sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"          ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
+sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"          ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
+sed -i -e "s|###ORACLE_RELEASE###|$ORACLE_RELEASE|g"    ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
+sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"          ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
+sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"          ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
+sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"            ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
+
+# add a softlink to the template
+ln -s ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
 
 # Replace place holders in response file
-cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
-sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"  ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
-sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"  ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
-sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"  ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
-sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"    ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
+cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###ORACLE_RELEASE###|$ORACLE_RELEASE|g"            ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                    ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                    ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                    ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###CONTAINER###|$CONTAINER|g"                      ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###TEMPLATE###|$TEMPLATE|g"                        ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
 
 # If there is greater than 8 CPUs default back to dbca memory calculations
 # dbca will automatically pick 40% of available memory for Oracle DB
@@ -112,15 +115,17 @@ sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"    ${ORACLE_HOME}/assistants/dbca/t
 # However, bigger environment can and should use more of the available memory
 # This is due to Github Issue #307
 if [ `nproc` -gt 8 ]; then
-   sed -i -e "s|totalMemory=2048||g" ${ORACLE_BASE}/tmp/dbca.rsp
+   sed -i -e "s|totalMemory=2048||g" ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
 fi;
+
+# configure listener if not yet available
 
 # update listener.ora
 sed -i -e "s|<HOSTNAME>|${HOST}|g" ${TNS_ADMIN}/listener.ora
 
 # Start LISTENER and run DBCA
-lsnrctl status || lsnrctl start
-dbca -silent -createDatabase -responseFile ${ORACLE_BASE}/tmp/dbca.rsp ||
+$ORACLE_HOME/bin/lsnrctl status || $ORACLE_HOME/bin/lsnrctl start
+$ORACLE_HOME/bin/dbca -silent -createDatabase -responseFile ${ORACLE_SID_ADMIN_ETC}/dbca.rsp ||
     cat ${ORACLE_BASE}/cfgtoollogs/dbca/$ORACLE_SID/$ORACLE_SID.log ||
     cat ${ORACLE_BASE}/cfgtoollogs/dbca/$ORACLE_SID.log
 
