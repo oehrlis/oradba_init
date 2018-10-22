@@ -23,20 +23,25 @@ Scripts are located in the *bin* folder.
 | ------------------------------------------------------ | ------ | --------------------------------------------------------------------------------------- |
 | [00_setup_oradba_init.sh](bin/00_setup_oradba_init.sh) | root   | Script to initialize and install oradba init scripts.                                   |
 | [01_setup_os_db.sh](bin/01_setup_os_db.sh)             | root   | Script to configure Oracle Enterprise Linux for Oracle Database installations.          |
-| [01_setup_os_oud.sh](bin/01_setup_os_oud.sh)           | root   | Script to configure Oracle Enterprise Linux for Oracle Unified Directory installations. |
 | [01_setup_os_java.sh](bin/01_setup_os_java.sh)         | root   | Script to install Oracle server jre.                                                    |
+| [01_setup_os_oud.sh](bin/01_setup_os_oud.sh)           | root   | Script to configure Oracle Enterprise Linux for Oracle Unified Directory installations. |
 | [10_setup_db.sh](bin/10_setup_db.sh)                   | oracle | Generic script to install Oracle databases binaries                                     |
 | [10_setup_db_11.2.sh](bin/10_setup_db_11.2.sh)         | oracle | Wrapper script to install Oracle 11.2.0.4 databases binaries                            |
 | [10_setup_db_12.1.sh](bin/10_setup_db_12.1.sh)         | oracle | Wrapper script to install Oracle 12.1.0.2 databases binaries                            |
 | [10_setup_db_12.2.sh](bin/10_setup_db_12.2.sh)         | oracle | Wrapper script to install Oracle 12.2.0.1 databases binaries                            |
 | [10_setup_db_18.3.sh](bin/10_setup_db_18.3.sh)         | oracle | Wrapper script to install Oracle 18.3.0.0 databases binaries                            |
-| [11_setup_db_patch.sh](bin/11_setup_db_patch.sh)       | oracle | Script to patch Oracle Database binaries. If necessary called by *10_setup_db.sh* |
 | [10_setup_oud_11g.sh](bin/10_setup_oud_11g.sh)         | oracle | Script to install Oracle Unified Directory 11g                                          |
 | [10_setup_oud_12c.sh](bin/10_setup_oud_12c.sh)         | oracle | Script to install Oracle Unified Directory 12c                                          |
 | [10_setup_oudsm_12c.sh](bin/10_setup_oudsm_12c.sh)     | oracle | Script to install Oracle Unified Directory Service Manager 12c                          |
+| [11_setup_db_patch.sh](bin/11_setup_db_patch.sh)       | oracle | Script to patch Oracle Database binaries. If necessary called by *10_setup_db.sh* |
 | [11_setup_oud_patch.sh](bin/11_setup_oud_patch.sh)     | oracle | Script to patch Oracle Unified Directory binaries. If necessary called by *10_setup_oud_xx.sh* |
 | [20_setup_basenv.sh](bin/20_setup_basenv.sh)           | oracle | Script to setup and configure TVD-Basenv                                                |
 | [20_setup_oudbase.sh](bin/20_setup_oudbase.sh)         | oracle | Script to setup and configure OUD Base                                                  |
+| [50_run_database.sh](bin/50_run_database.sh)           | oracle | Script to run an Oracle database (Docker). If necessary the script will create a new database |
+| [50_start_database.sh](bin/50_start_database.sh)       | oracle | Script to start an Oracle database (Docker)                                                   |
+| [52_create_database.sh](bin/52_create_database.sh)     | oracle | Script to create a database                                                  |
+| [55_check_database.sh](bin/55_check_database.sh)       | oracle | Script to check an Oracle database (Docker)                                                  |
+| [55_config_database.sh](bin/55_config_database.sh)     | oracle | Script to setup an Oracle database (Docker)                                                  |
 
 ## Response Files
 
@@ -45,10 +50,14 @@ Response files are located in the *rsp* folder.
 | Response file                                                    | Description                                            |
 | ---------------------------------------------------------------- | ------------------------------------------------------ |
 | [base_install.rsp.tmpl](rsp/base_install.rsp.tmpl)               | Response file for Trivadis BasEnv installation         |
-| [oud_install.rsp.tmpl](rsp/oud_install.rsp.tmpl)                 | Generic response file for OUD and OUDSM installations  |
 | [db_install.rsp.tmpl](rsp/db_install.rsp.tmpl)                   | Response file for Oracle database binary installations |
+| [dbca.dbc.tmpl](rsp/dbca.dbc.tmpl)                               | Generic DB creation assistant (dbca) for 11.2, 12.1, 12.2 and 18c |
+| [dbca.rsp.tmpl](rsp/dbca.rsp.tmpl)                               | Response file for DB creation assistant (dbca) for 12.2 and 18c |
+| [dbca11.2.0.rsp.tmpl](rsp/dbca11.2.0.rsp.tmpl)                   | Response file for DB creation assistant (dbca) for 11.2.0 |
+| [dbca12.1.0.rsp.tmpl](rsp/dbca12.1.0.rsp.tmpl)                   | Response file for DB creation assistant (dbca) for 12.1.0 |
+| [ocm.rsp.tmpl](rsp/ocm.rsp.tmpl)                                 | Generic response file OPatch / Oracle Configuration Manager |
+| [oud_install.rsp.tmpl](rsp/oud_install.rsp.tmpl)                 | Generic response file for OUD and OUDSM installations  |
 | [db_examples_install.rsp.tmpl](rsp/db_examples_install.rsp.tmpl) | Response file for Oracle example installations         |
-| [dbca.rsp.tmpl](rsp/dbca.rsp.tmpl)                               | Response file Oracle DBCA                              |
 
 ## Install the Scripts
 
@@ -59,11 +68,12 @@ The scripts can be downloaded directly from GitHub. Usually done to ``/tmp`` fol
 The ``00_setup_oradba_init.sh`` script itself can be used to download and setup the init scripts. All you need to do is load the script from GitHub, set permissions and execute it.
 
 ```bash
-curl -Lsf https://github.com/oehrlis/oradba_init/raw/master/bin/00_setup_oradba_init.sh \
+sudo rm -rf /opt/oradba
+curl -Lf https://github.com/oehrlis/oradba_init/raw/master/bin/00_setup_oradba_init.sh \
     -o /tmp/00_setup_oradba_init.sh
 chmod 755 /tmp/00_setup_oradba_init.sh
 
-/tmp/00_setup_oradba_init.sh
+sudo /tmp/00_setup_oradba_init.sh
 
 ls -alR /opt/oradba
 
