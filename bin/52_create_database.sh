@@ -50,6 +50,7 @@ export ORACLE_PWD=${ORACLE_PWD:-""}             # Default admin password
 HOSTNAME_BIN=$(command -v hostname)                             # get the binary for hostname
 HOSTNAME_BIN=${HOSTNAME_BIN:-"cat /proc/sys/kernel/hostname"}   # fallback to /proc/sys/kernel/hostname
 export HOST=$(${HOSTNAME_BIN})
+export DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-$(hostname -d 2>/dev/null ||cat /etc/domainname ||echo "postgasse.org")}
 
 export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
 # - EOF Environment Variables -------------------------------------------

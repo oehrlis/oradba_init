@@ -1,28 +1,28 @@
 <?xml version = '1.0'?>
 <DatabaseTemplate name="###ORACLE_SID###" description="This is a template created from an existing template - General Purpose." version="12.2.0.1.0">
    <CommonAttributes>
-      <option name="OMS" value="true"/>
-      <option name="JSERVER" value="true"/>
-      <option name="SPATIAL" value="true"/>
-      <option name="IMEDIA" value="true"/>
-      <option name="ORACLE_TEXT" value="true">
+      <option name="OMS" value="false"/>
+      <option name="JSERVER" value="false"/>
+      <option name="SPATIAL" value="false"/>
+      <option name="IMEDIA" value="false"/>
+      <option name="ORACLE_TEXT" value="false">
          <tablespace id="SYSAUX"/>
       </option>
       <option name="SAMPLE_SCHEMA" value="true">
          <tablespace id="SYSAUX"/>
       </option>
-      <option name="CWMLITE" value="true">
+      <option name="CWMLITE" value="false">
          <tablespace id="SYSAUX"/>
       </option>
       <option name="APEX" value="false"/>
-      <option name="DV" value="true"/>
+      <option name="DV" value="false"/>
    </CommonAttributes>
    <Variables/>
    <CustomScripts Execute="false"/>
    <InitParamAttributes>
       <InitParams>
          <initParam name="db_name" value="###ORACLE_SID###"/>
-         <initParam name="db_domain" value=""/>
+         <initParam name="db_domain" value="###DEFAULT_DOMAIN###"/>
          <initParam name="dispatchers" value="(PROTOCOL=TCP) (SERVICE={SID}XDB)"/>
          <initParam name="audit_file_dest" value="{ORACLE_BASE}/admin/{DB_UNIQUE_NAME}/adump"/>
          <initParam name="compatible" value="12.2.0"/>

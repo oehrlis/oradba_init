@@ -1,28 +1,28 @@
 <?xml version = '1.0'?>
 <DatabaseTemplate name="###ORACLE_SID###" description="This is a custom database template." version="18.0.0.0.0">
    <CommonAttributes>
-      <option name="OMS" value="true" includeInPDBs="true"/>
-      <option name="JSERVER" value="true" includeInPDBs="true"/>
-      <option name="SPATIAL" value="true" includeInPDBs="true"/>
-      <option name="IMEDIA" value="true" includeInPDBs="true"/>
-      <option name="ORACLE_TEXT" value="true" includeInPDBs="true">
+      <option name="OMS" value="false" includeInPDBs="true"/>
+      <option name="JSERVER" value="false" includeInPDBs="true"/>
+      <option name="SPATIAL" value="false" includeInPDBs="true"/>
+      <option name="IMEDIA" value="false" includeInPDBs="true"/>
+      <option name="ORACLE_TEXT" value="false" includeInPDBs="true">
          <tablespace id="SYSAUX"/>
       </option>
       <option name="SAMPLE_SCHEMA" value="true" includeInPDBs="false">
          <tablespace id="SYSAUX"/>
       </option>
-      <option name="CWMLITE" value="true" includeInPDBs="true">
+      <option name="CWMLITE" value="false" includeInPDBs="true">
          <tablespace id="SYSAUX"/>
       </option>
       <option name="APEX" value="false" includeInPDBs="false"/>
-      <option name="DV" value="true" includeInPDBs="true"/>
+      <option name="DV" value="false" includeInPDBs="true"/>
    </CommonAttributes>
    <Variables/>
    <CustomScripts Execute="false"/>
    <InitParamAttributes>
       <InitParams>
          <initParam name="db_name" value="###ORACLE_SID###"/>
-         <initParam name="db_domain" value=""/>
+         <initParam name="db_domain" value="###DEFAULT_DOMAIN###"/>
          <initParam name="dispatchers" value="(PROTOCOL=TCP) (SERVICE={SID}XDB)"/>
          <initParam name="audit_file_dest" value="{ORACLE_BASE}/admin/{DB_UNIQUE_NAME}/adump"/>
          <initParam name="compatible" value="18.0.0"/>
