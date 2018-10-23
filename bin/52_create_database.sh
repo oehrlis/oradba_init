@@ -132,9 +132,7 @@ sed -i -e "s|<HOSTNAME>|${HOST}|g" ${TNS_ADMIN}/listener.ora
 
 # Start LISTENER and run DBCA
 $ORACLE_HOME/bin/lsnrctl status > /dev/null 2>&1 || $ORACLE_HOME/bin/lsnrctl start
-$ORACLE_HOME/bin/dbca -silent -createDatabase -responseFile ${ORADBA_RESPONSE} ||
-    cat ${ORACLE_BASE}/cfgtoollogs/dbca/$ORACLE_SID/$ORACLE_SID.log ||
-    cat ${ORACLE_BASE}/cfgtoollogs/dbca/$ORACLE_SID.log
+$ORACLE_HOME/bin/dbca -silent -createDatabase -responseFile ${ORADBA_RESPONSE} 
 
 echo "$ORACLE_SID= 
     (DESCRIPTION = 

@@ -21,6 +21,7 @@
 # - Environment Variables ---------------------------------------------------
 # - Set default values for environment variables if not yet defined. 
 # ---------------------------------------------------------------------------
+
 # - EOF Environment Variables -----------------------------------------------
 
 # - Initialization ----------------------------------------------------------
@@ -34,10 +35,10 @@ fi
 
 # - Main --------------------------------------------------------------------
 # Start Listener
-lsnrctl start
+$ORACLE_HOME/bin/lsnrctl start
 
 # Start database
-sqlplus / as sysdba << EOF
+$ORACLE_HOME/bin/sqlplus / as sysdba << EOF
    STARTUP;
    exit;
 EOF

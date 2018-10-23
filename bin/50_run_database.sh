@@ -36,9 +36,6 @@ export ORACLE_CHARACTERSET=${ORACLE_CHARACTERSET:-AL32UTF8} # Default for ORACLE
 export CONTAINER=${CONTAINER:-"false"}                      # Check whether CONTAINER is passed on
 
 # Oracle Software, Patchs and common environment variables
-export ORACLE_ROOT=${ORACLE_ROOT:-/u00}
-export ORACLE_DATA=${ORACLE_DATA:-/u01}
-export ORACLE_BASE=${ORACLE_BASE:-${ORACLE_ROOT}/app/oracle}
 export ORACLE_LOCAL=${ORACLE_LOCAL:-${ORACLE_BASE}/local}
 export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
 # - EOF Environment Variables -----------------------------------------------
