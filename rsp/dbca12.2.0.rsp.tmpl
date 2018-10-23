@@ -2,10 +2,10 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: dbca.rsp.tmpl
+# Name.......: dbca12.2.0.rsp.tmpl
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2018.09.27
+# Date.......: 2018.10.23
 # Revision...: 
 # Purpose....: Response file for Oracle database binary installations.
 # Notes......: ###TAG### have to be replaced with correct values
@@ -17,7 +17,7 @@
 #-------------------------------------------------------------------------------
 # Do not change the following system generated value. 
 #-------------------------------------------------------------------------------
-responseFileVersion=/oracle/assistants/rspfmt_dbca_response_schema_v###ORACLE_RELEASE###
+responseFileVersion=/oracle/assistants/rspfmt_dbca_response_schema_v12.2.0
 
 #-----------------------------------------------------------------------------
 # Name          : gdbName
@@ -153,26 +153,6 @@ dbsnmpPassword=###ORACLE_PWD###
 datafileJarLocation=###ORACLE_HOME###/assistants/dbca/templates/
 
 #-----------------------------------------------------------------------------
-# Name          : datafileDestination 
-# Datatype      : String
-# Description   : Location of the data file's
-# Valid values  : Directory for all the database files
-# Default value : $ORACLE_BASE/oradata
-# Mandatory     : No
-#-----------------------------------------------------------------------------
-datafileDestination=###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/
-
-#-----------------------------------------------------------------------------
-# Name          : recoveryAreaDestination
-# Datatype      : String
-# Description   : Location of the data file's
-# Valid values  : Recovery Area location
-# Default value : $ORACLE_BASE/flash_recovery_area
-# Mandatory     : No
-#-----------------------------------------------------------------------------
-recoveryAreaDestination=###ORACLE_ARCH###/fast_recovery_area
-
-#-----------------------------------------------------------------------------
 # Name          : characterSet
 # Datatype      : String
 # Description   : Character set of the database
@@ -201,7 +181,7 @@ nationalCharacterSet=AL16UTF16
 # Valid values  : The list should be comma separated like "listener1,listener2".
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-listeners=LISTENER
+#listeners=LISTENER
 
 #-----------------------------------------------------------------------------
 # Name          : variablesFile 
@@ -230,7 +210,7 @@ variables=ORACLE_BASE_HOME=###ORACLE_HOME###,DB_UNIQUE_NAME=###ORACLE_SID###,ORA
 # Default value : None
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-initParams=control_files=("###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf", "###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf"),
+#initParams=control_files=("###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf", "###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf"),
 
 #-----------------------------------------------------------------------------
 # Name          : sampleSchema

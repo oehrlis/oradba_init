@@ -37,10 +37,12 @@ export ORACLE_RELEASE="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release'|sed 's
 # define oradba specific variables
 export ORADBA_BIN=${ORADBA_INIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)}
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
-export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca.rsp.tmpl"} # oradba init response file
-export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"dbca.dbc.tmpl"}
-export TEMPLATE=$(basename $ORADBA_DBC_FILE .tmpl)
+export ORADBA_RSP=${ORADBA_RSP:-"${ORADBA_BASE}/rsp"}           # oradba init response file folder
+export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca${ORACLE_RELEASE}.rsp.tmpl"} # oradba init response file
+export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"dbca${ORACLE_RELEASE}.dbc.tmpl"}
+export ORACLE_SID_ADMIN_ETC="${ORACLE_BASE}/admin/${ORACLE_SID}/etc"
+export ORADBA_TEMPLATE=${ORADBA_TEMPLATE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.dbc"}
+export ORADBA_RESPONSE=${ORADBA_RESPONSE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.rsp"}
 export ORACLE_PWD=${ORACLE_PWD:-""}             # Default admin password
 
 HOSTNAME_BIN=$(command -v hostname)                             # get the binary for hostname
@@ -75,39 +77,45 @@ else
     echo "------------------------------------------------------------------------"
 fi
 
+# inform what's done next...
+echo "Create database instance ${ORACLE_SID} using:"
+echo "ORACLE_SID            : ${ORACLE_SID}"
+echo "HOST                  : ${HOST}"
+echo "ORACLE_HOME           : ${ORACLE_HOME}"
+echo "ORACLE_RELEASE        : ${ORACLE_RELEASE}"
+echo "ORACLE_VERSION        : ${ORACLE_VERSION}"
+echo "ORACLE_BASE           : ${ORACLE_BASE}"
+echo "ORACLE_DATA           : ${ORACLE_DATA}"
+echo "ORACLE_ARCH           : ${ORACLE_ARCH}"
+echo "CONTAINER             : ${CONTAINER}"
+echo "RESPONSE              : ${ORADBA_RESPONSE}"
+echo "TEMPLATE              : ${ORADBA_TEMPLATE}"
+echo "ORACLE_CHARACTERSET   : ${ORACLE_CHARACTERSET}"
+
 # write password file
-export ORACLE_SID_ADMIN_ETC="${ORACLE_BASE}/admin/${ORACLE_SID}/etc"
 mkdir -p ${ORACLE_SID_ADMIN_ETC}
 export ORACLE_PWD=$s
 echo "${ORACLE_PWD}" > "${ORACLE_BASE}/admin/${ORACLE_SID}/etc/${ORACLE_SID}_password.txt"
-
 echo "ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ORACLE_PWD";
 
 # Replace place holders in response file
-cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
-sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"          ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
-sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"          ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
-sed -i -e "s|###ORACLE_RELEASE###|$ORACLE_RELEASE|g"    ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
-sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"          ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
-sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"          ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
-sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"            ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE
-
-# add a softlink to the template
-ln -s ${ORACLE_SID_ADMIN_ETC}/$TEMPLATE ${ORACLE_HOME}/assistants/dbca/templates/$TEMPLATE
+cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"          ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"          ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"            ${ORADBA_TEMPLATE}
 
 # Replace place holders in response file
-cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###ORACLE_RELEASE###|$ORACLE_RELEASE|g"            ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                    ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                    ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                    ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###CONTAINER###|$CONTAINER|g"                      ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###TEMPLATE###|$TEMPLATE|g"                        ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
-sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"  ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                  ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                  ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                    ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                    ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                    ${ORADBA_RESPONSE}
+sed -i -e "s|###CONTAINER###|$CONTAINER|g"                      ${ORADBA_RESPONSE}
+sed -i -e "s|###TEMPLATE###|${ORADBA_TEMPLATE}|g"               ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"  ${ORADBA_RESPONSE}
 
 # If there is greater than 8 CPUs default back to dbca memory calculations
 # dbca will automatically pick 40% of available memory for Oracle DB
@@ -115,17 +123,15 @@ sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"  ${ORACLE_SID_ADM
 # However, bigger environment can and should use more of the available memory
 # This is due to Github Issue #307
 if [ `nproc` -gt 8 ]; then
-   sed -i -e "s|totalMemory=2048||g" ${ORACLE_SID_ADMIN_ETC}/dbca.rsp
+   sed -i -e "s|totalMemory=2048||g" ${ORACLE_SID_ADMIN_ETC}/$RESPONSE
 fi;
 
-# configure listener if not yet available
-
-# update listener.ora
+# update listener.ora in general just for the Docker listener.ora
 sed -i -e "s|<HOSTNAME>|${HOST}|g" ${TNS_ADMIN}/listener.ora
 
 # Start LISTENER and run DBCA
-$ORACLE_HOME/bin/lsnrctl status || $ORACLE_HOME/bin/lsnrctl start
-$ORACLE_HOME/bin/dbca -silent -createDatabase -responseFile ${ORACLE_SID_ADMIN_ETC}/dbca.rsp ||
+$ORACLE_HOME/bin/lsnrctl status > /dev/null 2>&1 || $ORACLE_HOME/bin/lsnrctl start
+$ORACLE_HOME/bin/dbca -silent -createDatabase -responseFile ${ORADBA_RESPONSE} ||
     cat ${ORACLE_BASE}/cfgtoollogs/dbca/$ORACLE_SID/$ORACLE_SID.log ||
     cat ${ORACLE_BASE}/cfgtoollogs/dbca/$ORACLE_SID.log
 
@@ -143,6 +149,9 @@ sqlplus / as sysdba << EOF
     ALTER SYSTEM SET local_listener='';
     exit;
 EOF
+
+# remove passwords from response file
+sed -i -e "s|${ORACLE_PWD}|ORACLE_PASSWORD|g" ${ORADBA_RESPONSE}
 
 # adjust basenv
 MY_ORACLE_SID=${ORACLE_SID}

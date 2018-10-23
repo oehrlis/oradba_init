@@ -2,7 +2,7 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: dbca12.1.0.rsp.tmpl
+# Name.......: dbca18.0.0.rsp.tmpl
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2018.10.23
@@ -13,40 +13,14 @@
 # License....: Licensed under the Universal Permissive License v 1.0 as 
 #              shown at http://oss.oracle.com/licenses/upl.
 # ---------------------------------------------------------------------------
-#-----------------------------------------------------------------------------
-# GENERAL section is required for all types of database creations.
-#-----------------------------------------------------------------------------
-[GENERAL]
+
+#-------------------------------------------------------------------------------
+# Do not change the following system generated value. 
+#-------------------------------------------------------------------------------
+responseFileVersion=/oracle/assistants/rspfmt_dbca_response_schema_v12.2.0
 
 #-----------------------------------------------------------------------------
-# Name          : RESPONSEFILE_VERSION
-# Datatype      : String
-# Description   : Version of the database to create
-# Valid values  : "12.1.0"
-# Default value : None
-# Mandatory     : Yes
-#-----------------------------------------------------------------------------
-RESPONSEFILE_VERSION = "12.1.0"
-
-#-----------------------------------------------------------------------------
-# Name          : OPERATION_TYPE
-# Datatype      : String
-# Description   : Type of operation
-# Valid values  : "createDatabase" \ "createTemplateFromDB" \ "createCloneTemplate" \ "deleteDatabase" \ "configureDatabase" \ "addInstance" (RAC-only) \ "deleteInstance" (RAC-only)
-# Default value : None
-# Mandatory     : Yes
-#-----------------------------------------------------------------------------
-OPERATION_TYPE = "createDatabase"
-
-#-----------------------*** End of GENERAL section ***------------------------
-
-#-----------------------------------------------------------------------------
-# CREATEDATABASE section is used when OPERATION_TYPE is defined as "createDatabase". 
-#-----------------------------------------------------------------------------
-[CREATEDATABASE]
-
-#-----------------------------------------------------------------------------
-# Name          : GDBNAME
+# Name          : gdbName
 # Datatype      : String
 # Description   : Global database name of the database
 # Valid values  : <db_name>.<db_domain> - when database domain isn't NULL
@@ -54,140 +28,152 @@ OPERATION_TYPE = "createDatabase"
 # Default value : None
 # Mandatory     : Yes
 #-----------------------------------------------------------------------------
-GDBNAME = ###ORACLE_SID###
+gdbName=###ORACLE_SID###
 
 #-----------------------------------------------------------------------------
-# Name          : SID
+# Name          : sid
 # Datatype      : String
 # Description   : System identifier (SID) of the database
 # Valid values  : Check Oracle12c Administrator's Guide
 # Default value : <db_name> specified in GDBNAME
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-SID = ###ORACLE_SID###
+sid=###ORACLE_SID###
 
 #-----------------------------------------------------------------------------
-# Name          : CREATEASCONTAINERDATABASE 
+# Name          : createAsContainerDatabase 
 # Datatype      : boolean
 # Description   : flag to create database as container database 
 # Valid values  : Check Oracle12c Administrator's Guide
 # Default value : false
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-CREATEASCONTAINERDATABASE = ###CONTAINER###
+createAsContainerDatabase=###CONTAINER###
 
 #-----------------------------------------------------------------------------
-# Name          : NUMBEROFPDBS
+# Name          : numberOfPDBs
 # Datatype      : Number
 # Description   : Specify the number of pdb to be created
 # Valid values  : 0 to 252
 # Default value : 0
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-NUMBEROFPDBS = 1
+numberOfPDBs=1
 
 #-----------------------------------------------------------------------------
-# Name          : PDBNAME 
+# Name          : pdbName 
 # Datatype      : String
 # Description   : Specify the pdbname/pdbanme prefix if one or more pdb need to be created
 # Valid values  : Check Oracle12c Administrator's Guide
 # Default value : None
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-PDBNAME = ###ORACLE_PDB###
+pdbName=###ORACLE_PDB###
 
 #-----------------------------------------------------------------------------
-# Name          : PDBADMINPASSWORD
+# Name          : pdbAdminPassword
 # Datatype      : String
 # Description   : PDB Administrator user password
 # Valid values  : Check Oracle12c Administrator's Guide
 # Default value : None
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-PDBADMINPASSWORD = ###ORACLE_PWD###
+pdbAdminPassword=###ORACLE_PWD###
 
 #-----------------------------------------------------------------------------
-# Name          : TEMPLATENAME
+# Name          : templateName
 # Datatype      : String
 # Description   : Name of the template
 # Valid values  : Template file name
 # Default value : None
 # Mandatory     : Yes
 #-----------------------------------------------------------------------------
-TEMPLATENAME = "###TEMPLATE###"
+templateName=###TEMPLATE###
 
 #-----------------------------------------------------------------------------
-# Name          : SYSPASSWORD
+# Name          : sysPassword
 # Datatype      : String
 # Description   : Password for SYS user
 # Valid values  : Check Oracle12c Administrator's Guide
 # Default value : None
 # Mandatory     : Yes
 #-----------------------------------------------------------------------------
-SYSPASSWORD = ###ORACLE_PWD###
+sysPassword=###ORACLE_PWD###
 
 #-----------------------------------------------------------------------------
-# Name          : SYSTEMPASSWORD
+# Name          : systemPassword
 # Datatype      : String
 # Description   : Password for SYSTEM user
 # Valid values  : Check Oracle12c Administrator's Guide
 # Default value : None
 # Mandatory     : Yes
 #-----------------------------------------------------------------------------
-SYSTEMPASSWORD = ###ORACLE_PWD###
+systemPassword=###ORACLE_PWD###
 
 #-----------------------------------------------------------------------------
-# Name          : EMCONFIGURATION
+# Name          : emConfiguration
 # Datatype      : String
 # Description   : Enterprise Manager Configuration Type
-# Valid values  : CENTRAL|DBEXPRESS|ALL|NONE
+# Valid values  : CENTRAL|DBEXPRESS|BOTH|NONE
 # Default value : NONE
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-EMCONFIGURATION = "NONE"
+emConfiguration=DBEXPRESS
 
 #-----------------------------------------------------------------------------
-# Name          : DATAFILEJARLOCATION 
+# Name          : emExpressPort
+# Datatype      : Number
+# Description   : Enterprise Manager Configuration Type
+# Valid values  : Check Oracle12c Administrator's Guide
+# Default value : NONE
+# Mandatory     : No, will be picked up from DBEXPRESS_HTTPS_PORT env variable
+#                 or auto generates a free port between 5500 and 5599
+#-----------------------------------------------------------------------------
+#emExpressPort=5500
+
+#-----------------------------------------------------------------------------
+# Name          : dbsnmpPassword
+# Datatype      : String
+# Description   : Password for DBSNMP user
+# Valid values  : Check Oracle12c Administrator's Guide
+# Default value : None
+# Mandatory     : Yes, if emConfiguration is specified or
+#                 the value of runCVUChecks is TRUE
+#-----------------------------------------------------------------------------
+dbsnmpPassword=###ORACLE_PWD###
+
+#-----------------------------------------------------------------------------
+# Name          : datafileJarLocation 
 # Datatype      : String
 # Description   : Location of the data file jar 
 # Valid values  : Directory containing compressed datafile jar
 # Default value : None
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-DATAFILEJARLOCATION = ###ORACLE_HOME###/assistants/dbca/templates/
+datafileJarLocation=###ORACLE_HOME###/assistants/dbca/templates/
 
 #-----------------------------------------------------------------------------
-# Name          : STORAGETYPE
-# Datatype      : String
-# Description   : Specifies the storage on which the database is to be created
-# Valid values  : FS (CFS for RAC), ASM
-# Default value : FS
-# Mandatory     : No
-#-----------------------------------------------------------------------------
-STORAGETYPE=FS
-
-#-----------------------------------------------------------------------------
-# Name          : CHARACTERSET
+# Name          : characterSet
 # Datatype      : String
 # Description   : Character set of the database
 # Valid values  : Check Oracle12c National Language Support Guide
 # Default value : "US7ASCII"
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-CHARACTERSET = ###ORACLE_CHARACTERSET###
+characterSet=###ORACLE_CHARACTERSET###
 
 #-----------------------------------------------------------------------------
-# Name          : NATIONALCHARACTERSET
+# Name          : nationalCharacterSet
 # Datatype      : String
 # Description   : National Character set of the database
 # Valid values  : "UTF8" or "AL16UTF16". For details, check Oracle12c National Language Support Guide
 # Default value : "AL16UTF16"
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-NATIONALCHARACTERSET= AL16UTF16
+nationalCharacterSet=AL16UTF16
 
 #-----------------------------------------------------------------------------
-# Name          : LISTENERS
+# Name          : listeners
 # Datatype      : String
 # Description   : Specifies list of listeners to register the database with.
 #		  By default the database is configured for all the listeners specified in the 
@@ -195,10 +181,10 @@ NATIONALCHARACTERSET= AL16UTF16
 # Valid values  : The list should be comma separated like "listener1,listener2".
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-#LISTENERS = "LISTENER"
+#listeners=LISTENER
 
 #-----------------------------------------------------------------------------
-# Name          : VARIABLESFILE 
+# Name          : variablesFile 
 # Datatype      : String
 # Description   : Location of the file containing variable value pair
 # Valid values  : A valid file-system file. The variable value pair format in this file 
@@ -206,62 +192,52 @@ NATIONALCHARACTERSET= AL16UTF16
 # Default value : None
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-#VARIABLESFILE =
+variablesFile=
 
 #-----------------------------------------------------------------------------
-# Name          : VARIABLES
+# Name          : variables
 # Datatype      : String
 # Description   : comma separated list of name=value pairs. Overrides variables defined in variablefile and templates
 # Default value : None
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-VARIABLES = ORACLE_BASE_HOME=###ORACLE_HOME###,DB_UNIQUE_NAME=###ORACLE_SID###,ORACLE_BASE=###ORACLE_BASE###,DB_NAME=###ORACLE_SID###,ORACLE_HOME=###ORACLE_HOME###,SID=###ORACLE_SID###
+variables=ORACLE_BASE_HOME=###ORACLE_HOME###,DB_UNIQUE_NAME=###ORACLE_SID###,ORACLE_BASE=###ORACLE_BASE###,PDB_NAME=###ORACLE_PDB###,DB_NAME=###ORACLE_SID###,ORACLE_HOME=###ORACLE_HOME###,SID=###ORACLE_SID###
 
 #-----------------------------------------------------------------------------
-# Name          : INITPARAMS
+# Name          : initParams
 # Datatype      : String
 # Description   : comma separated list of name=value pairs. Overrides initialization parameters defined in templates
 # Default value : None
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-#INITPARAMS=control_files=("###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf", "###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf")
+#initParams=control_files=("###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf", "###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf"),
 
 #-----------------------------------------------------------------------------
-# Name          : SAMPLESCHEMA
+# Name          : sampleSchema
 # Datatype      : Boolean
 # Description   : Specifies whether or not to add the Sample Schemas to your database
 # Valid values  : TRUE \ FALSE
 # Default value : FASLE
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-SAMPLESCHEMA=TRUE
+sampleSchema=true
 
 #-----------------------------------------------------------------------------
-# Name          : DATABASETYPE
-# Datatype      : String
-# Description   : used for memory distribution when MEMORYPERCENTAGE specified
-# Valid values  : MULTIPURPOSE|DATA_WAREHOUSING|OLTP
-# Default value : MULTIPURPOSE
-# Mandatory     : NO
-#-----------------------------------------------------------------------------
-DATABASETYPE = "MULTIPURPOSE"
-
-#-----------------------------------------------------------------------------
-# Name          : AUTOMATICMEMORYMANAGEMENT
+# Name          : automaticMemoryManagement
 # Datatype      : Boolean
 # Description   : flag to indicate Automatic Memory Management is used
 # Valid values  : TRUE/FALSE
 # Default value : TRUE
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-AUTOMATICMEMORYMANAGEMENT = "FALSE"
+automaticMemoryManagement=FALSE
 
 #-----------------------------------------------------------------------------
-# Name          : TOTALMEMORY
+# Name          : totalMemory
 # Datatype      : String
 # Description   : total memory in MB to allocate to Oracle
 # Valid values  : 
 # Default value : 
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-TOTALMEMORY = "1024"
+totalMemory=1024
