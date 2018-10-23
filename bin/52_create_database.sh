@@ -91,8 +91,10 @@ echo "ORACLE_BASE           : ${ORACLE_BASE}"
 echo "ORACLE_DATA           : ${ORACLE_DATA}"
 echo "ORACLE_ARCH           : ${ORACLE_ARCH}"
 echo "CONTAINER             : ${CONTAINER}"
-echo "RESPONSE              : ${ORADBA_RESPONSE}"
-echo "TEMPLATE              : ${ORADBA_TEMPLATE}"
+echo "RESPONSE              : ${ORADBA_RSP_FILE}"
+echo "TEMPLATE              : ${ORADBA_DBC_FILE}"
+echo "DB RESPONSE           : ${ORADBA_RESPONSE}"
+echo "DB TEMPLATE           : ${ORADBA_TEMPLATE}"
 echo "ORACLE_CHARACTERSET   : ${ORACLE_CHARACTERSET}"
 
 # write password file
@@ -106,6 +108,7 @@ cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}
 sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"          ${ORADBA_TEMPLATE}
 sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"          ${ORADBA_TEMPLATE}
 sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"            ${ORADBA_TEMPLATE}
+sed -i -e "s|###DEFAULT_DOMAIN###|$DEFAULT_DOMAIN|g"    ${ORADBA_TEMPLATE}
 
 # Replace place holders in response file
 cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORADBA_RESPONSE}
