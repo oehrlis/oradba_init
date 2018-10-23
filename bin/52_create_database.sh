@@ -38,12 +38,13 @@ export ORACLE_RELEASE="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release'|sed 's
 export ORADBA_BIN=${ORADBA_INIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)}
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP=${ORADBA_RSP:-"${ORADBA_BASE}/rsp"}           # oradba init response file folder
+export ORADBA_TEMPLATE_PREFIX=${ORADBA_TEMPLATE_PREFIX:-""}
 export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca${ORACLE_RELEASE}.rsp.tmpl"} # oradba init response file
-export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"dbca${ORACLE_RELEASE}.dbc.tmpl"}
+export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"${ORADBA_TEMPLATE_PREFIX}dbca${ORACLE_RELEASE}.dbc.tmpl"}
 export ORACLE_SID_ADMIN_ETC="${ORACLE_BASE}/admin/${ORACLE_SID}/etc"
 export ORADBA_TEMPLATE_PREFIX=${ORADBA_TEMPLATE_PREFIX:-""}
-export ORADBA_TEMPLATE=${ORADBA_TEMPLATE:-"${ORACLE_SID_ADMIN_ETC}/${ORADBA_TEMPLATE_PREFIX}dbca${ORACLE_SID}.dbc"}
-export ORADBA_RESPONSE=${ORADBA_RESPONSE:-"${ORACLE_SID_ADMIN_ETC}/${ORADBA_TEMPLATE_PREFIX}dbca${ORACLE_SID}.rsp"}
+export ORADBA_TEMPLATE=${ORADBA_TEMPLATE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.dbc"}
+export ORADBA_RESPONSE=${ORADBA_RESPONSE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.rsp"}
 export ORACLE_PWD=${ORACLE_PWD:-""}             # Default admin password
 
 HOSTNAME_BIN=$(command -v hostname)                             # get the binary for hostname
