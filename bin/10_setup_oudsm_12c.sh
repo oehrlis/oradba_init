@@ -25,8 +25,8 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 # define the software packages
 export OUD_BASE_PKG=${OUD_BASE_PKG:-"p26270957_122130_Generic.zip"}
 export FMW_BASE_PKG=${FMW_BASE_PKG:-"p26269885_122130_Generic.zip"}
-export OUD_PATCH_PKG=${OUD_PATCH_PKG:-"p28245820_122130_Generic.zip"}
-export FMW_PATCH_PKG=${FMW_PATCH_PKG:-"p27912627_122130_Generic.zip"}
+export OUD_PATCH_PKG=${OUD_PATCH_PKG:-"p28569189_122130_Generic.zip"}
+export FMW_PATCH_PKG=${FMW_PATCH_PKG:-"p28298734_122130_Generic.zip"}
 export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-"p28186730_139400_Generic.zip"}
 
 # define oradba specific variables
