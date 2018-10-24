@@ -69,7 +69,7 @@ fi
 # check space
 echo " - Check available space ----------------------------------------------"
 REQUIRED_SPACE_GB=15
-AVAILABLE_SPACE_GB=$(df -PB 1G / | tail -n 1 | awk '{ print $4 }')
+AVAILABLE_SPACE_GB=$(df -PB 1G $ORACLE_BASE | tail -n 1 | awk '{ print $4 }')
 
 if [ $AVAILABLE_SPACE_GB -lt $REQUIRED_SPACE_GB ]; then
     echo "ERROR:   There is not enough space available."
