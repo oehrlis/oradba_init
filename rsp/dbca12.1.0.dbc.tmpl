@@ -1,22 +1,22 @@
 <?xml version = '1.0'?>
 <DatabaseTemplate name="###ORACLE_SID###" description="This is a template created from an existing template - General Purpose." version="12.1.0.2.0">
    <CommonAttributes>
-      <option name="OMS" value="false"/>
-      <option name="JSERVER" value="false"/>
-      <option name="SPATIAL" value="false"/>
-      <option name="IMEDIA" value="false"/>
+      <option name="OMS" value="true"/>
+      <option name="JSERVER" value="true"/>
+      <option name="SPATIAL" value="true"/>
+      <option name="IMEDIA" value="true"/>
       <option name="XDB_PROTOCOLS" value="true">
          <tablespace id="SYSAUX"/>
       </option>
-      <option name="ORACLE_TEXT" value="false">
+      <option name="ORACLE_TEXT" value="true">
          <tablespace id="SYSAUX"/>
       </option>
       <option name="SAMPLE_SCHEMA" value="true"/>
-      <option name="CWMLITE" value="false">
+      <option name="CWMLITE" value="true">
          <tablespace id="SYSAUX"/>
       </option>
       <option name="APEX" value="false"/>
-      <option name="DV" value="false"/>
+      <option name="DV" value="true"/>
    </CommonAttributes>
    <Variables/>
    <CustomScripts Execute="false"/>
@@ -33,8 +33,8 @@
          <initParam name="undo_tablespace" value="UNDOTBS1"/>
          <initParam name="control_files" value="(&quot;###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf&quot;, &quot;###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf&quot;)"/>
          <initParam name="diagnostic_dest" value="{ORACLE_BASE}"/>
-         <initParam name="db_recovery_file_dest" value="###ORACLE_ARCH###/fast_recovery_area"/>
-         <initParam name="audit_trail" value="db, extended"/>
+         <initParam name="db_recovery_file_dest" value="{ORACLE_BASE}/fast_recovery_area"/>
+         <initParam name="audit_trail" value="db"/>
          <initParam name="log_archive_format" value="%t_%s_%r.dbf"/>
          <initParam name="db_block_size" value="8" unit="KB"/>
          <initParam name="open_cursors" value="300"/>
@@ -77,21 +77,21 @@
          <fileSize unit="KB">51200</fileSize>
          <Thread>1</Thread>
          <member ordinal="0" memberName="redog1m1{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/"/>
-         <member ordinal="1" memberName="redog1m2{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
+         <member ordinal="0" memberName="redog1m2{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
       </RedoLogGroupAttributes>
       <RedoLogGroupAttributes id="2">
          <reuse>false</reuse>
          <fileSize unit="KB">51200</fileSize>
          <Thread>1</Thread>
          <member ordinal="0" memberName="redog2m1{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/"/>
-         <member ordinal="1" memberName="redog2m2{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
+         <member ordinal="0" memberName="redog2m2{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
       </RedoLogGroupAttributes>
       <RedoLogGroupAttributes id="3">
          <reuse>false</reuse>
          <fileSize unit="KB">51200</fileSize>
          <Thread>1</Thread>
          <member ordinal="0" memberName="redog3m1{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/"/>
-         <member ordinal="1" memberName="redog3m2{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
+         <member ordinal="0" memberName="redog3m2{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
       </RedoLogGroupAttributes>
    </StorageAttributes>
 </DatabaseTemplate>

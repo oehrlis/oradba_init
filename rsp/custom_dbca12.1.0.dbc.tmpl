@@ -1,4 +1,3 @@
-<?xml version = '1.0'?>
 <DatabaseTemplate name="###ORACLE_SID###" description="This is a template created from an existing template - New Database." version="12.1.0.2.0">
    <CommonAttributes>
       <option name="OMS" value="false"/>
@@ -33,12 +32,11 @@
          <initParam name="compatible" value="12.1.0.2.0"/>
          <initParam name="remote_login_passwordfile" value="EXCLUSIVE"/>
          <initParam name="processes" value="300"/>
-         <initParam name="local_listener" value=""/>
          <initParam name="undo_tablespace" value="UNDOTBS1"/>
          <initParam name="control_files" value="(&quot;###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf&quot;, &quot;###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf&quot;)"/>
          <initParam name="diagnostic_dest" value="{ORACLE_BASE}"/>
          <initParam name="db_recovery_file_dest" value="{ORACLE_BASE}/fast_recovery_area"/>
-         <initParam name="audit_trail" value="db, extended"/>
+         <initParam name="audit_trail" value="db"/>
          <initParam name="log_archive_format" value="%t_%s_%r.dbf"/>
          <initParam name="memory_target" value="1024" unit="MB"/>
          <initParam name="db_block_size" value="8" unit="KB"/>
@@ -116,7 +114,7 @@
          <temporary>false</temporary>
          <online>true</online>
          <status>0</status>
-         <size unit="MB">5</size>
+         <size unit="MB">20</size>
          <reuse>true</reuse>
          <autoExtend>true</autoExtend>
          <increment unit="KB">1280</increment>
@@ -174,8 +172,8 @@
          <undo>false</undo>
          <local>true</local>
          <blockSize>-1</blockSize>
-         <allocation>1</allocation>
-         <uniAllocSize unit="KB">-1</uniAllocSize>
+         <allocation>2</allocation>
+         <uniAllocSize unit="KB">640</uniAllocSize>
          <initSize unit="KB">64</initSize>
          <increment unit="KB">64</increment>
          <incrementPercent>0</incrementPercent>
@@ -186,7 +184,7 @@
          <recoverable>false</recoverable>
          <maxFreeSpace>0</maxFreeSpace>
          <autoSegmentMgmt>true</autoSegmentMgmt>
-         <bigfile>false</bigfile>
+         <bigfile>true</bigfile>
          <datafilesList>
             <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/temp01{DB_UNIQUE_NAME}.dbf"/>
          </datafilesList>
