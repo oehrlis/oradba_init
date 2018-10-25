@@ -27,13 +27,14 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
 export BASENV_PKG=${BASENV_PKG:-basenv-18.05.final.b.zip}
+export BACKUP_PKG=${BACKUP_PKG:-tvdbackup-le-18.05.final.a.tar.gz}
 
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 
-export DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-$(hostname -d 2>/dev/null ||cat /etc/domainname ||echo "postgasse.org")}
+export DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-$(domainname 2>/dev/null ||cat /etc/domainname ||echo "postgasse.org")}
 
 # define Oracle specific variables
 export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and binaries
@@ -86,5 +87,55 @@ if [ -n "${BASENV_PKG}" ]; then
         echo "ERROR:   No base software package specified. Abort installation."
         exit 1
     fi
+fi
+
+# - Configure custom basenv folders -----------------------------------------
+mkdir -p ${ORACLE_BASE}/local/oradba/bin
+mkdir -p ${ORACLE_BASE}/local/oradba/doc
+mkdir -p ${ORACLE_BASE}/local/oradba/etc
+mkdir -p ${ORACLE_BASE}/local/oradba/sql
+mkdir -p ${ORACLE_BASE}/local/oradba/rcv
+
+# - Configure stuff for none Docker environment -----------------------------
+if ! running_in_docker; then
+    # - Install Trivadis TVD-Backup -----------------------------------------
+    if [ -n "${BACKUP_PKG}" ]; then
+        if get_software "${BACKUP_PKG}"; then   # Check and get binaries
+            echo " - extract ${SOFTWARE}/${BACKUP_PKG} to ${ORACLE_BASE}/local"
+            tar -zxvf ${SOFTWARE}/${BACKUP_PKG} -C ${ORACLE_BASE}/local
+
+            # - create archive delete job -----------------------------------
+            echo "<SHOW_ALL>show all;"                                              >${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv
+            echo "<SET_GLOBAL_OPERATIONS>"                                          >>${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv
+            echo "delete noprompt archivelog <ARCHIVE_RANGE> <ARCHIVE_PATTERN>;"    >>${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv
+            echo "INFO:    Create rman archive delete job. Add the following line to your crontab."
+            echo "INFO:    Change TEMPLATE to your DB SID's."
+            echo ""
+            echo "00 0,4,8,16,20 * * * /u01/app/oracle/local/tvdbackup/bin/rman_exec.ksh -t TEMPLATE -s ${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv >/dev/null 2>&1"
+        else
+            echo "INFO:    No backup software package specified. Skip this step."
+        fi
+    fi
+
+    # - Create houskeeping job -----------------------------------------------
+    cp -v ${ORACLE_BASE}/local/dba/templates/etc/housekeep.conf.tpl ${ORACLE_BASE}/local/dba/etc/housekeep.conf
+    cp -v ${ORACLE_BASE}/local/dba/templates/etc/housekeep_work.conf.tpl.unix ${ORACLE_BASE}/local/dba/etc/housekeep_work.conf
+    echo "INFO:    Create housekeep config files. Please adapt ${ORACLE_BASE}/local/dba/etc/housekeep_work.conf"
+    echo "INFO:    and add the following line to your crontab."
+    echo ""
+    echo "00 01 * * * ${ORACLE_BASE}/local/dba/bin/housekeep.ksh >> ${ORACLE_BASE}/local/dba/log/housekeep.log 2>&1"
+
+    # - Configure autostart for none docker environments ---------------------
+    echo "INFO:    Configure Oracle service for none Docker environments."
+    cp -v ${ORACLE_BASE}/local/dba/templates/init.d/oracle.service ${ORACLE_BASE}/local/dba/etc/oracle.service
+    sed -i -e "s|${ORACLE_BASE}/tvdtoolbox/dba/etc/oracle_start_stop.conf|${ORACLE_BASE}/local/dba/etc/oracle_start_stop.conf|g" ${ORACLE_BASE}/local/dba/etc/oracle.service
+    echo "INFO:    Run the following commands to enable the oracle service."
+    echo ""
+    echo "sudo cp ${ORACLE_BASE}/local/dba/etc/oracle.service /usr/lib/systemd/system/"
+    echo "sudo systemctl --system daemon-reload"
+    echo "sudo systemctl enable oracle"
+    echo ""
+else
+    echo "INFO:    Seems that I do run in a Docker container."
 fi
 # --- EOF --------------------------------------------------------------------

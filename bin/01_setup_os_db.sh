@@ -129,6 +129,7 @@ else
 fi
 
 # create a bunch of other directories
+mkdir -p ${ORACLE_BASE}/archive
 mkdir -p ${ORACLE_BASE}/etc
 mkdir -p ${ORACLE_BASE}/tmp
 mkdir -p ${ORACLE_DATA}/scripts
