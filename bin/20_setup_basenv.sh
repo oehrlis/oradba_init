@@ -128,6 +128,7 @@ if ! running_in_docker; then
     # - Configure autostart for none docker environments ---------------------
     echo "INFO:    Configure Oracle service for none Docker environments."
     cp -v ${ORACLE_BASE}/local/dba/templates/init.d/oracle.service ${ORACLE_BASE}/local/dba/etc/oracle.service
+    cp -v ${ORACLE_BASE}/local/dba/templates/etc/oracle_start_stop.conf ${ORACLE_BASE}/local/dba/etc/oracle_start_stop.conf
     sed -i -e "s|${ORACLE_BASE}/tvdtoolbox/dba/etc/oracle_start_stop.conf|${ORACLE_BASE}/local/dba/etc/oracle_start_stop.conf|g" ${ORACLE_BASE}/local/dba/etc/oracle.service
     echo "INFO:    Run the following commands to enable the oracle service."
     echo ""

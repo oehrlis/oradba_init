@@ -72,11 +72,8 @@ sudo rm -rf /opt/oradba
 curl -Lf https://github.com/oehrlis/oradba_init/raw/master/bin/00_setup_oradba_init.sh \
     -o /tmp/00_setup_oradba_init.sh
 chmod 755 /tmp/00_setup_oradba_init.sh
-
 sudo /tmp/00_setup_oradba_init.sh
-
 ls -alR /opt/oradba
-
 rm -rf /tmp/00_setup_oradba_init.sh
 ```
 
@@ -114,6 +111,23 @@ To setup a database server you have to run the following scripts
 * execute *20_setup_basenv.sh* to configure TVD-BasEnv
 * execute *3x_setup_xxx.sh* to create a database 
 * execute *4x_setup_xxx.sh* to configure your database
+
+export DB_BASE_PKG="LINUX.X64_180000_db_home.zip"
+export DB_EXAMPLE_PKG="LINUX.X64_180000_examples.zip"
+export DB_PATCH_PKG="p28655784_180000_Linux-x86-64.zip"
+export DB_OJVM_PKG="p28502229_180000_Linux-x86-64.zip"
+export DB_OPATCH_PKG="p6880880_180000_Linux-x86-64.zip"
+export ORACLE_HOME_NAME="18.4.0.0"
+export ORACLE_HOME="/u00/app/oracle/product/${ORACLE_HOME_NAME}"
+
+export DB_BASE_PKG="linuxx64_12201_database.zip"
+export DB_EXAMPLE_PKG="linuxx64_12201_examples.zip"
+export DB_PATCH_PKG="p28662603_122010_Linux-x86-64.zip"
+export DB_OJVM_PKG="p28440725_122010_Linux-x86-64.zip"
+export DB_OPATCH_PKG="p6880880_122010_Linux-x86-64.zip"
+export ORACLE_HOME_NAME="12.2.0.1"
+export ORACLE_HOME="/u00/app/oracle/product/${ORACLE_HOME_NAME}"
+/opt/oradba/bin/10_setup_db_12.2.sh
 
 ```bash
 /opt/oradba/bin/01_setup_os_db.sh
