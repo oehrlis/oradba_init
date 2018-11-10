@@ -148,7 +148,7 @@ echo "$ORACLE_SID=
     )" >> ${TNS_ADMIN}/tnsnames.ora
 
 # Remove second control file, fix local_listener, make PDB auto open
-sqlplus / as sysdba << EOF
+$ORACLE_HOME/bin/sqlplus / as sysdba << EOF
     ALTER SYSTEM SET local_listener='';
     exit;
 EOF
