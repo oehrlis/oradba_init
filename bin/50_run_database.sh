@@ -31,6 +31,7 @@ export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file fold
 # ---------------------------------------------------------------------------
 # Default name for OUD instance
 export ORACLE_SID=${ORACLE_SID:-TDB183C}                    # Default for ORACLE SID
+export ORADBA_TEMPLATE_PREFIX=${ORADBA_TEMPLATE_PREFIX:-""}
 export ORACLE_PDB=${ORACLE_PDB:-PDB1}                       # Default for ORACLE PDB
 export ORACLE_CHARACTERSET=${ORACLE_CHARACTERSET:-AL32UTF8} # Default for ORACLE CHARACTERSET
 export CONTAINER=${CONTAINER:-"false"}                      # Check whether CONTAINER is passed on
