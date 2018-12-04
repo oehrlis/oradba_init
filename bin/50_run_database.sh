@@ -115,7 +115,7 @@ function move_files {
 
     # move network config files
     for i in sqlnet.ora listener.ora ldap.ora tnsnames.ora; do
-        ln -s ${ORACLE_HOME}/network/admin/${i} ${TNS_ADMIN}/${i}
+        ln -s ${TNS_ADMIN}/${i} ${ORACLE_HOME}/network/admin/${i}
     done
     mv ${ORACLE_HOME}/ldap/admin/dsi.ora ${TNS_ADMIN}/dsi.ora
 
@@ -155,14 +155,16 @@ function sym_link_files {
     fi
 
     # create softlinks for toolbox configuration
+    cd ${ORACLE_LOCAL}/dba/etc/
     for i in basenv.conf orahometab sidtab sid.*.conf; do
         if [ ! -L ${ORACLE_LOCAL}/dba/etc/${i} ]; then
-            ln -s ${ORACLE_DATA}/etc/${i} ${ORACLE_LOCAL}/dba/etc/${i}
+            ln -s -f ${ORACLE_DATA}/etc/${i} ${ORACLE_LOCAL}/dba/etc/${i}
         fi
     done
-    if [ ! -L ${ORACLE_BASE}/etc/oratab ]; then
-        ln -s ${ORACLE_DATA}/etc/oratab ${ORACLE_BASE}/etc/oratab
-    fi
+    cd -
+    # if [ ! -L ${ORACLE_BASE}/etc/oratab ]; then
+    #     ln -s -f ${ORACLE_DATA}/etc/oratab ${ORACLE_BASE}/etc/oratab
+    # fi
 }
 # - EOF Functions -------------------------------------------------------
 
