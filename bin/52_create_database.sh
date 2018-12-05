@@ -162,7 +162,7 @@ MY_ORACLE_SID=${ORACLE_SID}
 . "$HOME/.BE_HOME"                                          # load BE_HOME
 . "$HOME/.TVDPERL_HOME"                                     # load TVDPERL_HOME
 . ${BE_HOME}/bin/basenv.sh                                  # source basenv
-. /u00/app/oracle/local/dba/bin/oraenv.ksh ${MY_ORACLE_SID}    # source SID environment
+. /u00/app/oracle/local/dba/bin/oraenv.ksh ${MY_ORACLE_SID} # source SID environment
 
 sed -i "/$MY_ORACLE_SID/{s/;[0-9][0-9];/;10;/}" $ETC_BASE/sidtab
 echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >/etc/oratab

@@ -117,7 +117,10 @@ function move_files {
     for i in sqlnet.ora listener.ora ldap.ora tnsnames.ora; do
         ln -s ${TNS_ADMIN}/${i} ${ORACLE_HOME}/network/admin/${i}
     done
-    mv ${ORACLE_HOME}/ldap/admin/dsi.ora ${TNS_ADMIN}/dsi.ora
+
+    if [ -f ${ORACLE_HOME}/ldap/admin/dsi.ora ]; then
+        mv ${ORACLE_HOME}/ldap/admin/dsi.ora ${TNS_ADMIN}/dsi.ora
+    fi
 
     # move toolbox config files
     cd ${ORACLE_LOCAL}/dba/etc/
