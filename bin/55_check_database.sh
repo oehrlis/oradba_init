@@ -30,7 +30,7 @@ source oraenv
 # - EOF Environment Variables -------------------------------------------
 
 # Check Oracle DB status and store it in status
-status=`sqlplus -s / as sysdba << EOF
+status=`$ORACLE_HOME/bin/sqlplus -s / as sysdba << EOF
    set heading off;
    set pagesize 0;
    SELECT open_mode FROM v\\$database;
