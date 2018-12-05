@@ -120,13 +120,12 @@ function move_files {
     mv ${ORACLE_HOME}/ldap/admin/dsi.ora ${TNS_ADMIN}/dsi.ora
 
     # move toolbox config files
+    cd ${ORACLE_LOCAL}/dba/etc/
     for i in basenv.conf orahometab sidtab sid.*.conf; do
         mv ${ORACLE_LOCAL}/dba/etc/${i} ${ORACLE_DATA}/etc/${i}
     done
+    cd -
 
-    # oracle user does not have permissions in /etc, hence cp and not mv
-    mv ${ORACLE_BASE}/etc/oratab ${ORACLE_DATA}/etc/oratab
-    
     # create softlinks
     sym_link_files;
 }
@@ -162,9 +161,6 @@ function sym_link_files {
         fi
     done
     cd -
-    # if [ ! -L ${ORACLE_BASE}/etc/oratab ]; then
-    #     ln -s -f ${ORACLE_DATA}/etc/oratab ${ORACLE_BASE}/etc/oratab
-    # fi
 }
 # - EOF Functions -------------------------------------------------------
 
