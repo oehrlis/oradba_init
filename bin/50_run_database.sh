@@ -39,6 +39,8 @@ export CONTAINER=${CONTAINER:-"false"}                      # Check whether CONT
 # Oracle Software, Patchs and common environment variables
 export ORACLE_LOCAL=${ORACLE_LOCAL:-${ORACLE_BASE}/local}
 export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
+
+export INSTANCE_INIT=${INSTANCE_INIT:-"${ORACLE_BASE}/admin/${ORACLE_SID}/scripts"}
 # - EOF Environment Variables -----------------------------------------------
 
 # - Functions -----------------------------------------------------------
@@ -232,7 +234,6 @@ trap term_db SIGTERM
 
 # Set SIGKILL handler
 trap kill_db SIGKILL
-
 # - EOF Initialization --------------------------------------------------
 
 # - Main ----------------------------------------------------------------
@@ -278,9 +279,11 @@ else
     
     # Move database operational files to oradata
     move_files
+fi
 
-    # Execute custom provided setup scripts
-    ${ORADBA_BIN}/${CONFIG_SCRIPT} ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/setup
+# set instant init location create folder if it does exists
+if [ ! -d "${INSTANCE_INIT}/startup" ]; then
+    INSTANCE_INIT="${ORACLE_BASE}/admin/${ORACLE_SID}/scripts"
 fi
 
 # Check whether database is up and running
@@ -290,7 +293,7 @@ if [ $? -eq 0 ]; then
     echo " - DATABASE ${ORACLE_SID} IS READY TO USE!"
     echo "---------------------------------------------------------------"
     # Execute custom provided startup scripts
-    ${ORADBA_BIN}/${CONFIG_SCRIPT} ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/startup
+    ${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/startup
 else
     echo "---------------------------------------------------------------"
     echo " - DATABASE SETUP FOR ${ORACLE_SID} WAS NOT SUCCESSFUL:"

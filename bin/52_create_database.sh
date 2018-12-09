@@ -52,6 +52,9 @@ export HOST=$(${HOSTNAME_BIN})
 export DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-$(hostname -d 2>/dev/null ||cat /etc/domainname ||echo "postgasse.org")}
 
 export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
+
+# default folder for DB instance init scripts
+export INSTANCE_INIT=${INSTANCE_INIT:-"${ORACLE_BASE}/admin/${ORACLE_SID}/scripts"}
 # - EOF Environment Variables -------------------------------------------
 
 # generate a password
@@ -79,6 +82,18 @@ else
     echo "------------------------------------------------------------------------"
 fi
 
+# set instant init location create folder if it does exists
+if [ -d "${INSTANCE_INIT}/create" ]; then
+    INSTANCE_INIT="${INSTANCE_INIT}/create"
+else
+    INSTANCE_INIT="${INSTANCE_INIT}/setup"
+fi
+
+# set instant init location create folder if it does exists
+if [ ! -d "${INSTANCE_INIT}/setup" ]; then
+    INSTANCE_INIT="${ORACLE_BASE}/admin/${ORACLE_SID}/scripts"
+fi
+
 # inform what's done next...
 echo "Create database instance ${ORACLE_SID} using:"
 echo "ORACLE_SID            : ${ORACLE_SID}"
@@ -90,6 +105,7 @@ echo "ORACLE_BASE           : ${ORACLE_BASE}"
 echo "ORACLE_DATA           : ${ORACLE_DATA}"
 echo "ORACLE_ARCH           : ${ORACLE_ARCH}"
 echo "CONTAINER             : ${CONTAINER}"
+echo "INSTANCE_INIT         : ${INSTANCE_INIT}"
 echo "RESPONSE              : ${ORADBA_RSP_FILE}"
 echo "TEMPLATE              : ${ORADBA_DBC_FILE}"
 echo "ORADBA_TEMPLATE_PREFIX: ${ORADBA_TEMPLATE_PREFIX}"
@@ -153,6 +169,9 @@ $ORACLE_HOME/bin/sqlplus / as sysdba << EOF
     ALTER SYSTEM SET local_listener='';
     exit;
 EOF
+
+# Execute custom provided setup scripts
+${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
 
 # remove passwords from response file
 sed -i -e "s|${ORACLE_PWD}|ORACLE_PASSWORD|g" ${ORADBA_RESPONSE}
