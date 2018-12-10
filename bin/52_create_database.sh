@@ -83,13 +83,6 @@ else
 fi
 
 # set instant init location create folder if it does exists
-if [ -d "${INSTANCE_INIT}/create" ]; then
-    INSTANCE_INIT="${INSTANCE_INIT}/create"
-else
-    INSTANCE_INIT="${INSTANCE_INIT}/setup"
-fi
-
-# set instant init location create folder if it does exists
 if [ ! -d "${INSTANCE_INIT}/setup" ]; then
     INSTANCE_INIT="${ORACLE_BASE}/admin/${ORACLE_SID}/scripts"
 fi
