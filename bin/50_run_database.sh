@@ -286,8 +286,14 @@ if [ ! -d "${INSTANCE_INIT}/startup" ]; then
     INSTANCE_INIT="${ORACLE_BASE}/admin/${ORACLE_SID}/scripts"
 fi
 
+# check if we have an oratab entry
+if [ $(grep -ic ${ORACLE_SID} /etc/oratab) -eq 0 ]; then
+    echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >${ORACLE_BASE}/etc/oratab
+fi
+
 # Check whether database is up and running
 ${ORADBA_BIN}/${CHECK_SCRIPT}
+
 if [ $? -eq 0 ]; then
     echo "---------------------------------------------------------------"
     echo " - DATABASE ${ORACLE_SID} IS READY TO USE!"

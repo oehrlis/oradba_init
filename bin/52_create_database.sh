@@ -178,4 +178,5 @@ MY_ORACLE_SID=${ORACLE_SID}
 
 sed -i "/$MY_ORACLE_SID/{s/;[0-9][0-9];/;10;/}" $ETC_BASE/sidtab
 echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >${ORACLE_BASE}/etc/oratab
+
 # --- EOF -------------------------------------------------------------------
