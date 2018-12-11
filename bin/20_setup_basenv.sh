@@ -90,11 +90,42 @@ if [ -n "${BASENV_PKG}" ]; then
 fi
 
 # - Configure custom basenv folders -----------------------------------------
-mkdir -p ${ORACLE_BASE}/local/oradba/bin
-mkdir -p ${ORACLE_BASE}/local/oradba/doc
-mkdir -p ${ORACLE_BASE}/local/oradba/etc
-mkdir -p ${ORACLE_BASE}/local/oradba/sql
-mkdir -p ${ORACLE_BASE}/local/oradba/rcv
+
+# define the oradba url and package name
+export GITHUB_URL="https://codeload.github.com/oehrlis/oradba/zip/master"
+export ORADBA_PKG="oradba.zip" 
+# - Get oradba init scripts -----------------------------------------------
+echo " - Get oradba scripts -------------------------------------------------"
+mkdir -p ${DOWNLOAD}                                    # create download folder
+curl -Lf ${GITHUB_URL} -o ${DOWNLOAD}/${ORADBA_PKG}
+
+# check if we do have an unzip command
+if [ ! -z $(command -v unzip) ]; then 
+    # unzip seems to be available
+    unzip -o ${DOWNLOAD}/${ORADBA_PKG} -d ${ORACLE_LOCAL}   # unzip scripts
+else 
+    # missing unzip fallback to a simple phyton script as python seems
+    # to be available on Docker image oraclelinx:7-slim
+    echo "no unzip available, fallback to python script"
+    echo "import zipfile" >${DOWNLOAD}/unzipfile.py
+    echo "with zipfile.ZipFile('${DOWNLOAD}/${ORADBA_PKG}', 'r') as z:" >>${DOWNLOAD}/unzipfile.py
+    echo "   z.extractall('${ORACLE_LOCAL}')">>${DOWNLOAD}/unzipfile.py
+    python ${DOWNLOAD}/unzipfile.py
+
+    # adjust file mods
+    find ${ORACLE_LOCAL} -type f -name *.sh -exec chmod 755 {} \;
+fi
+
+mv ${ORACLE_LOCAL}/oradba-master ${ORACLE_LOCAL}/oradba             # get rid of master folder
+mv ${ORACLE_LOCAL}/oradba/README.md ${ORACLE_LOCAL}/oradba/doc      # move documentation
+rm ${ORACLE_LOCAL}/oradba/.gitignore                                # remove gitignore
+rm -rf ${DOWNLOAD}                                                  # clean up
+
+mkdir -p ${ORACLE_LOCAL}/oradba/bin
+mkdir -p ${ORACLE_LOCAL}/oradba/doc
+mkdir -p ${ORACLE_LOCAL}/oradba/etc
+mkdir -p ${ORACLE_LOCAL}/oradba/sql
+mkdir -p ${ORACLE_LOCAL}/oradba/rcv
 
 # - Configure stuff for none Docker environment -----------------------------
 if ! running_in_docker; then
