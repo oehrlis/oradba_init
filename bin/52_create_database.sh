@@ -29,8 +29,11 @@ export ORACLE_SID=${1:-TDB183C}                 # Default name for Oracle databa
 export ORACLE_PDB=${2:-PDB1}                    # Check whether ORACLE_PDB is passed on
 export CONTAINER=${3:-"false"}                  # Check whether CONTAINER is passed on
 
-export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.3.0.0"}
-export ORACLE_HOME="${ORACLE_HOME:-${ORACLE_BASE}/product/${ORACLE_HOME_NAME}}"
+export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.4.0.0"}
+export ORACLE_BASE=${ORACLE_BASE:-"/u00/app/oracle"}
+export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product/ -name sqlplus -type f|sort|tail -1)))}
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-"${ORACLE_HOME}/lib:/usr/lib"}
+    
 export ORACLE_VERSION="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release\|Version'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
 export ORACLE_RELEASE="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
 
