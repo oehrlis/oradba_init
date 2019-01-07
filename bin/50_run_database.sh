@@ -126,7 +126,7 @@ function move_files {
 
     # move toolbox config files
     cd ${ORACLE_LOCAL}/dba/etc/
-    for i in basenv.conf orahometab sidtab sid.*.conf; do
+    for i in basenv.conf orahometab sidtab sid.${ORACLE_SID}.conf; do
         mv ${ORACLE_LOCAL}/dba/etc/${i} ${ORACLE_DATA}/etc/${i}
     done
     cd -
@@ -160,7 +160,7 @@ function sym_link_files {
 
     # create softlinks for toolbox configuration
     cd ${ORACLE_LOCAL}/dba/etc/
-    for i in basenv.conf orahometab sidtab sid.*.conf; do
+    for i in basenv.conf orahometab sidtab sid.${ORACLE_SID}.conf; do
         if [ ! -L ${ORACLE_LOCAL}/dba/etc/${i} ]; then
             ln -s -f ${ORACLE_DATA}/etc/${i} ${ORACLE_LOCAL}/dba/etc/${i}
         fi
