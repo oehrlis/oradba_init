@@ -122,7 +122,6 @@ rm ${ORACLE_LOCAL}/oradba/.gitignore                                # remove git
 rm -rf ${DOWNLOAD}                                                  # clean up
 
 mkdir -p ${ORACLE_LOCAL}/oradba/bin
-mkdir -p ${ORACLE_LOCAL}/oradba/doc
 mkdir -p ${ORACLE_LOCAL}/oradba/etc
 mkdir -p ${ORACLE_LOCAL}/oradba/sql
 mkdir -p ${ORACLE_LOCAL}/oradba/rcv
