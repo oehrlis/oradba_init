@@ -26,8 +26,8 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 export DB_BASE_PKG=${DB_BASE_PKG:-"linuxamd64_12102_database_1of2.zip"}
 export DB_BASE2_PKG=${DB_BASE2_PKG:-"linuxamd64_12102_database_2of2.zip"}
 export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-""}
-export DB_PATCH_PKG=${DB_PATCH_PKG:-"p28259833_121020_Linux-x86-64.zip"}
-export DB_OJVM_PKG=${DB_OJVM_PKG:-"p28440711_121020_Linux-x86-64.zip"}
+export DB_PATCH_PKG=${DB_PATCH_PKG:-"p28729169_121020_Linux-x86-64.zip"}
+export DB_OJVM_PKG=${DB_OJVM_PKG:-"p28790654_121020_Linux-x86-64.zip"}
 export DB_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_121010_Linux-x86-64.zip"}
 export RESPONSFILE_VERSION=${RESPONSFILE_VERSION:-"oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v12.1.0"}
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"12.1.0.2"}
