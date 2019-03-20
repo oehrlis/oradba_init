@@ -93,6 +93,13 @@ echo "%_install_langs   en" >>/etc/rpm/macros.lang
 # upgrade the installation
 yum upgrade -y
 
+# check for legacy yum upgrade
+if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
+    echo "found /usr/bin/ol_yum_configure.sh "
+    /usr/bin/ol_yum_configure.sh
+    yum upgrade -y
+fi
+
 # install basic utilities
 yum install -y libaio gzip tar zip unzip
 
