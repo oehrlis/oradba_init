@@ -23,7 +23,7 @@
 # - Set default values for environment variables if not yet defined. 
 # ---------------------------------------------------------------------------
 
-export ORACLE_SID=$(grep $ORACLE_HOME /etc/oratab | cut -d: -f1|head -1)
+export ORACLE_SID=$(grep $ORACLE_HOME /etc/oratab | grep -iv '^#' |cut -d: -f1|head -1)
 export POSITIVE_RETURN="READ WRITE"
 export ORAENV_ASK=NO
 . oraenv
