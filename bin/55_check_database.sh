@@ -23,10 +23,10 @@
 # - Set default values for environment variables if not yet defined. 
 # ---------------------------------------------------------------------------
 
-ORACLE_SID=$(grep $ORACLE_HOME /etc/oratab | cut -d: -f1)
-POSITIVE_RETURN="READ WRITE"
-ORAENV_ASK=NO
-source oraenv
+export ORACLE_SID=$(grep $ORACLE_HOME /etc/oratab | cut -d: -f1|head -1)
+export POSITIVE_RETURN="READ WRITE"
+export ORAENV_ASK=NO
+. oraenv
 # - EOF Environment Variables -------------------------------------------
 
 # Check Oracle DB status and store it in status
