@@ -62,7 +62,8 @@ for i in admin backup etc instances domains log scripts; do
     mkdir -v -p ${ORACLE_DATA}/${i}
 done
 mkdir -v -p ${OUD_INSTANCE_ADMIN}/etc
-
+mkdir -v -p ${OUD_INSTANCE_ADMIN}/create
+cp ${ORADBA_BIN}/${CREATE_SCRIPT_PYTHON} ${OUD_INSTANCE_ADMIN}/create/${CREATE_SCRIPT_PYTHON}
 # create oudtab file for OUD Base
 OUDTAB=${ORACLE_DATA}/etc/oudtab
 echo "${DOMAIN_NAME}:${PORT}:${PORT_SSL}:::OUDSM" >>${OUDTAB}
@@ -88,7 +89,7 @@ else
     echo "    ----> 'weblogic' admin password: $s"
     echo "---------------------------------------------------------------"
 fi 
-sed -i -e "s|ADMIN_PASSWORD|$s|g" ${ORADBA_BIN}/${CREATE_SCRIPT_PYTHON}
+sed -i -e "s|ADMIN_PASSWORD|$s|g" ${OUD_INSTANCE_ADMIN}/create/${CREATE_SCRIPT_PYTHON}
 
 echo "--- Create WebLogic Server Domain (${DOMAIN_NAME}) -----------------------------"
 echo "  DOMAIN_NAME=${DOMAIN_NAME}"
@@ -99,7 +100,7 @@ echo "  ADMIN_USER=${ADMIN_USER}"
 
 # Create an empty domain
 ${ORACLE_BASE}/product/fmw12.2.1.3.0/oracle_common/common/bin/wlst.sh \
-    -skipWLSModuleScanning ${ORADBA_BIN}/${CREATE_SCRIPT_PYTHON}
+    -skipWLSModuleScanning ${OUD_INSTANCE_ADMIN}/create/${CREATE_SCRIPT_PYTHON}
 
 if [ $? -eq 0 ]; then
     echo "--- Successfully created WebLogic Server Domain (${DOMAIN_NAME}) --------------"
