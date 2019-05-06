@@ -19,29 +19,43 @@ A few hints and rules for using the scripts:
 
 Scripts are located in the *bin* folder.
 
-| Script                                                 | Runas  | Description                                                                             |
-| ------------------------------------------------------ | ------ | --------------------------------------------------------------------------------------- |
-| [00_setup_oradba_init.sh](bin/00_setup_oradba_init.sh) | root   | Script to initialize and install oradba init scripts.                                   |
-| [01_setup_os_db.sh](bin/01_setup_os_db.sh)             | root   | Script to configure Oracle Enterprise Linux for Oracle Database installations.          |
-| [01_setup_os_java.sh](bin/01_setup_os_java.sh)         | root   | Script to install Oracle server jre.                                                    |
-| [01_setup_os_oud.sh](bin/01_setup_os_oud.sh)           | root   | Script to configure Oracle Enterprise Linux for Oracle Unified Directory installations. |
-| [10_setup_db.sh](bin/10_setup_db.sh)                   | oracle | Generic script to install Oracle databases binaries                                     |
-| [10_setup_db_11.2.sh](bin/10_setup_db_11.2.sh)         | oracle | Wrapper script to install Oracle 11.2.0.4 databases binaries                            |
-| [10_setup_db_12.1.sh](bin/10_setup_db_12.1.sh)         | oracle | Wrapper script to install Oracle 12.1.0.2 databases binaries                            |
-| [10_setup_db_12.2.sh](bin/10_setup_db_12.2.sh)         | oracle | Wrapper script to install Oracle 12.2.0.1 databases binaries                            |
-| [10_setup_db_18.3.sh](bin/10_setup_db_18.3.sh)         | oracle | Wrapper script to install Oracle 18.3.0.0 databases binaries                            |
-| [10_setup_oud_11g.sh](bin/10_setup_oud_11g.sh)         | oracle | Script to install Oracle Unified Directory 11g                                          |
-| [10_setup_oud_12c.sh](bin/10_setup_oud_12c.sh)         | oracle | Script to install Oracle Unified Directory 12c                                          |
-| [10_setup_oudsm_12c.sh](bin/10_setup_oudsm_12c.sh)     | oracle | Script to install Oracle Unified Directory Service Manager 12c                          |
-| [11_setup_db_patch.sh](bin/11_setup_db_patch.sh)       | oracle | Script to patch Oracle Database binaries. If necessary called by *10_setup_db.sh* |
-| [11_setup_oud_patch.sh](bin/11_setup_oud_patch.sh)     | oracle | Script to patch Oracle Unified Directory binaries. If necessary called by *10_setup_oud_xx.sh* |
-| [20_setup_basenv.sh](bin/20_setup_basenv.sh)           | oracle | Script to setup and configure TVD-Basenv                                                |
-| [20_setup_oudbase.sh](bin/20_setup_oudbase.sh)         | oracle | Script to setup and configure OUD Base                                                  |
-| [50_run_database.sh](bin/50_run_database.sh)           | oracle | Script to run an Oracle database (Docker). If necessary the script will create a new database |
-| [50_start_database.sh](bin/50_start_database.sh)       | oracle | Script to start an Oracle database (Docker)                                                   |
-| [52_create_database.sh](bin/52_create_database.sh)     | oracle | Script to create a database                                                  |
-| [55_check_database.sh](bin/55_check_database.sh)       | oracle | Script to check an Oracle database (Docker)                                                  |
-| [55_config_database.sh](bin/55_config_database.sh)     | oracle | Script to setup an Oracle database (Docker)                                                  |
+| Script                                                     | Runas  | Description                                                                                    |
+|------------------------------------------------------------|--------|------------------------------------------------------------------------------------------------|
+| [00_setup_oradba_init.sh](bin/00_setup_oradba_init.sh)     | root   | Script to initialize and install oradba init scripts.                                          |
+| [01_setup_os_db.sh](bin/01_setup_os_db.sh)                 | root   | Script to configure Oracle Enterprise Linux for Oracle Database installations.                 |
+| [01_setup_os_java.sh](bin/01_setup_os_java.sh)             | root   | Script to install Oracle server jre.                                                           |
+| [01_setup_os_oud.sh](bin/01_setup_os_oud.sh)               | root   | Script to configure Oracle Enterprise Linux for Oracle Unified Directory installations.        |
+| [10_setup_db.sh](bin/10_setup_db.sh)                       | oracle | Generic script to install Oracle databases binaries                                            |
+| [10_setup_db_11.2.sh](bin/10_setup_db_11.2.sh)             | oracle | Wrapper script to install Oracle Enterprise Edition 11.2.0.4 with PSU January 2019             |
+| [10_setup_db_12.1.sh](bin/10_setup_db_12.1.sh)             | oracle | Wrapper script to install Oracle Enterprise Edition 12.1.0.2 with PSU April 2019               |
+| [10_setup_db_12.2.sh](bin/10_setup_db_12.2.sh)             | oracle | Wrapper script to install Oracle Enterprise Edition 12.2.0.1 with RU April 2019                |
+| [10_setup_db_18.3.sh](bin/10_setup_db_18.3.sh)             | oracle | Wrapper script to install Oracle Enterprise Edition 18.3.0.0 initial 18c on-premises release   |
+| [10_setup_db_18.4.sh](bin/10_setup_db_18.4.sh)             | oracle | Wrapper script to install Oracle Enterprise Edition 18.4.0.0 18c with RU October 2019          |
+| [10_setup_db_18.5.sh](bin/10_setup_db_18.5.sh)             | oracle | Wrapper script to install Oracle Enterprise Edition 18.5.0.0 18c with RU January 2019          |
+| [10_setup_db_18.6.sh](bin/10_setup_db_18.6.sh)             | oracle | Wrapper script to install Oracle Enterprise Edition 18.6.0.0 18c with RU April 2019            |
+| [10_setup_db_19.2.sh](bin/10_setup_db_19.2.sh)             | oracle | Wrapper script to install Oracle Enterprise Edition 19.2.0.0 initial 19c ExaData release       |
+| [10_setup_db_19.3.sh](bin/10_setup_db_19.3.sh)             | oracle | Wrapper script to install Oracle Enterprise Edition 19.3.0.0 initial 19c on-premises release   |
+| [10_setup_oud_11g.sh](bin/10_setup_oud_11g.sh)             | oracle | Script to install Oracle Unified Directory 11g                                                 |
+| [10_setup_oud_12c.sh](bin/10_setup_oud_12c.sh)             | oracle | Script to install Oracle Unified Directory 12c                                                 |
+| [10_setup_oudsm_12c.sh](bin/10_setup_oudsm_12c.sh)         | oracle | Script to install Oracle Unified Directory Service Manager 12c                                 |
+| [11_setup_db_patch.sh](bin/11_setup_db_patch.sh)           | oracle | Script to patch Oracle Database binaries. If necessary called by *10_setup_db.sh*              |
+| [11_setup_oud_patch.sh](bin/11_setup_oud_patch.sh)         | oracle | Script to patch Oracle Unified Directory binaries. If necessary called by *10_setup_oud_xx.sh* |
+| [20_setup_basenv.sh](bin/20_setup_basenv.sh)               | oracle | Script to setup and configure TVD-Basenv                                                       |
+| [20_setup_oudbase.sh](bin/20_setup_oudbase.sh)             | oracle | Script to setup and configure OUD Base                                                         |
+| [50_run_database.sh](bin/50_run_database.sh)               | oracle | Script to run an Oracle database (Docker). If necessary the script will create a new database  |
+| [51_start_database.sh](bin/51_start_database.sh)           | oracle | Script to start an Oracle database (Docker)                                                    |
+| [52_create_database.sh](bin/52_create_database.sh)         | oracle | Script to create a database                                                                    |
+| [53_config_database.sh](bin/53_config_database.sh)         | oracle | Script to setup an Oracle database (Docker)                                                    |
+| [54_check_database.sh](bin/54_check_database.sh)           | oracle | Script to check an Oracle database (Docker)                                                    |
+| [60_start_oud_instance.sh](bin/60_start_oud_instance.sh)   | oracle | Script to start an Oracle Unified Directory instance (Docker)                                  |
+| [62_create_oud_instance.sh](bin/62_create_oud_instance.sh) | oracle | Script to create an Oracle Unified Directory instance (Docker)                                 |
+| [63_config_oud_instance.sh](bin/63_config_oud_instance.sh) | oracle | Script to configure an Oracle Unified Directory instance (Docker)                              |
+| [64_check_oud_instance.sh](bin/64_check_oud_instance.sh)   | oracle | Script to check an Oracle Unified Directory instance (Docker)                                  |
+| [70_start_oudsm_domain.sh](bin/70_start_oudsm_domain.sh)   | oracle | Script to start an Oracle Unified Directory Services Manager console (Docker)                  |
+| [72_create_oudsm_domain.sh](bin/72_create_oudsm_domain.sh) | oracle | Script to create an Oracle Unified Directory Services Manager console (Docker)                 |
+| [72_create_oudsm_domain.py](bin/72_create_oudsm_domain.py) | oracle | Python script to create an Oracle Unified Directory Services Manager console (Docker)          |
+| [74_check_oudsm_console.sh](bin/74_check_oudsm_console.sh) | oracle | Script to check an Oracle Unified Directory Services Manager console (Docker)                  |
+| [80_setPassword.sh](bin/80_setPassword.sh)                 | oracle | Script to reset passwords (Docker)                                                             |
 
 ## Response Files
 
@@ -50,11 +64,23 @@ Response files are located in the *rsp* folder.
 | Response file                                                    | Description                                            |
 | ---------------------------------------------------------------- | ------------------------------------------------------ |
 | [base_install.rsp.tmpl](rsp/base_install.rsp.tmpl)               | Response file for Trivadis BasEnv installation         |
+| [custom_dbca11.2.0.dbc.tmpl](rsp/custom_dbca11.2.0.dbc.tmpl)     | Custom template file for DB creation assistant (dbca) for 11.2.0 |
+| [custom_dbca12.1.0.dbc.tmpl](rsp/custom_dbca12.1.0.dbc.tmpl)     | Custom template file for DB creation assistant (dbca) for 12.1.0 |
+| [custom_dbca12.2.0.dbc.tmpl](rsp/custom_dbca12.2.0.dbc.tmpl)     | Custom template file for DB creation assistant (dbca) for 12.2.0 |
+| [custom_dbca18.0.0.dbc.tmpl](rsp/custom_dbca18.0.0.dbc.tmpl)     | Custom template file for DB creation assistant (dbca) for 18.0.0 |
+| [custom_dbca19.0.0.dbc.tmpl](rsp/custom_dbca19.0.0.dbc.tmpl)     | Custom template file for DB creation assistant (dbca) for 19.0.0 |
 | [db_install.rsp.tmpl](rsp/db_install.rsp.tmpl)                   | Response file for Oracle database binary installations |
 | [dbca.dbc.tmpl](rsp/dbca.dbc.tmpl)                               | Generic DB creation assistant (dbca) for 11.2, 12.1, 12.2 and 18c |
-| [dbca.rsp.tmpl](rsp/dbca.rsp.tmpl)                               | Response file for DB creation assistant (dbca) for 12.2 and 18c |
 | [dbca11.2.0.rsp.tmpl](rsp/dbca11.2.0.rsp.tmpl)                   | Response file for DB creation assistant (dbca) for 11.2.0 |
+| [dbca11.2.0.dbc.tmpl](rsp/dbca11.2.0.dbc.tmpl)                   | Template file for DB creation assistant (dbca) for 11.2.0 |
 | [dbca12.1.0.rsp.tmpl](rsp/dbca12.1.0.rsp.tmpl)                   | Response file for DB creation assistant (dbca) for 12.1.0 |
+| [dbca12.1.0.dbc.tmpl](rsp/dbca12.1.0.dbc.tmpl)                   | Template file for DB creation assistant (dbca) for 12.1.0 |
+| [dbca12.2.0.rsp.tmpl](rsp/dbca12.2.0.rsp.tmpl)                   | Response file for DB creation assistant (dbca) for 12.2.0 |
+| [dbca12.2.0.dbc.tmpl](rsp/dbca12.2.0.dbc.tmpl)                   | Template file for DB creation assistant (dbca) for 12.2.0 |
+| [dbca18.0.0.rsp.tmpl](rsp/dbca18.0.0.rsp.tmpl)                   | Response file for DB creation assistant (dbca) for 18.0.0 |
+| [dbca18.0.0.dbc.tmpl](rsp/dbca18.0.0.dbc.tmpl)                   | Template file for DB creation assistant (dbca) for 18.0.0 |
+| [dbca19.0.0.rsp.tmpl](rsp/dbca19.0.0.rsp.tmpl)                   | Response file for DB creation assistant (dbca) for 19.0.0 |
+| [dbca19.0.0.dbc.tmpl](rsp/dbca19.0.0.dbc.tmpl)                   | template file for DB creation assistant (dbca) for 19.0.0 |
 | [ocm.rsp.tmpl](rsp/ocm.rsp.tmpl)                                 | Generic response file OPatch / Oracle Configuration Manager |
 | [oud_install.rsp.tmpl](rsp/oud_install.rsp.tmpl)                 | Generic response file for OUD and OUDSM installations  |
 | [db_examples_install.rsp.tmpl](rsp/db_examples_install.rsp.tmpl) | Response file for Oracle example installations         |
@@ -112,6 +138,9 @@ To setup a database server you have to run the following scripts
 * execute *3x_setup_xxx.sh* to create a database 
 * execute *4x_setup_xxx.sh* to configure your database
 
+Define the package variables for 18.4.0.0
+
+```bash
 export DB_BASE_PKG="LINUX.X64_180000_db_home.zip"
 export DB_EXAMPLE_PKG="LINUX.X64_180000_examples.zip"
 export DB_PATCH_PKG="p28655784_180000_Linux-x86-64.zip"
@@ -119,7 +148,11 @@ export DB_OJVM_PKG="p28502229_180000_Linux-x86-64.zip"
 export DB_OPATCH_PKG="p6880880_180000_Linux-x86-64.zip"
 export ORACLE_HOME_NAME="18.4.0.0"
 export ORACLE_HOME="/u00/app/oracle/product/${ORACLE_HOME_NAME}"
+```
 
+Define the package variables for 12.2.0.1
+
+```bash
 export DB_BASE_PKG="linuxx64_12201_database.zip"
 export DB_EXAMPLE_PKG="linuxx64_12201_examples.zip"
 export DB_PATCH_PKG="p28662603_122010_Linux-x86-64.zip"
@@ -128,11 +161,14 @@ export DB_OPATCH_PKG="p6880880_122010_Linux-x86-64.zip"
 export ORACLE_HOME_NAME="12.2.0.1"
 export ORACLE_HOME="/u00/app/oracle/product/${ORACLE_HOME_NAME}"
 /opt/oradba/bin/10_setup_db_12.2.sh
+```
+
+Setup the environment and install 18c and 12.2.
 
 ```bash
 /opt/oradba/bin/01_setup_os_db.sh
 su - oracle
-/opt/oradba/bin/10_setup_db_18.3.sh
+/opt/oradba/bin/10_setup_db_18.4.sh
 /opt/oradba/bin/10_setup_db_12.2.sh
 /opt/oradba/bin/20_setup_basenv.sh
 ```
@@ -178,17 +214,3 @@ yum -y erase oracle-rdbms-server-11gR2-preinstall \
 ## Customization
 
 tbd
-
-## Todo
-
-* db create scripts
-    * enable unified audit
-    * setup links for network stuff
-    * create scripts
-    * create training folder
-    * test kerberos
-* oudbase issue bash profile update
-* Windows AD
-    * putty config 
-    * putty agent auto start
-    * 
