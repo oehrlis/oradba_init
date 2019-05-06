@@ -29,7 +29,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-export CREATE_SCRIPT_PYTHON="72_create_oudsm_domain.py"
+export CREATE_SCRIPT_PYTHON=${CREATE_SCRIPT_PYTHON:-"72_create_oudsm_domain.py"}
 # - EOF Script Variables ----------------------------------------------------
 
 # - Environment Variables ---------------------------------------------------

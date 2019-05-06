@@ -47,8 +47,8 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-export CREATE_SCRIPT="62_create_oud_instance.sh"
-export CHECK_SCRIPT="64_check_oud_instance.sh"
+export CREATE_SCRIPT=${CREATE_SCRIPT:-"62_create_oud_instance.sh"}
+export CHECK_SCRIPT=${CHECK_SCRIPT:-"64_check_oud_instance.sh"}
 # - EOF Script Variables ----------------------------------------------------
 
 # ---------------------------------------------------------------------------
