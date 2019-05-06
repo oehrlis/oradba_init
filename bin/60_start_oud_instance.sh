@@ -45,10 +45,10 @@ export OUD_INSTANCE_HOME=${OUD_INSTANCE_BASE}/${OUD_INSTANCE}
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define oradba specific variables
-export ORADBA_BIN       = "$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
-export ORADBA_BASE      = "$(dirname ${ORADBA_BIN})"
-export CREATE_SCRIPT    = "62_create_oud_instance.sh"
-export CHECK_SCRIPT     = "64_check_oud_instance.sh"
+export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
+export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
+export CREATE_SCRIPT="62_create_oud_instance.sh"
+export CHECK_SCRIPT="64_check_oud_instance.sh"
 # - EOF Script Variables ----------------------------------------------------
 
 # ---------------------------------------------------------------------------

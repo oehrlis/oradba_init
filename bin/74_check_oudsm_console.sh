@@ -28,8 +28,8 @@
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define oradba specific variables
-export ORADBA_BIN           = "$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
-export ORADBA_BASE          = "$(dirname ${ORADBA_BIN})"
+export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
+export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 # - EOF Script Variables ----------------------------------------------------
 
 # - Environment Variables ---------------------------------------------------

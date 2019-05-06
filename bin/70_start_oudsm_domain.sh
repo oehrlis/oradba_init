@@ -47,9 +47,9 @@ export DOMAIN_HOME=${OUDSM_DOMAIN_BASE}/${DOMAIN_NAME}
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define oradba specific variables
-export ORADBA_BIN           = "$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
-export ORADBA_BASE          = "$(dirname ${ORADBA_BIN})"
-export CREATE_SCRIPT        = "72_create_oudsm_domain.sh"
+export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
+export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
+export CREATE_SCRIPT="72_create_oudsm_domain.sh"
 # - EOF Script Variables ----------------------------------------------------
 
 # ---------------------------------------------------------------------------
