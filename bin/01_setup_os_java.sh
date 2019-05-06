@@ -38,7 +38,7 @@ export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 # - EOF Environment Variables -----------------------------------------------
 
 # - Install database binaries -----------------------------------------------
-echo " - Oracle Java 1.8 -----------------------------------------"
+echo " - Oracle Java  -----------------------------------------"
 if [ -n "${JAVA_PKG}" ]; then
     if get_software "${JAVA_PKG}"; then          # Check and get binaries
         mkdir -p  ${JAVA_BASE}
@@ -48,12 +48,12 @@ if [ -n "${JAVA_PKG}" ]; then
         # remove files on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${JAVA_PKG}
         # set alternative stuff
-        # export JAVA_DIR=$(ls -1 -d /usr/java/*) && \
-        # ln -s $JAVA_DIR /usr/java/latest && \
-        # ln -s $JAVA_DIR /usr/java/default && \
-        # alternatives --install /usr/bin/java java $JAVA_DIR/bin/java 20000 && \
-        # alternatives --install /usr/bin/javac javac $JAVA_DIR/bin/javac 20000 && \
-        # alternatives --install /usr/bin/jar jar $JAVA_DIR/bin/jar 20000
+        export JAVA_DIR=$(ls -1 -d /usr/java/*) && \
+        ln -s $JAVA_DIR /usr/java/latest && \
+        ln -s $JAVA_DIR /usr/java/default && \
+        alternatives --install /usr/bin/java java $JAVA_DIR/bin/java 20000 && \
+        alternatives --install /usr/bin/javac javac $JAVA_DIR/bin/javac 20000 && \
+        alternatives --install /usr/bin/jar jar $JAVA_DIR/bin/jar 20000
     else
         echo "ERROR:   No base software package specified. Abort installation."
         exit 1
