@@ -43,6 +43,12 @@ export OUD_INSTANCE_ADMIN=${OUD_INSTANCE_ADMIN:-${ORACLE_DATA}/admin/${OUD_INSTA
 export OUD_INSTANCE_BASE=${OUD_INSTANCE_BASE:-"$ORACLE_DATA/instances"}
 export OUD_INSTANCE_HOME=${OUD_INSTANCE_HOME:-"${OUD_INSTANCE_BASE}/${OUD_INSTANCE}"}
 
+# set the OUD major version default is 12
+export OUD_VERSION=${OUD_VERSION:-"12"}
+
+# OUD 11g instance name and home path for installation
+export INSTANCE_NAME=${INSTANCE_NAME:-"../../../../..${OUD_INSTANCE_HOME}"}
+
 # Default values for host and ports
 export HOST=$(hostname 2>/dev/null ||cat /etc/hostname ||echo $HOSTNAME)   # Hostname
 export PORT=${PORT:-1389}                               # Default LDAP port
@@ -174,28 +180,49 @@ if  [ ${OUD_CUSTOM} -eq 1 ]; then
     echo "--- Create OUD instance (${OUD_INSTANCE}) using custom scripts ---------"
     ${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
 elif [ ${OUD_PROXY} -eq 0 ]; then
-# Create an directory
-    echo "--- Create regular OUD instance (${OUD_INSTANCE}) ----------------------"
-    ${ORACLE_BASE}/product/${ORACLE_HOME_NAME}/oud/oud-setup \
-        --cli \
-        --instancePath "${OUD_INSTANCE_HOME}/OUD" \
-        --rootUserDN "${ADMIN_USER}" \
-        --rootUserPasswordFile "${OUD_INSTANCE_ADMIN}/etc/${OUD_INSTANCE}_pwd.txt" \
-        --adminConnectorPort ${PORT_ADMIN} \
-        --httpAdminConnectorPort ${PORT_ADMIN_HTTP} \
-        --ldapPort ${PORT} \
-        --httpPort ${PORT_HTTP} \
-        --ldapsPort ${PORT_SSL} \
-        --httpsPort ${PORT_HTTPS} \
-        --generateSelfSignedCertificate \
-        --enableStartTLS \
-        --hostname ${HOST} \
-        --baseDN "${BASEDN}" \
-        ${DIRECTORY_DATA} \
-        --serverTuning jvm-default \
-        --offlineToolsTuning autotune \
-        --no-prompt \
-        --noPropertiesFile
+# Create an OUD directory
+    if [ ${OUD_VERSION} == "12" ]; then
+        echo "--- Create regular OUD 12c instance (${OUD_INSTANCE}) ----------------------"
+        # Create an OUD 12c directory
+        ${ORACLE_BASE}/product/${ORACLE_HOME_NAME}/oud/oud-setup \
+            --cli \
+            --instancePath "${OUD_INSTANCE_HOME}/OUD" \
+            --rootUserDN "${ADMIN_USER}" \
+            --rootUserPasswordFile "${OUD_INSTANCE_ADMIN}/etc/${OUD_INSTANCE}_pwd.txt" \
+            --adminConnectorPort ${PORT_ADMIN} \
+            --httpAdminConnectorPort ${PORT_ADMIN_HTTP} \
+            --ldapPort ${PORT} \
+            --httpPort ${PORT_HTTP} \
+            --ldapsPort ${PORT_SSL} \
+            --httpsPort ${PORT_HTTPS} \
+            --generateSelfSignedCertificate \
+            --enableStartTLS \
+            --hostname ${HOST} \
+            --baseDN "${BASEDN}" \
+            ${DIRECTORY_DATA} \
+            --serverTuning jvm-default \
+            --offlineToolsTuning autotune \
+            --no-prompt \
+            --noPropertiesFile
+    else
+        echo "--- Create regular OUD 11g instance (${OUD_INSTANCE}) ----------------------"
+        # Create an OUD 11g directory
+        ${ORACLE_BASE}/product/${ORACLE_HOME_NAME}/oud-setup \
+            --cli \
+            --rootUserDN "${ADMIN_USER}" \
+            --rootUserPasswordFile "${OUD_INSTANCE_ADMIN}/etc/${OUD_INSTANCE}_pwd.txt" \
+            --adminConnectorPort ${PORT_ADMIN} \
+            --ldapPort ${PORT} \
+            --ldapsPort ${PORT_SSL} \
+            --generateSelfSignedCertificate \
+            --enableStartTLS \
+            --baseDN "${BASEDN}" \
+            ${DIRECTORY_DATA} \
+            --serverTuning jvm-default \
+            --offlineToolsTuning autotune \
+            --no-prompt \
+            --noPropertiesFile
+    fi
     if [ $? -eq 0 ]; then
         echo "--- Successfully created regular OUD instance (${OUD_INSTANCE}) --------"
         # Execute custom provided setup scripts
@@ -205,23 +232,41 @@ elif [ ${OUD_PROXY} -eq 0 ]; then
         exit 1
     fi
 elif [ ${OUD_PROXY} -eq 1 ]; then
-    echo "--- Create OUD proxy instance (${OUD_INSTANCE}) ------------------------"
-    ${ORACLE_BASE}/product/${ORACLE_HOME_NAME}/oud/oud-proxy-setup \
-        --cli \
-        --instancePath "${OUD_INSTANCE_HOME}/OUD" \
-        --rootUserDN "${ADMIN_USER}" \
-        --rootUserPasswordFile "${OUD_INSTANCE_ADMIN}/etc/${OUD_INSTANCE}_pwd.txt" \
-        --adminConnectorPort ${PORT_ADMIN} \
-        --httpAdminConnectorPort ${PORT_ADMIN_HTTP} \
-        --ldapPort ${PORT} \
-        --httpPort ${PORT_HTTP} \
-        --ldapsPort ${PORT_SSL} \
-        --httpsPort ${PORT_HTTPS} \
-        --generateSelfSignedCertificate \
-        --enableStartTLS \
-        --hostname ${HOST} \
-        --no-prompt \
-        --noPropertiesFile
+# Create an OUD proxy server
+    if [ ${OUD_VERSION} == "12" ]; then
+        echo "--- Create regular OUD 12c proxy instance (${OUD_INSTANCE}) ----------------------"
+        # Create an OUD 12c proxy server
+        ${ORACLE_BASE}/product/${ORACLE_HOME_NAME}/oud/oud-proxy-setup \
+            --cli \
+            --instancePath "${OUD_INSTANCE_HOME}/OUD" \
+            --rootUserDN "${ADMIN_USER}" \
+            --rootUserPasswordFile "${OUD_INSTANCE_ADMIN}/etc/${OUD_INSTANCE}_pwd.txt" \
+            --adminConnectorPort ${PORT_ADMIN} \
+            --httpAdminConnectorPort ${PORT_ADMIN_HTTP} \
+            --ldapPort ${PORT} \
+            --httpPort ${PORT_HTTP} \
+            --ldapsPort ${PORT_SSL} \
+            --httpsPort ${PORT_HTTPS} \
+            --generateSelfSignedCertificate \
+            --enableStartTLS \
+            --hostname ${HOST} \
+            --no-prompt \
+            --noPropertiesFile
+    else
+        echo "--- Create regular OUD 11c proxy instance (${OUD_INSTANCE}) ----------------------"
+        # Create an OUD 11c proxy server
+        ${ORACLE_BASE}/product/${ORACLE_HOME_NAME}/oud-proxy-setup \
+            --cli \
+            --rootUserDN "${ADMIN_USER}" \
+            --rootUserPasswordFile "${OUD_INSTANCE_ADMIN}/etc/${OUD_INSTANCE}_pwd.txt" \
+            --adminConnectorPort ${PORT_ADMIN} \
+            --ldapPort ${PORT} \
+            --ldapsPort ${PORT_SSL} \
+            --generateSelfSignedCertificate \
+            --enableStartTLS \
+            --no-prompt \
+            --noPropertiesFile
+    fi
     if [ $? -eq 0 ]; then
         echo "--- Successfully created OUD proxy instance (${OUD_INSTANCE}) ----------"
         # Execute custom provided setup scripts
