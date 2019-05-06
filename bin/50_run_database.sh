@@ -19,7 +19,10 @@
 # see git revision history for more information on changes/updates
 # ---------------------------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Script Variables --------------------------------------------------------
+# - Set script names for miscellaneous start, check and config scripts.
+# ---------------------------------------------------------------------------
+# Default name for OUD instance
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -27,6 +30,11 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
+export START_SCRIPT=${START_SCRIPT:-"51_start_database.sh"}
+export CREATE_SCRIPT=${CREATE_SCRIPT:-"52_create_database.sh"}
+export CONFIG_SCRIPT=${CONFIG_SCRIPT:-"53_config_database.sh"}
+export CHECK_SCRIPT=${CHECK_SCRIPT:-"54_check_database.sh"}
+# - EOF Script Variables ----------------------------------------------------
 
 # ---------------------------------------------------------------------------
 # Default name for OUD instance
@@ -261,7 +269,7 @@ if [ -d ${ORACLE_DATA}/oradata/${ORACLE_SID} ]; then
         mkdir -p ${ORACLE_BASE}/admin/${ORACLE_SID}/adump
     fi
    
-    # Start database
+    # Start database 
     ${ORADBA_BIN}/${START_SCRIPT}
 else
     # Remove database config files, if they exist
@@ -274,7 +282,7 @@ else
     # check and move config directories
     move_directories
 
-    # Create database
+    # Create database 
     ${ORADBA_BIN}/${CREATE_SCRIPT} ${ORACLE_SID} ${ORACLE_PDB} ${CONTAINER}
     
     # Move database operational files to oradata
