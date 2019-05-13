@@ -99,21 +99,23 @@ running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 # limit installation language / locals to EN
 echo "%_install_langs   en" >>/etc/rpm/macros.lang
 
+# workaround for issue #131 https://github.com/oracle/vagrant-boxes/issues/131
+YUM="yum --disablerepo=ol7_developer"
 # upgrade the installation
-yum upgrade -y
+${YUM} upgrade -y
 
 # check for legacy yum upgrade
 if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
     echo "found /usr/bin/ol_yum_configure.sh "
     /usr/bin/ol_yum_configure.sh
-    yum upgrade -y
+    ${YUM} upgrade -y
 fi
 
 # install basic utilities
-yum install -y zip unzip gzip tar which
+${YUM} install -y zip unzip gzip tar which
 
 # install the oracle preinstall stuff
-yum install -y make \
+${YUM} install -y make \
     oracle-rdbms-server-11gR2-preinstall \
     oracle-rdbms-server-12cR1-preinstall \
     oracle-database-server-12cR2-preinstall \
@@ -129,7 +131,7 @@ done
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
     echo "clean up yum cache"
-    yum clean all
+    ${YUM} clean all
     rm -rf /var/cache/yum
 else
     echo "yum cache is not cleaned up"
