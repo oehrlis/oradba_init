@@ -64,7 +64,7 @@ if [ ! running_in_docker ]; then
     chmod 700 /home/oracle/.ssh/
 
     # remove openJDK
-    yum erase -y java-1.8.0-openjdk java-1.8.0-openjdk-headless
+    ${YUM} erase -y java-1.8.0-openjdk java-1.8.0-openjdk-headless
 fi
 
 # show what we will create later on...
@@ -89,24 +89,24 @@ running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 
 # limit installation language / locals to EN
 echo "%_install_langs   en" >>/etc/rpm/macros.lang
-
+YUM="yum --disablerepo=ol7_developer"
 # upgrade the installation
-yum upgrade -y
+${YUM} upgrade -y
 
 # check for legacy yum upgrade
 if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
     echo "found /usr/bin/ol_yum_configure.sh "
     /usr/bin/ol_yum_configure.sh
-    yum upgrade -y
+    ${YUM} upgrade -y
 fi
 
 # install basic utilities
-yum install -y libaio gzip tar zip unzip
+${YUM} install -y libaio gzip tar zip unzip
 
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
     echo "clean up yum cache"
-    yum clean all 
+    ${YUM} clean all 
     rm -rf /var/cache/yum
 else
     echo "yum cache is not cleaned up"
