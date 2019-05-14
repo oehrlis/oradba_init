@@ -27,6 +27,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
 export BASENV_PKG=${BASENV_PKG:-basenv-18.11.final.a.zip}
+export BASENV_ORADBA=${BASENV_ORADBA:-basenv-18.11.final.a.zip}
 export BACKUP_PKG=${BACKUP_PKG:-tvdbackup-le-18.05.final.a.tar.gz}
 
 # define oradba specific variables
@@ -84,8 +85,21 @@ if [ -n "${BASENV_PKG}" ]; then
         rm -rf ${ORACLE_LOCAL}/basenv-* ${ORACLE_LOCAL}/runInstaller* /tmp/*.rsp
         if [ "${DOCKER^^}" == "TRUE" ]; then rm -rf ${SOFTWARE}/${BASENV_PKG}; fi
     else
-        echo "ERROR:   No base software package specified. Abort installation."
-        exit 1
+        echo "WARN:    Fallback to oradba..."
+        curl -f http://docker.oradba.ch/${BASENV_ORADBA} -o ${SOFTWARE}/${BASENV_ORADBA}
+        if [ -f ${SOFTWARE}/${BASENV_ORADBA} ]; then
+            mkdir -p ${ORACLE_LOCAL}
+            echo " - unzip ${SOFTWARE}/${BASENV_PKG} to ${ORACLE_LOCAL}"
+            unzip -q -o ${SOFTWARE}/${BASENV_PKG} -d ${ORACLE_LOCAL}
+            # Install basenv binaries
+            ${ORACLE_LOCAL}/runInstaller -responseFile /tmp/base_install.rsp -silent
+            # cleanup basenv
+            rm -rf ${ORACLE_LOCAL}/basenv-* ${ORACLE_LOCAL}/runInstaller* /tmp/*.rsp
+            if [ "${DOCKER^^}" == "TRUE" ]; then rm -rf ${SOFTWARE}/${BASENV_PKG}; fi
+        else
+            echo "ERROR:   No base software package specified. Abort installation."
+            exit 1
+        fi
     fi
 fi
 
