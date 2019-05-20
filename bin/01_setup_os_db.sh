@@ -39,6 +39,7 @@ export OPT_DIR=${OPT_DIR:-"/opt"}
 export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
+export YUM="yum"
 # - EOF Environment Variables -----------------------------------------------
 
 # Make sure only root can run our script
@@ -71,6 +72,8 @@ if [ ! running_in_docker ]; then
     cp ${HOME}/.ssh/authorized_keys /home/oracle/.ssh/
     chown oracle:oinstall -R /home/oracle/.ssh
     chmod 700 /home/oracle/.ssh/
+    # workaround for issue #131 https://github.com/oracle/vagrant-boxes/issues/131
+    export YUM="yum --disablerepo=ol7_developer"
 fi
 
 # show what we will create later on...
@@ -99,8 +102,7 @@ running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 # limit installation language / locals to EN
 echo "%_install_langs   en" >>/etc/rpm/macros.lang
 
-# workaround for issue #131 https://github.com/oracle/vagrant-boxes/issues/131
-YUM="yum --disablerepo=ol7_developer"
+
 # upgrade the installation
 ${YUM} upgrade -y
 
