@@ -75,7 +75,7 @@ sed -i -e "s|###DEFAULT_DOMAIN###|${DEFAULT_DOMAIN}|g"  /tmp/base_install.rsp
 # - Install Trivadis toolbox ------------------------------------------------
 echo " - Install Trivadis toolbox -------------------------------------------"
 if [ -n "${BASENV_PKG}" ]; then
-    if [ ! get_software "${BASENV_PKG}" ]; then
+    if ! get_software "${BASENV_PKG}" ; then
         echo "WARN:    Fallback to oradba..."
         curl -f http://docker.oradba.ch/${BASENV_ORADBA} -o ${SOFTWARE}/${BASENV_ORADBA}
     fi
