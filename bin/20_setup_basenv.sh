@@ -75,7 +75,13 @@ sed -i -e "s|###DEFAULT_DOMAIN###|${DEFAULT_DOMAIN}|g"  /tmp/base_install.rsp
 # - Install Trivadis toolbox ------------------------------------------------
 echo " - Install Trivadis toolbox -------------------------------------------"
 if [ -n "${BASENV_PKG}" ]; then
-    if get_software "${BASENV_PKG}"; then          # Check and get binaries
+    if [ ! get_software "${BASENV_PKG}" ]; then
+        echo "WARN:    Fallback to oradba..."
+        curl -f http://docker.oradba.ch/${BASENV_ORADBA} -o ${SOFTWARE}/${BASENV_ORADBA}
+    fi
+
+    # check if we have a basenv package and start installing
+    if [ -f ${SOFTWARE}/${BASENV_ORADBA} ]; then
         mkdir -p ${ORACLE_LOCAL}
         echo " - unzip ${SOFTWARE}/${BASENV_PKG} to ${ORACLE_LOCAL}"
         unzip -q -o ${SOFTWARE}/${BASENV_PKG} -d ${ORACLE_LOCAL}
@@ -85,21 +91,8 @@ if [ -n "${BASENV_PKG}" ]; then
         rm -rf ${ORACLE_LOCAL}/basenv-* ${ORACLE_LOCAL}/runInstaller* /tmp/*.rsp
         if [ "${DOCKER^^}" == "TRUE" ]; then rm -rf ${SOFTWARE}/${BASENV_PKG}; fi
     else
-        echo "WARN:    Fallback to oradba..."
-        curl -f http://docker.oradba.ch/${BASENV_ORADBA} -o ${SOFTWARE}/${BASENV_ORADBA}
-        if [ -f ${SOFTWARE}/${BASENV_ORADBA} ]; then
-            mkdir -p ${ORACLE_LOCAL}
-            echo " - unzip ${SOFTWARE}/${BASENV_PKG} to ${ORACLE_LOCAL}"
-            unzip -q -o ${SOFTWARE}/${BASENV_PKG} -d ${ORACLE_LOCAL}
-            # Install basenv binaries
-            ${ORACLE_LOCAL}/runInstaller -responseFile /tmp/base_install.rsp -silent
-            # cleanup basenv
-            rm -rf ${ORACLE_LOCAL}/basenv-* ${ORACLE_LOCAL}/runInstaller* /tmp/*.rsp
-            if [ "${DOCKER^^}" == "TRUE" ]; then rm -rf ${SOFTWARE}/${BASENV_PKG}; fi
-        else
-            echo "ERROR:   No base software package specified. Abort installation."
-            exit 1
-        fi
+        echo "ERROR:   No base software package specified. Abort installation."
+        exit 1
     fi
 fi
 
