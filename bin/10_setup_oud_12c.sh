@@ -24,7 +24,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
 export OUD_BASE_PKG=${OUD_BASE_PKG:-"p26270957_122130_Generic.zip"}
-export OUD_PATCH_PKG=${OUD_PATCH_PKG:-"p28569189_122130_Generic.zip"}
+export OUD_PATCH_PKG=${OUD_PATCH_PKG:-"p29814384_122130_Generic.zip"}
 export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-"p28186730_139400_Generic.zip"}
 
 # define oradba specific variables
