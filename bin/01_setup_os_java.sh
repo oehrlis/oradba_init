@@ -22,7 +22,7 @@
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
-export JAVA_PKG=${JAVA_PKG:-"p28916775_180202_Linux-x86-64.zip"}
+export JAVA_PKG=${JAVA_PKG:-"p29657250_180221_Linux-x86-64.zip"}
 
 # define Oracle specific variables
 export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
