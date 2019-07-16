@@ -89,7 +89,8 @@ running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 
 # limit installation language / locals to EN
 echo "%_install_langs   en" >>/etc/rpm/macros.lang
-YUM="yum --disablerepo=ol7_developer"
+#YUM="yum --disablerepo=ol7_developer"
+YUM="yum"
 # upgrade the installation
 ${YUM} upgrade -y
 
