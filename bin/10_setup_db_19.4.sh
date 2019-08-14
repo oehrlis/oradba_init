@@ -26,7 +26,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 export DB_BASE_PKG=${DB_BASE_PKG:-"LINUX.X64_193000_db_home.zip"}
 export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-""}
 export DB_PATCH_PKG=${DB_PATCH_PKG:-"p29834717_190000_Linux-x86-64.zip"}
-export DB_OJVM_PKG=${DB_OJVM_PKG:-"p29834717_190000_Linux-x86-64.zip"}
+export DB_OJVM_PKG=${DB_OJVM_PKG:-"p29774421_190000_Linux-x86-64."}
 export DB_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_190000_Linux-x86-64.zip"}
 export RESPONSFILE_VERSION=${RESPONSFILE_VERSION:-"oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v19.0.0"}
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"19.4.0.0"}
