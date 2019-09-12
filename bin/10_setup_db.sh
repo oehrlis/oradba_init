@@ -106,6 +106,19 @@ sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"              /tmp/db_examples_ins
 sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"              /tmp/db_examples_install.rsp
 sed -i -e "s|^oracle.install.responseFileVersion.*|$RESPONSFILE_VERSION|" /tmp/db_examples_install.rsp
 
+# - Prepare database binaries installation ----------------------------------
+echo " - Prepare Oracle DB binaries -----------------------------------------"
+echo " DB_BASE_PKG              =${DB_BASE_PKG}"
+echo " DB_EXAMPLE_PKG           =${DB_EXAMPLE_PKG}"
+echo " DB_PATCH_PKG             =${DB_PATCH_PKG}"
+echo " DB_OJVM_PKG              =${DB_OJVM_PKG}"
+echo " DB_OPATCH_PKG            =${DB_OPATCH_PKG}"
+echo " ORACLE_BASE              =${ORACLE_BASE}"
+echo " ORACLE_HOME              =${ORACLE_HOME}"
+echo " ORACLE_EDITION           =${ORACLE_EDITION}"
+echo " RESPONSFILE_VERSION      =${RESPONSFILE_VERSION}"
+
+
 # - Install database binaries -----------------------------------------------
 # handle pre and post 18c
 echo " - Install Oracle DB binaries -----------------------------------------"
