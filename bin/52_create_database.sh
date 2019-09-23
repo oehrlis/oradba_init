@@ -41,6 +41,7 @@ export ORACLE_RELEASE="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release'|sed 's
 export ORADBA_BIN=${ORADBA_INIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)}
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP=${ORADBA_RSP:-"${ORADBA_BASE}/rsp"}           # oradba init response file folder
+export ORADBA_RSP=${CUSTOM_RSP:-"${ORADBA_RSP}"}                # custom response file folder
 export CONFIG_SCRIPT=${CONFIG_SCRIPT:-"53_config_database.sh"}
 export ORADBA_TEMPLATE_PREFIX=${ORADBA_TEMPLATE_PREFIX:-""}
 export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca${ORACLE_RELEASE}.rsp.tmpl"} # oradba init response file
@@ -103,6 +104,8 @@ echo "ORACLE_DATA           : ${ORACLE_DATA}"
 echo "ORACLE_ARCH           : ${ORACLE_ARCH}"
 echo "CONTAINER             : ${CONTAINER}"
 echo "INSTANCE_INIT         : ${INSTANCE_INIT}"
+echo "CUSTOM_RSP            : ${CUSTOM_RSP}"
+echo "RESPONSE FOLDER       : ${ORADBA_RSP}"
 echo "RESPONSE              : ${ORADBA_RSP_FILE}"
 echo "TEMPLATE              : ${ORADBA_DBC_FILE}"
 echo "ORADBA_TEMPLATE_PREFIX: ${ORADBA_TEMPLATE_PREFIX}"
