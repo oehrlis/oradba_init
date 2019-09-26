@@ -112,6 +112,9 @@ if [ -n "${FMW_PATCH_PKG}" ]; then
         unzip -q -o ${SOFTWARE}/${FMW_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         cd ${DOWNLOAD}/${FMW_PATCH_ID}
+        echo ${DOWNLOAD}/${FMW_PATCH_ID}
+        pwd
+        echo ${ORACLE_HOME}/OPatch/opatch apply -silent
         ${ORACLE_HOME}/OPatch/opatch apply -silent
         # remove binary packages on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${FMW_PATCH_PKG}
