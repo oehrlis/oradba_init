@@ -29,6 +29,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 export OUD_PATCH_PKG=${OUD_PATCH_PKG:-""}
 export FMW_PATCH_PKG=${FMW_PATCH_PKG:-""}
 export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-""}
+export OUI_PATCH_PKG=${OUI_PATCH_PKG:-""}
 
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
@@ -79,6 +80,27 @@ if [ -n "${OUD_OPATCH_PKG}" ]; then
     fi
 else
     echo "INFO:    No OPatch package specified. Skip OPatch update."
+fi
+
+# - Install OUI patch -------------------------------------------------------
+echo " - Install OUI patch --------------------------------------------------"
+if [ -n "${OUI_PATCH_PKG}" ]; then
+    if get_software "${OUI_PATCH_PKG}"; then        # Check and get binaries
+        OUI_PATCH_ID=$(echo ${OUI_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
+        echo " - unzip ${SOFTWARE}/${FMW_PATCH_PKG} to ${DOWNLOAD}"
+        unzip -q -o ${SOFTWARE}/${OUI_PATCH_PKG} \
+            -d ${DOWNLOAD}/                         # unpack OPatch binary package
+        cd ${DOWNLOAD}/${OUI_PATCH_ID}
+        ${ORACLE_HOME}/OPatch/opatch apply -silent -jre $JAVA_HOME
+        # remove binary packages on docker builds
+        running_in_docker && rm -rf ${SOFTWARE}/${OUI_PATCH_PKG}
+        rm -rf ${DOWNLOAD}/${OUI_PATCH_ID}          # remove the binary packages
+        rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
+    else
+        echo "WARNING: Could not find local or remote FMW patch package. Skip FMW patch installation."
+    fi
+else
+    echo "INFO:    No FMW patch package specified. Skip FMW patch installation."
 fi
 
 # - Install FMW patch -------------------------------------------------------
