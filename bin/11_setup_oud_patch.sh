@@ -64,7 +64,7 @@ running_in_docker && export OPATCH_NO_FUSER=true
 
 # - Main --------------------------------------------------------------------
 # - Install OPatch ----------------------------------------------------------
-echo " - Install OPatch -----------------------------------------------------"
+echo " - Install OPatch (${OUD_OPATCH_PKG}) ----------------------"
 if [ -n "${OUD_OPATCH_PKG}" ]; then
     if get_software "${OUD_OPATCH_PKG}"; then       # Check and get binaries
         echo " - unzip ${SOFTWARE}/${OUD_OPATCH_PKG} to ${DOWNLOAD}"
@@ -84,7 +84,7 @@ else
 fi
 
 # - Install OUI patch -------------------------------------------------------
-echo " - Install OUI patch --------------------------------------------------"
+echo " - Install OUI patch (${OUI_PATCH_PKG}zip) -------------------"
 if [ -n "${OUI_PATCH_PKG}" ]; then
     if get_software "${OUI_PATCH_PKG}"; then        # Check and get binaries
         OUI_PATCH_ID=$(echo ${OUI_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
@@ -105,7 +105,7 @@ else
 fi
 
 # - Install FMW patch -------------------------------------------------------
-echo " - Install FMW patch --------------------------------------------------"
+echo " - Install FMW patch (${FMW_PATCH_PKG}) -------------------"
 if [ -n "${FMW_PATCH_PKG}" ]; then
     if get_software "${FMW_PATCH_PKG}"; then        # Check and get binaries
         FMW_PATCH_ID=$(echo ${FMW_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
@@ -113,9 +113,6 @@ if [ -n "${FMW_PATCH_PKG}" ]; then
         unzip -q -o ${SOFTWARE}/${FMW_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
         cd ${DOWNLOAD}/${FMW_PATCH_ID}
-        echo ${DOWNLOAD}/${FMW_PATCH_ID}
-        pwd
-        echo ${ORACLE_HOME}/OPatch/opatch apply -silent
         ${ORACLE_HOME}/OPatch/opatch apply -silent
         # remove binary packages on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${FMW_PATCH_PKG}
@@ -129,7 +126,7 @@ else
 fi
 
 # - Install OUD patch -------------------------------------------------------
-echo " - Install OUD patch --------------------------------------------------"
+echo " - Install OUD patch (${OUD_PATCH_PKG}) -------------------"
 if [ -n "${OUD_PATCH_PKG}" ]; then
     if get_software "${OUD_PATCH_PKG}"; then        # Check and get binaries
         OUD_PATCH_ID=$(echo ${OUD_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
