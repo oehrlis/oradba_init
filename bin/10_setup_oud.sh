@@ -126,7 +126,7 @@ if [ -n "${OUD_BASE_PKG}" ]; then
                 -invPtrLoc /tmp/oraInst.loc \
                 -ignoreSysPrereqs -force \
                 -novalidation ORACLE_HOME=${ORACLE_HOME} \
-                INSTALL_TYPE=${OUD_INSTALL_TYPE}
+                INSTALL_TYPE="${OUD_INSTALL_TYPE}"
 
             # remove files on docker builds
             rm -rf ${DOWNLOAD}/$OUD_BASE_JAR
