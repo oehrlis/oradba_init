@@ -31,7 +31,7 @@ export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-""}
 export OUI_PATCH_PKG=${OUI_PATCH_PKG:-""}
 
 export OUD_TYPE=${OUD_TYPE:-"OUD12"}
-export OUD_INSTALL_TYPE=${OUD_INSTALL_TYPE:-"Standalone Oracle Unified Directory Server (Managed independently of WebLogic server)"}
+export OUD_INSTALL_TYPE=${OUD_INSTALL_TYPE:-'Standalone Oracle Unified Directory Server (Managed independently of WebLogic server)'}
 
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
@@ -77,7 +77,7 @@ echo "inst_group=oinstall"                 >>/tmp/oraInst.loc
 # - just required if you setup OUDSM
 if [ "${OUD_TYPE}" == "OUDSM12" ]; then
     echo " - Install Oracle FMW binaries ----------------------------------------"
-    export OUD_INSTALL_TYPE="Collocated Oracle Unified Directory Server (Managed through WebLogic server)"
+    export OUD_INSTALL_TYPE='Collocated Oracle Unified Directory Server (Managed through WebLogic server)'
     if [ -n "${FMW_BASE_PKG}" ]; then
         if get_software "${FMW_BASE_PKG}"; then          # Check and get binaries
             cd ${DOWNLOAD}
