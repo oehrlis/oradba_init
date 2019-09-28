@@ -6,7 +6,7 @@
 # Name.......: 10_setup_oud.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2018.09.27
+# Date.......: 2019.09.27
 # Revision...: 
 # Purpose....: generic script to install Oracle Unified Directory binaries.
 # Notes......: Script would like to be executed as oracle :-).
@@ -22,9 +22,9 @@
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
-# define the software packages
-export OUD_BASE_PKG=${OUD_BASE_PKG:-"p30188352_122140_Generic.zip"}
-export FMW_BASE_PKG=${FMW_BASE_PKG:-""}
+# define the software packages default is just the OUD 12.2.1.4 base package
+export OUD_BASE_PKG=${OUD_BASE_PKG:-"p30188352_122140_Generic.zip"} # OUD 12.2.1.4.0
+export FMW_BASE_PKG=${FMW_BASE_PKG:-""}                             
 export OUD_PATCH_PKG=${OUD_PATCH_PKG:-""}
 export FMW_PATCH_PKG=${FMW_PATCH_PKG:-""}
 export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-""}
