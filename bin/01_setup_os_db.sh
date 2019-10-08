@@ -122,6 +122,7 @@ ${YUM} install -y make \
     oracle-rdbms-server-12cR1-preinstall \
     oracle-database-server-12cR2-preinstall \
     oracle-database-preinstall-18c \
+    oracle-database-preinstall-19c \
     elfutils-libelf-devel
 
 # remove the groups created by oracle
