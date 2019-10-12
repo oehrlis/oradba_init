@@ -93,8 +93,9 @@ if [ "${OUD_TYPE}" == "OUDSM12" ]; then
             -responseFile /tmp/oud_install.rsp \
             -invPtrLoc /tmp/oraInst.loc \
             -ignoreSysPrereqs -force \
-            -novalidation ORACLE_HOME=${ORACLE_HOME} \
-            INSTALL_TYPE="WebLogic Server"
+            -novalidation ORACLE_HOME=${ORACLE_HOME}
+            # -novalidation ORACLE_HOME=${ORACLE_HOME} \
+            # INSTALL_TYPE="WebLogic Server"
 
             # remove files on docker builds
             rm -rf ${DOWNLOAD}/$FMW_BASE_JAR
