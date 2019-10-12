@@ -99,7 +99,7 @@ echo "  PORT_SSL=${PORT_SSL}"
 echo "  ADMIN_USER=${ADMIN_USER}"
 
 # Create an empty domain
-${ORACLE_BASE}/product/fmw12.2.1.3.0/oracle_common/common/bin/wlst.sh \
+${ORACLE_HOME}/oracle_common/common/bin/wlst.sh \
     -skipWLSModuleScanning ${OUD_INSTANCE_ADMIN}/create/${CREATE_SCRIPT_PYTHON}
 
 if [ $? -eq 0 ]; then
