@@ -72,7 +72,7 @@ echo "inst_group=oinstall"                 >>/tmp/oraInst.loc
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
-
+mkdir -p ${ORACLE_BASE}/product
 # - Install FWM Binaries ----------------------------------------------------
 # - just required if you setup OUDSM
 if [ "${OUD_TYPE}" == "OUDSM12" ]; then
@@ -93,9 +93,8 @@ if [ "${OUD_TYPE}" == "OUDSM12" ]; then
             -responseFile /tmp/oud_install.rsp \
             -invPtrLoc /tmp/oraInst.loc \
             -ignoreSysPrereqs -force \
-            -novalidation ORACLE_HOME=${ORACLE_HOME}
-            # -novalidation ORACLE_HOME=${ORACLE_HOME} \
-            # INSTALL_TYPE="WebLogic Server"
+            -novalidation ORACLE_HOME=${ORACLE_HOME} \
+            INSTALL_TYPE="WebLogic Server"
 
             # remove files on docker builds
             rm -rf ${DOWNLOAD}/$FMW_BASE_JAR
