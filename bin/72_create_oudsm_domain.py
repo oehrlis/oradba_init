@@ -28,18 +28,16 @@ admin_user       = os.environ.get('ADMIN_USER', "weblogic")
 admin_pass       = "ADMIN_PASSWORD"
 
 
-print('Domain Name     : [%s]' % domain_name);
-print('Domain Path     : [%s]' % domain_path);
-print('Admin Port      : [%s]' % admin_port);
-print('Admin SSL Port  : [%s]' % admin_sslport);
-print('User            : [%s]' % admin_user);
-print('Password        : [%s]' % admin_pass);
+print('Domain Name     : [%s]' % domain_name)
+print('Domain Path     : [%s]' % domain_path)
+print('Admin Port      : [%s]' % admin_port)
+print('Admin SSL Port  : [%s]' % admin_sslport)
+print('User            : [%s]' % admin_user)
+print('Password        : [%s]' % admin_pass)
 
 # create WLS Domain
 createOUDSMDomain(domainLocation        = domain_path,
                   weblogicPort          = admin_port,
                   weblogicSSLPort       = admin_sslport,
                   weblogicUserName      = admin_user,
-                  weblogicUserPassword  = admin_pass);
-
-# Exit WLST
+                  weblogicUserPassword  = admin_pass)
