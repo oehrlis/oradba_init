@@ -117,7 +117,7 @@ fi
 ${YUM} install -y zip unzip gzip tar which
 
 # install the oracle preinstall stuff
-${YUM} install -y make \
+${YUM} install -y make passwd \
     oracle-rdbms-server-11gR2-preinstall \
     oracle-rdbms-server-12cR1-preinstall \
     oracle-database-server-12cR2-preinstall \
