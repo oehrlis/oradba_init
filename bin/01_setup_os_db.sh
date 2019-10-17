@@ -40,6 +40,7 @@ export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 export YUM="yum"
+export DEFAULT_PASSWORD=${default_password:-"LAB01schulung"}
 # - EOF Environment Variables -----------------------------------------------
 
 # Make sure only root can run our script
@@ -65,7 +66,7 @@ useradd --create-home --gid oinstall \
 # do some stuff on none docker environments
 if [ ! running_in_docker ]; then
     # set the default password for the oracle user
-    echo "manager" | passwd --stdin oracle
+    echo "LAB01schulung" | passwd --stdin oracle
 
     # copy autorized keys 
     mkdir -p /home/oracle/.ssh/
@@ -101,7 +102,6 @@ running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 
 # limit installation language / locals to EN
 echo "%_install_langs   en" >>/etc/rpm/macros.lang
-
 
 # upgrade the installation
 ${YUM} upgrade -y
@@ -139,6 +139,21 @@ if [ "${CLEANUP^^}" == "TRUE" ]; then
 else
     echo "yum cache is not cleaned up"
 fi
+
+# - add PDB OS user ---------------------------------------------------------
+# add an restricted group
+groupadd restricted
+
+# add a users
+useradd --create-home --gid restricted --shell /bin/bash oracdb
+useradd --create-home --gid restricted --shell /bin/bash orapdb
+useradd --create-home --gid restricted --shell /bin/bash orasec
+
+# set the password
+echo ${DEFAULT_PASSWORD} | passwd oracdb --stdin
+echo ${DEFAULT_PASSWORD} | passwd orapdb --stdin
+echo ${DEFAULT_PASSWORD} | passwd orasec --stdin
+# - EOF add PDB OS user -----------------------------------------------------
 
 # create a bunch of other directories
 mkdir -p ${ORACLE_BASE}/archive
