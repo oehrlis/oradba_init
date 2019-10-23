@@ -41,6 +41,8 @@ export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 export YUM="yum"
 export DEFAULT_PASSWORD=${default_password:-"LAB01schulung"}
+
+export DEFAULT_DOCKER_PARTITION='/dev/sdb1'     # default docker partition
 # - EOF Environment Variables -----------------------------------------------
 
 # Make sure only root can run our script
@@ -54,9 +56,16 @@ echo 'Installing and configuring Docker engine'
 # install Docker engine
 yum -y install docker-engine
 
-# Format spare device as Btrfs
-# Configure Btrfs storage driver
-echo "docker-storage-config -s btrfs -d /dev/sdb"
+# check if partition /dev/sdb1 is in use
+blkid |grep -i ${DEFAULT_DOCKER_PARTITION}
+if [ $? -eq 0 ]; then 
+    echo "Partition ${DEFAULT_DOCKER_PARTITION} is in use"
+else 
+    echo "Partition ${DEFAULT_DOCKER_PARTITION} is not in use"
+    # Format spare device as Btrfs
+    # Configure Btrfs storage driver
+    docker-storage-config -s btrfs -d ${DEFAULT_DOCKER_PARTITION}
+fi
 
 # Start and enable Docker engine
 systemctl start docker
