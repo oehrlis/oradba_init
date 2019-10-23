@@ -64,7 +64,7 @@ else
     echo "Partition ${DEFAULT_DOCKER_PARTITION} is not in use"
     # Format spare device as Btrfs
     # Configure Btrfs storage driver
-    docker-storage-config -s btrfs -d ${DEFAULT_DOCKER_PARTITION}
+    # docker-storage-config -s btrfs -d ${DEFAULT_DOCKER_PARTITION}
 fi
 
 # Start and enable Docker engine
