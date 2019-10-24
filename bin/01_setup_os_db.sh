@@ -120,6 +120,9 @@ if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
     ${YUM} upgrade -y
 fi
 
+# Disable the oci repo
+running_in_docker && yum-config-manager --disable ol7_ociyum_config
+
 # install basic utilities
 ${YUM} install -y zip unzip gzip tar which
 
