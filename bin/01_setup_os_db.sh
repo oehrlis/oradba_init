@@ -80,8 +80,6 @@ if [ ! running_in_docker ]; then
     chmod 700 /home/oracle/.ssh/
     # workaround for issue #131 https://github.com/oracle/vagrant-boxes/issues/131
     export YUM="yum --disablerepo=ol7_developer"
-else
-    export YUM="yum --disablerepo=ol7_ociyum_config"
 fi
 
 # show what we will create later on...
