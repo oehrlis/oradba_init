@@ -94,6 +94,9 @@ YUM="yum"
 # upgrade the installation
 ${YUM} upgrade -y
 
+# Disable the oci repo
+running_in_docker && yum-config-manager --disable ol7_ociyum_config
+
 # check for legacy yum upgrade
 if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
     echo "found /usr/bin/ol_yum_configure.sh "
