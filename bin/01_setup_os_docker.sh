@@ -54,7 +54,7 @@ fi
 echo 'Installing and configuring Docker engine'
 
 # install Docker engine
-yum -y install docker-engine
+yum -y install docker-engine docker-compose
 
 # check if partition /dev/sdb1 is in use
 blkid |grep -i ${DEFAULT_DOCKER_PARTITION}

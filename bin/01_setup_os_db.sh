@@ -63,6 +63,11 @@ useradd --create-home --gid oinstall \
     --groups oinstall,osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
     --shell /bin/bash oracle
 
+# add oracle to sudo
+if [ -f "/etc/sudoers.d/90-cloud-init-users" ]; then
+    echo "oracle ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/90-cloud-init-users
+fi
+
 # do some stuff on none docker environments
 if [ ! running_in_docker ]; then
     # set the default password for the oracle user
@@ -75,6 +80,8 @@ if [ ! running_in_docker ]; then
     chmod 700 /home/oracle/.ssh/
     # workaround for issue #131 https://github.com/oracle/vagrant-boxes/issues/131
     export YUM="yum --disablerepo=ol7_developer"
+else
+    export YUM="yum --disablerepo=ol7_ociyum_config"
 fi
 
 # show what we will create later on...
