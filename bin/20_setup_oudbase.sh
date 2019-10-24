@@ -55,6 +55,8 @@ fi
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
+# create the download directory if it does not yet exists
+mkdir -p ${DOWNLOAD}
 # get the OUD base install package
 curl -f --location-trusted ${OUDBASE_URL} -o ${DOWNLOAD}/${OUDBASE_PKG}
 
