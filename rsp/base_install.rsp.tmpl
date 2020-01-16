@@ -16,17 +16,43 @@
 # Modified...:
 # see git revision history for more information on changes/updates
 # ---------------------------------------------------------------------------
+
 Be_Etc="###ORACLE_BASE###/etc"
 Install_Dir="###ORACLE_LOCAL###"
+
+# Would you like to automatically activate BasEnv during login?  (Unix only)
+# The BasEnv-profile can be appended to, or replace the .profile/.bash_profile
+# R=replace, A=append, N=no
 Install_Profile="R"
+
+# if Trivadis sqlnet.ora template is used (Config_Tns=0)
+# sqlnet.ora: NAMES.DEFAULT_DOMAIN
 Names_Default_Domain="###DEFAULT_DOMAIN###"
+
 Oracle_Base="###ORACLE_BASE###"
 Oracle_Home="###ORACLE_HOME###"
 Perl_binary="###ORACLE_HOME###/perl/bin/perl"
 Tns_Admin="###TNS_ADMIN###"
+
+# Use the Perl of Oracle if BasEnv provides additional modules for it
+#   YES will set 'TVDPERL=ORACLE' in basenv.conf
+#   If updating: YES will enable it, but NO will NOT disable it (--> remove it manually)
 Use_Oracleperl="YES"
 Use_Tvdperl="NO"
+
+# should dba/etc & dba/log be changed to oinstall group with write-permission
 config_oinstall="YES"
+
+# What *.ora files to use in TNS_ADMIN
+# 0 = use Trivadis Templates
+# 1 = copy files from another location
+# 2 = do not configure (creates empty tnsnames.ora)
 Config_Tns=0
+
+# BasEnv for Mysql
+Be_Mysql=NO
+
+# Ignore warning about selinux YES | NO
+Ignore_SeLinux=YES
 
 # --- EOF --------------------------------------------------------------------
