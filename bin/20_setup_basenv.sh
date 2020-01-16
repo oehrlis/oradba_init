@@ -71,8 +71,7 @@ sed -i -e "s|###ORACLE_HOME###|${ORACLE_HOME}|g"        /tmp/base_install.rsp
 sed -i -e "s|###TNS_ADMIN###|${TNS_ADMIN}|g"            /tmp/base_install.rsp
 sed -i -e "s|###ORACLE_LOCAL###|${ORACLE_LOCAL}|g"      /tmp/base_install.rsp
 sed -i -e "s|###DEFAULT_DOMAIN###|${DEFAULT_DOMAIN}|g"  /tmp/base_install.rsp
-echo " - Response File base_install.rsp -------------------------------------"
-cat /tmp/base_install.rsp
+
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
@@ -86,12 +85,11 @@ if [ -n "${BASENV_PKG}" ]; then
 
     # check if we have a basenv package and start installing
     if [ -f ${SOFTWARE}/${BASENV_ORADBA} ]; then
-    set -x
         mkdir -p ${ORACLE_LOCAL}
         echo " - unzip ${SOFTWARE}/${BASENV_PKG} to ${ORACLE_LOCAL}"
         unzip -q -o ${SOFTWARE}/${BASENV_PKG} -d ${ORACLE_LOCAL}
         # Install basenv binaries
-        ${ORACLE_LOCAL}/runInstaller -responseFile /tmp/base_install.rsp 
+        ${ORACLE_LOCAL}/runInstaller -responseFile /tmp/base_install.rsp -silent
         # cleanup basenv
         rm -rf ${ORACLE_LOCAL}/basenv-* ${ORACLE_LOCAL}/runInstaller* /tmp/*.rsp
         if [ "${DOCKER^^}" == "TRUE" ]; then rm -rf ${SOFTWARE}/${BASENV_PKG}; fi

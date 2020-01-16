@@ -147,8 +147,8 @@ if [ -n "${DB_BASE_PKG}" ]; then
         fi
         # Install Oracle binaries -ignorePrereqFailure/-ignoreSysPrereqs
         PREREQ="-ignorePrereqFailure"
-        if [ ${ORACLE_MAJOR_RELEASE} -le 121 ]; then
-            PREREQ="-ignoresysprereqs -ignoreprereq"
+        if [ ${ORACLE_MAJOR_RELEASE} -le 122 ]; then
+            PREREQ="-ignoreSysPrereqs -ignoreprereq"
         fi
         
         ${SETUP_PATH}/runInstaller -silent -force \
