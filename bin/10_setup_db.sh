@@ -66,6 +66,25 @@ if [ ! $EUID -ne 0 ]; then
    exit 1
 fi
 
+# show what we will create later on...
+echo " - Settings -----------------------------------------------------------" && \
+echo "ORACLE_ROOT           =${ORACLE_ROOT}" && \
+echo "ORACLE_DATA           =${ORACLE_DATA}" && \
+echo "ORACLE_ARCH           =${ORACLE_ARCH}" && \
+echo "ORACLE_BASE           =${ORACLE_BASE}" && \
+echo "ORACLE_HOME           =${ORACLE_HOME}" && \
+echo "ORACLE_INVENTORY      =${ORACLE_INVENTORY}" && \
+echo "ORACLE_EDITION        =${ORACLE_EDITION}" && \
+echo "ORACLE_MAJOR_RELEASE  =${ORACLE_MAJOR_RELEASE}" && \
+echo "SOFTWARE              =${SOFTWARE}" && \
+echo "DOWNLOAD              =${DOWNLOAD}" && \
+echo "DB_BASE_PKG           =${DB_BASE_PKG}" && \
+echo "DB_EXAMPLE_PKG        =${DB_EXAMPLE_PKG}" && \
+echo "DB_PATCH_PKG          =${DB_PATCH_PKG}" && \
+echo "DB_OJVM_PKG           =${DB_OJVM_PKG}" && \
+echo "DB_OPATCH_PKG         =${DB_OPATCH_PKG}" && \
+echo "RESPONSFILE_VERSION   =${RESPONSFILE_VERSION}"
+
 # check space
 echo " - Check available space ----------------------------------------------"
 REQUIRED_SPACE_GB=15

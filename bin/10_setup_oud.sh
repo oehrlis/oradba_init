@@ -63,6 +63,23 @@ if [ ! $EUID -ne 0 ]; then
    exit 1
 fi
 
+# show what we will create later on...
+echo " - Settings -----------------------------------------------------------" && \
+echo "ORACLE_ROOT       =${ORACLE_ROOT}" && \
+echo "ORACLE_DATA       =${ORACLE_DATA}" && \
+echo "ORACLE_BASE       =${ORACLE_BASE}" && \
+echo "ORACLE_HOME       =${ORACLE_HOME}" && \
+echo "ORACLE_INVENTORY  =${ORACLE_INVENTORY}" && \
+echo "OUD_TYPE          =${OUD_TYPE}" && \
+echo "SOFTWARE          =${SOFTWARE}" && \
+echo "DOWNLOAD          =${DOWNLOAD}" && \
+echo "OUD_BASE_PKG      =${OUD_BASE_PKG}" && \
+echo "FMW_BASE_PKG      =${FMW_BASE_PKG}" && \
+echo "OUD_PATCH_PKG     =${OUD_PATCH_PKG}" && \
+echo "FMW_PATCH_PKG     =${FMW_PATCH_PKG}" && \
+echo "OUD_OPATCH_PKG    =${OUD_OPATCH_PKG}" && \
+echo "OUI_PATCH_PKG     =${OUI_PATCH_PKG}" 
+
 # Replace place holders in responce file
 echo " - Prepare response files ---------------------------------------------"
 cp ${ORADBA_RSP}/oud_install.rsp.tmpl /tmp/oud_install.rsp
@@ -154,7 +171,7 @@ if [ -n "${OUD_BASE_PKG}" ]; then
 fi
 
 # install patch any of the patch variable is if defined
-if [ ! -z "${OUD_PATCH_PKG}" ] || [ ! -z "${OUD_OPATCH_PKG}" ]; then 
+if [ ! -z "${OUD_PATCH_PKG}" ] || [ ! -z "${FMW_PATCH_PKG}" ] || [ ! -z "${OUD_OPATCH_PKG}" ] || [ ! -z "${OUI_PATCH_PKG}" ]; then 
     ${ORADBA_BIN}/11_setup_oud_patch.sh
 else
     echo "INFO:    Skip patch installation. No patch packages specified."
