@@ -48,6 +48,7 @@ if [ -n "${JAVA_PKG}" ]; then
         # remove files on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${JAVA_PKG}
         # set alternative stuff
+        running_in_docker && \
         export JAVA_DIR=$(ls -1 -d ${JAVA_BASE}/jdk*|tail -1) && \
         ln -s $JAVA_DIR /usr/java/latest && \
         ln -s $JAVA_DIR /usr/java/default && \
