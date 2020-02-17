@@ -148,7 +148,7 @@ sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"  ${ORADBA_RESPONS
 # However, bigger environment can and should use more of the available memory
 # This is due to Github Issue #307
 if [ `nproc` -gt 8 ]; then
-   sed -i -e "s|totalMemory=2048||g" ${ORACLE_SID_ADMIN_ETC}/$RESPONSE
+   sed -i -e "s|totalMemory=2048||g" ${ORADBA_RESPONSE}
 fi;
 
 # update listener.ora in general just for the Docker listener.ora
