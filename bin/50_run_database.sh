@@ -56,89 +56,153 @@ export INSTANCE_INIT=${INSTANCE_INIT:-"${ORACLE_BASE}/admin/${ORACLE_SID}/script
 # -----------------------------------------------------------------------
 function move_directories {
 # Purpose....: Move config directories
-# -----------------------------------------------------------------------
+    # -----------------------------------------------------------------------
+    echo "---------------------------------------------------------------"
+    echo "- move directories with persistent data to docker volume (${ORACLE_DATA})"
+    # check if dbs directory is a softlink if not move it and create one
+    if [ ! -L ${ORACLE_BASE}/dbs ] && [ -d ${ORACLE_BASE}/dbs ] && [ ! -d ${ORACLE_DATA}/dbs ]; then
+        echo "- move ${ORACLE_BASE}/dbs to ${ORACLE_BASE}/dbs"
+        mv -v ${ORACLE_BASE}/dbs ${ORACLE_DATA}
+        echo "- create softlink for ${ORACLE_BASE}/dbs"
+        ln -s -v ${ORACLE_DATA}/dbs ${ORACLE_BASE}/dbs
+    # if dbs exists on /u01 just create a softlink
+    elif [ ! -L ${ORACLE_BASE}/dbs ] && [ -d ${ORACLE_BASE}/dbs ] && [ -d ${ORACLE_DATA}/dbs ]; then
+        rm -rf ${ORACLE_BASE}/dbs
+        echo "- re-create softlink for ${ORACLE_BASE}/dbs"
+        ln -s -v ${ORACLE_DATA}/dbs ${ORACLE_BASE}/dbs
+    fi
+
+    # check if audit directory is a softlink if not move it and create one
+    if [ ! -L ${ORACLE_BASE}/audit ] && [ -d ${ORACLE_BASE}/audit ] && [ ! -d ${ORACLE_DATA}/audit ]; then
+        echo "- move ${ORACLE_BASE}/audit to ${ORACLE_BASE}/audit"
+        mv -v ${ORACLE_BASE}/audit ${ORACLE_DATA}
+        echo "- create softlink for ${ORACLE_BASE}/audit"
+        ln -s -v ${ORACLE_DATA}/audit ${ORACLE_BASE}/audit
+    # if dbs exists on /u01 just create a softlink
+    elif [ ! -L ${ORACLE_BASE}/audit ] && [ -d ${ORACLE_BASE}/audit ] && [ -d ${ORACLE_DATA}/audit ]; then
+        rm -rf ${ORACLE_BASE}/audit
+        echo "- re-create softlink for ${ORACLE_BASE}/audit"
+        ln -s -v ${ORACLE_DATA}/audit ${ORACLE_BASE}/audit
+    fi
+
+    # check if homes directory is a softlink if not move it and create one
+    if [ ! -L ${ORACLE_BASE}/homes ] && [ -d ${ORACLE_BASE}/homes ] && [ ! -d ${ORACLE_DATA}/homes ]; then
+        echo "- move ${ORACLE_BASE}/homes to ${ORACLE_BASE}/homes"
+        mv -v ${ORACLE_BASE}/homes ${ORACLE_DATA}
+        echo " create softlink for ${ORACLE_BASE}/homes"
+        ln -s -v ${ORACLE_DATA}/homes ${ORACLE_BASE}/homes
+    # if dbs exists on /u01 just create a softlink
+    elif [ ! -L ${ORACLE_BASE}/homes ] && [ -d ${ORACLE_BASE}/homes ] && [ -d ${ORACLE_DATA}/homes ]; then
+        rm -rf ${ORACLE_BASE}/homes
+        echo "- re-create softlink for ${ORACLE_BASE}/homes"
+        ln -s -v ${ORACLE_DATA}/homes ${ORACLE_BASE}/homes
+    fi
+
     # check if admin directory is a softlink if not move it and create one
     if [ ! -L ${ORACLE_BASE}/admin ] && [ ! -d ${ORACLE_DATA}/admin ]; then
-        mv ${ORACLE_BASE}/admin ${ORACLE_DATA}
-        ln -s ${ORACLE_DATA}/admin ${ORACLE_BASE}/admin
+        echo "- move ${ORACLE_BASE}/admin to ${ORACLE_BASE}/admin"
+        mv -v ${ORACLE_BASE}/admin ${ORACLE_DATA}
+        echo "- create softlink for ${ORACLE_BASE}/admin"
+        ln -s -v ${ORACLE_DATA}/admin ${ORACLE_BASE}/admin
     # if admin exists on /u01 just create a softlink
     elif [ ! -L ${ORACLE_BASE}/admin ] && [ -d ${ORACLE_DATA}/admin ]; then
-        mv ${ORACLE_BASE}/admin ${ORACLE_BASE}/admin_container
-        ln -s ${ORACLE_DATA}/admin ${ORACLE_BASE}/admin
+        rm -rf ${ORACLE_BASE}/admin 
+        echo "- re-create softlink for ${ORACLE_BASE}/admin"
+        ln -s -v ${ORACLE_DATA}/admin ${ORACLE_BASE}/admin
     fi
 
     # check if diag directory is a softlink if not move it and create one
     if [ ! -L ${ORACLE_BASE}/diag ] && [ ! -d ${ORACLE_DATA}/diag ]; then
-        mv ${ORACLE_BASE}/diag ${ORACLE_DATA}
-        ln -s ${ORACLE_DATA}/diag ${ORACLE_BASE}/diag
+        echo "- move ${ORACLE_BASE}/diag to ${ORACLE_BASE}/diag"
+        mv -v ${ORACLE_BASE}/diag ${ORACLE_DATA}
+        echo "- create softlink for ${ORACLE_BASE}/diag"
+        ln -s -v ${ORACLE_DATA}/diag ${ORACLE_BASE}/diag
     # if diag exists on /u01 just create a softlink
     elif [ ! -L ${ORACLE_BASE}/diag ] && [ -d ${ORACLE_DATA}/diag ]; then
         rm -rf ${ORACLE_BASE}/diag
-        ln -s ${ORACLE_DATA}/diag ${ORACLE_BASE}/diag
+        echo "- re-create softlink for ${ORACLE_BASE}/diag"
+        ln -s -v ${ORACLE_DATA}/diag ${ORACLE_BASE}/diag
     fi
 
     # check if etc directory is a softlink if not move it and create one
     if [ ! -L ${ORACLE_BASE}/etc ] && [ ! -d ${ORACLE_DATA}/etc ]; then
-        mv ${ORACLE_BASE}/etc ${ORACLE_DATA}
-        ln -s ${ORACLE_DATA}/etc ${ORACLE_BASE}/etc
+        echo "- move ${ORACLE_BASE}/etc to ${ORACLE_BASE}/etc"
+        mv -v ${ORACLE_BASE}/etc ${ORACLE_DATA}
+        echo "- create softlink for ${ORACLE_BASE}/etc"
+        ln -s -v ${ORACLE_DATA}/etc ${ORACLE_BASE}/etc
     # if etc exists on /u01 just create a softlink
     elif [ ! -L ${ORACLE_BASE}/etc ] && [ -d ${ORACLE_DATA}/etc ]; then
         mv ${ORACLE_BASE}/etc/* ${ORACLE_DATA}/etc
         rm -rf ${ORACLE_BASE}/etc
-        ln -s ${ORACLE_DATA}/etc ${ORACLE_BASE}/etc
+        echo "- re-create softlink for ${ORACLE_BASE}/etc"
+        ln -s -v ${ORACLE_DATA}/etc ${ORACLE_BASE}/etc
     fi
 
     # check if network directory is a softlink if not move it and create one
     if [ ! -L ${ORACLE_BASE}/network ] && [ ! -d ${ORACLE_DATA}/network ]; then
-        mv ${ORACLE_BASE}/network ${ORACLE_DATA}
-        ln -s ${ORACLE_DATA}/network ${ORACLE_BASE}/network
+        echo "- move ${ORACLE_BASE}/network to ${ORACLE_BASE}/network"
+        mv -v ${ORACLE_BASE}/network ${ORACLE_DATA}
+        echo "- create softlink for ${ORACLE_BASE}/network"
+        ln -s -v ${ORACLE_DATA}/network ${ORACLE_BASE}/network
     # if diag exists on /u01 just create a softlink
     elif [ ! -L ${ORACLE_BASE}/network ] && [ -d ${ORACLE_DATA}/network ]; then
         rm -rf ${ORACLE_BASE}/network
-        ln -s ${ORACLE_DATA}/network ${ORACLE_BASE}/network
+        echo "- re-create softlink for ${ORACLE_BASE}/network"
+        ln -s -v ${ORACLE_DATA}/network ${ORACLE_BASE}/network
     fi
+    echo "---------------------------------------------------------------"
 }
 
 # -----------------------------------------------------------------------
 function move_files {
 # Purpose....: Move DB files
 # -----------------------------------------------------------------------
-    
+    echo "---------------------------------------------------------------"
+    echo "- move files with persistent data to docker volume (${ORACLE_DATA})"
     # create admin directory on volume
     if [ ! -d ${ORACLE_DATA}/admin/${ORACLE_SID} ]; then
-        mkdir -p ${ORACLE_DATA}/admin/${ORACLE_SID}
+        mkdir -v -p ${ORACLE_DATA}/admin/${ORACLE_SID}
     fi
 
     # create network directory on volume
     if [ ! -d ${ORACLE_DATA}/network ]; then
-        mkdir -p ${ORACLE_DATA}/network
+        mkdir -v -p ${ORACLE_DATA}/network
     fi
 
     # create etc directory on volume
     if [ ! -d ${ORACLE_DATA}/etc ]; then
-        mkdir -p ${ORACLE_DATA}/etc
+        mkdir -v -p ${ORACLE_DATA}/etc
     fi
 
     # move db config files
-    mv ${ORACLE_HOME}/dbs/spfile${ORACLE_SID}.ora ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/
-    mv ${ORACLE_HOME}/dbs/orapw${ORACLE_SID} ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/
+    if [ -f ${ORACLE_HOME}/dbs/spfile${ORACLE_SID}.ora ]; then
+        mv ${ORACLE_HOME}/dbs/spfile${ORACLE_SID}.ora ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/
+    elif [ -f ${ORACLE_BASE}/dbs/spfile${ORACLE_SID}.ora ]; then
+        mv -v ${ORACLE_BASE}/dbs/spfile${ORACLE_SID}.ora ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/
+    fi
+
+    if [ -f ${ORACLE_HOME}/dbs/orapw${ORACLE_SID} ]; then
+        mv ${ORACLE_HOME}/dbs/orapw${ORACLE_SID} ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/
+    elif [ -f ${ORACLE_BASE}/dbs/orapw${ORACLE_SID} ]; then
+        mv -v ${ORACLE_BASE}/dbs/orapw${ORACLE_SID} ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/
+    fi
 
     # move network config files
     for i in sqlnet.ora listener.ora ldap.ora tnsnames.ora; do
-        ln -s ${TNS_ADMIN}/${i} ${ORACLE_HOME}/network/admin/${i}
+        ln -s -v ${TNS_ADMIN}/${i} ${ORACLE_HOME}/network/admin/${i}
     done
 
     if [ -f ${ORACLE_HOME}/ldap/admin/dsi.ora ]; then
-        mv ${ORACLE_HOME}/ldap/admin/dsi.ora ${TNS_ADMIN}/dsi.ora
+        mv -v ${ORACLE_HOME}/ldap/admin/dsi.ora ${TNS_ADMIN}/dsi.ora
     fi
 
     # move toolbox config files
     cd ${ORACLE_LOCAL}/dba/etc/
     for i in basenv.conf orahometab sidtab sid.${ORACLE_SID}.conf; do
-        mv ${ORACLE_LOCAL}/dba/etc/${i} ${ORACLE_DATA}/etc/${i}
+        mv -v ${ORACLE_LOCAL}/dba/etc/${i} ${ORACLE_DATA}/etc/${i}
     done
     cd -
-
+    echo "---------------------------------------------------------------"
     # create softlinks
     sym_link_files;
 }
@@ -147,33 +211,35 @@ function move_files {
 function sym_link_files {
 # Purpose....: Symbolic link DB files
 # -----------------------------------------------------------------------
-
+    echo "---------------------------------------------------------------"
+    echo "- create softlinks for config files"
     # create softlinks for db config files
     if [ ! -L ${ORACLE_HOME}/dbs/spfile${ORACLE_SID}.ora ]; then
-        ln -s ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/spfile${ORACLE_SID}.ora ${ORACLE_HOME}/dbs/spfile${ORACLE_SID}.ora
+        ln -s -v ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/spfile${ORACLE_SID}.ora ${ORACLE_HOME}/dbs/spfile${ORACLE_SID}.ora
     fi
     if [ ! -L ${ORACLE_HOME}/dbs/orapw${ORACLE_SID} ]; then
-        ln -s ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/dbs/orapw${ORACLE_SID}
+        ln -s -v ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/dbs/orapw${ORACLE_SID}
     fi
 
     # create softlinks for network configuration
     for i in sqlnet.ora listener.ora ldap.ora tnsnames.ora; do
         if [ ! -L ${ORACLE_HOME}/network/admin/${i} ]; then
-            ln -s ${TNS_ADMIN}/${i} ${ORACLE_HOME}/network/admin/${i}
+            ln -s -v ${TNS_ADMIN}/${i} ${ORACLE_HOME}/network/admin/${i}
         fi
     done
     if [ ! -L ${ORACLE_HOME}/ldap/admin/dsi.ora ]; then
-        ln -s ${TNS_ADMIN}/dsi.ora ${ORACLE_HOME}/ldap/admin/dsi.ora
+        ln -s -v ${TNS_ADMIN}/dsi.ora ${ORACLE_HOME}/ldap/admin/dsi.ora
     fi
 
     # create softlinks for toolbox configuration
     cd ${ORACLE_LOCAL}/dba/etc/
     for i in basenv.conf orahometab sidtab sid.${ORACLE_SID}.conf; do
         if [ ! -L ${ORACLE_LOCAL}/dba/etc/${i} ]; then
-            ln -s -f ${ORACLE_DATA}/etc/${i} ${ORACLE_LOCAL}/dba/etc/${i}
+            ln -s -v -f ${ORACLE_DATA}/etc/${i} ${ORACLE_LOCAL}/dba/etc/${i}
         fi
     done
     cd -
+    echo "---------------------------------------------------------------"
 }
 # - EOF Functions -------------------------------------------------------
 
