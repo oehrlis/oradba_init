@@ -129,7 +129,7 @@ fi
 echo " - Install Coherence patch (${COHERENCE_PATCH_PKG}) -------------------"
 if [ -n "${COHERENCE_PATCH_PKG}" ]; then
     if get_software "${COHERENCE_PATCH_PKG}"; then        # Check and get binaries
-        COHERENCE_PATCH_ID=$(unzip -qql p30729380_122140_Generic.zip| sed -r '1 {s/([ ]+[^ ]+){3}\s+//;q}')
+        COHERENCE_PATCH_ID=$(unzip -qql ${SOFTWARE}/${COHERENCE_PATCH_PKG}| sed -r '1 {s/([ ]+[^ ]+){3}\s+//;q}')
         echo " - unzip ${SOFTWARE}/${COHERENCE_PATCH_PKG} to ${DOWNLOAD}"
         unzip -q -o ${SOFTWARE}/${COHERENCE_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
