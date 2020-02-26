@@ -129,15 +129,15 @@ fi
 echo " - Install Coherence patch (${COHERENCE_PATCH_PKG}) -------------------"
 if [ -n "${COHERENCE_PATCH_PKG}" ]; then
     if get_software "${COHERENCE_PATCH_PKG}"; then        # Check and get binaries
-        FMW_PATCH_ID=$(echo ${COHERENCE_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
+        COHERENCE_PATCH_ID=$(unzip -qql p30729380_122140_Generic.zip| sed -r '1 {s/([ ]+[^ ]+){3}\s+//;q}')
         echo " - unzip ${SOFTWARE}/${COHERENCE_PATCH_PKG} to ${DOWNLOAD}"
         unzip -q -o ${SOFTWARE}/${COHERENCE_PATCH_PKG} \
             -d ${DOWNLOAD}/                         # unpack OPatch binary package
-        cd ${DOWNLOAD}/${FMW_PATCH_ID}
+        cd ${DOWNLOAD}/${COHERENCE_PATCH_ID}
         ${ORACLE_HOME}/OPatch/opatch apply -silent
         # remove binary packages on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${COHERENCE_PATCH_PKG}
-        rm -rf ${DOWNLOAD}/${FMW_PATCH_ID}          # remove the binary packages
+        rm -rf ${DOWNLOAD}/${COHERENCE_PATCH_ID}          # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
         echo "WARNING: Could not find local or remote coherence patch package. Skip coherence patch installation."
