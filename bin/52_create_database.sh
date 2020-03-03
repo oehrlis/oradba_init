@@ -25,16 +25,20 @@
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
-LOCAL_ORACLE_SID=${1:-"TDB183C"}                        # Default name for Oracle database
-LOCAL_ORACLE_PDB=${2:-"PDB1"}                           # Check whether ORACLE_PDB is passed on
-LOCAL_CONTAINER=${3:-"false"}                           # Check whether CONTAINER is passed on
+LOCAL_ORACLE_SID=${1:-"TDB183C"}                                # Default name for Oracle database
+LOCAL_ORACLE_PDB=${2:-"PDB1"}                                   # Check whether ORACLE_PDB is passed on
+LOCAL_CONTAINER=${3:-"false"}                                   # Check whether CONTAINER is passed on
 
-export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}    # Default name for Oracle database
-export ORACLE_PDB=${ORACLE_PDB:-${LOCAL_ORACLE_PDB}}    # Check whether ORACLE_PDB is passed on
-export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}       # Check whether CONTAINER is passed on
+export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}            # Default name for Oracle database
+export ORACLE_PDB=${ORACLE_PDB:-${LOCAL_ORACLE_PDB}}            # Check whether ORACLE_PDB is passed on
+export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}               # Check whether CONTAINER is passed on
 
-export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.4.0.0"}
-export ORACLE_BASE=${ORACLE_BASE:-"/u00/app/oracle"}
+# 
+export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}                       # default location for the Oracle root / software mountpoint
+export ORACLE_DATA=${ORACLE_DATA:-"/u01"}                       # default location for the Oracle data mountpoint
+export ORACLE_ARCH=${ORACLE_ARCH:-"/u02"}                       # default location for the second Oracle data mountpoint 
+export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.4.0.0"}         # default name for the oracle home name
+export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}  # default location for the Oracle base directory
 export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product/ -name sqlplus -type f|sort|tail -1)))}
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-"${ORACLE_HOME}/lib:/usr/lib"}
     
