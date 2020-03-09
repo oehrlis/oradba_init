@@ -179,4 +179,11 @@ if ! running_in_docker; then
 else
     echo "INFO:    Seems that I do run in a Docker container."
 fi
+
+# fix bash_profile for docker environment and remove BE_INITIALSID
+if running_in_docker; then
+    if [ -f $HOME/.bash_profile ]; then
+        sed -i.bck -n '/BE_INITIALSID/{N;s/.*//;x;d;};x;p;${x;p;}' $HOME/.bash_profile
+    fi
+fi
 # --- EOF --------------------------------------------------------------------
