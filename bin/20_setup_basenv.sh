@@ -47,6 +47,7 @@ export ORACLE_LOCAL=${ORACLE_LOCAL:-${ORACLE_BASE}/local}
 if running_in_docker; then
     export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_DATA}/network/admin}
     export ETC_BASE=${ETC_BASE:-${ORACLE_DATA}/etc}
+    mkdir -v -p $TNS_ADMIN $ETC_BASE
 else
     export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
     export ETC_BASE=${ETC_BASE:-${ORACLE_LOCAL}/dba}
