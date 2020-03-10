@@ -26,9 +26,6 @@
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
-# export BASENV_PKG=${BASENV_PKG:-basenv-19.05.final.b.zip}
-# export BASENV_ORADBA=${BASENV_ORADBA:-basenv-19.05.final.b.zip}
-# export BACKUP_PKG=${BACKUP_PKG:-tvdbackup-le-19.05.final.a.tar.gz}
 export BASENV_PKG=${BASENV_PKG:-basenv-19.11.final.c.zip}
 export BASENV_ORADBA=${BASENV_ORADBA:-basenv-19.11.final.c.zip}
 export BACKUP_PKG=${BACKUP_PKG:-tvdbackup-le-19.11.final.a.tar.gz}
@@ -41,10 +38,20 @@ export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file fold
 export DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-$(domainname 2>/dev/null ||cat /etc/domainname ||echo "postgasse.org")}
 
 # define Oracle specific variables
-export ORACLE_ROOT=${ORACLE_ROOT:-/u00}     # root folder for ORACLE_BASE and binaries
+export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
+export ORACLE_DATA=${ORACLE_DATA:-"/u01"}       # Oracle data folder eg volume for docker
 export ORACLE_BASE=${ORACLE_BASE:-$ORACLE_ROOT/app/oracle}
 export ORACLE_LOCAL=${ORACLE_LOCAL:-${ORACLE_BASE}/local}
-export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
+
+# set tns_admin for docker
+if running_in_docker; then
+    export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_DATA}/network/admin}
+    export ETC_BASE=${ETC_BASE:-${ORACLE_DATA}/etc}
+else
+    export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
+    export ETC_BASE=${ETC_BASE:-${ORACLE_LOCAL}/dba}
+fi
+
 # set the default ORACLE_HOME based on find results for oraenv
 export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product -name oraenv |sort -r|head -1)))}
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-$(basename ${ORACLE_HOME})}
@@ -64,6 +71,13 @@ if [ ! $EUID -ne 0 ]; then
    exit 1
 fi
 
+echo " - Prepare response file ----------------------------------------------"
+echo " - ORACLE_BASE    = $ORACLE_BASE"
+echo " - ORACLE_LOCAL   = $ORACLE_LOCAL"
+echo " - ORACLE_HOME    = $ORACLE_HOME"
+echo " - TNS_ADMIN      = $TNS_ADMIN"
+echo " - ETC_BASE       = $ETC_BASE"
+echo " - DEFAULT_DOMAIN = $DEFAULT_DOMAIN"
 # prepare response file
 cp ${ORADBA_RSP}/base_install.rsp.tmpl /tmp/base_install.rsp
 sed -i -e "s|###ORACLE_BASE###|${ORACLE_BASE}|g"        /tmp/base_install.rsp
@@ -71,6 +85,7 @@ sed -i -e "s|###ORACLE_HOME###|${ORACLE_HOME}|g"        /tmp/base_install.rsp
 sed -i -e "s|###TNS_ADMIN###|${TNS_ADMIN}|g"            /tmp/base_install.rsp
 sed -i -e "s|###ORACLE_LOCAL###|${ORACLE_LOCAL}|g"      /tmp/base_install.rsp
 sed -i -e "s|###DEFAULT_DOMAIN###|${DEFAULT_DOMAIN}|g"  /tmp/base_install.rsp
+sed -i -e "s|###ETC_BASE###|${ETC_BASE}|g"              /tmp/base_install.rsp
 
 # - EOF Initialization ------------------------------------------------------
 
