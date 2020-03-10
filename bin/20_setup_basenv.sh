@@ -42,16 +42,8 @@ export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE an
 export ORACLE_DATA=${ORACLE_DATA:-"/u01"}       # Oracle data folder eg volume for docker
 export ORACLE_BASE=${ORACLE_BASE:-$ORACLE_ROOT/app/oracle}
 export ORACLE_LOCAL=${ORACLE_LOCAL:-${ORACLE_BASE}/local}
-
-# set tns_admin for docker
-if running_in_docker; then
-    export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_DATA}/network/admin}
-    export ETC_BASE=${ETC_BASE:-${ORACLE_DATA}/etc}
-    mkdir -v -p $TNS_ADMIN $ETC_BASE
-else
-    export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
-    export ETC_BASE=${ETC_BASE:-${ORACLE_LOCAL}/dba}
-fi
+export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
+export ETC_BASE=${ETC_BASE:-${ORACLE_LOCAL}/dba}
 
 # set the default ORACLE_HOME based on find results for oraenv
 export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product -name oraenv |sort -r|head -1)))}
