@@ -83,14 +83,15 @@ if [ ! running_in_docker ]; then
 fi
 
 # show what we will create later on...
-echo "ORACLE_ROOT       =${ORACLE_ROOT}" && \
-echo "ORACLE_DATA       =${ORACLE_DATA}" && \
-echo "ORACLE_ARCH       =${ORACLE_ARCH}" && \
-echo "ORACLE_BASE       =${ORACLE_BASE}" && \
-echo "ORACLE_INVENTORY  =${ORACLE_INVENTORY}" && \
-echo "ORADBA_BASE       =${ORADBA_BASE}" && \
-echo "SOFTWARE          =${SOFTWARE}" && \
-echo "DOWNLOAD          =${DOWNLOAD}" 
+echo " - Prepare DB server OS> installation ---------------------------------"
+echo " - ORACLE_ROOT       = ${ORACLE_ROOT}" 
+echo " - ORACLE_DATA       = ${ORACLE_DATA}" 
+echo " - ORACLE_ARCH       = ${ORACLE_ARCH}" 
+echo " - ORACLE_BASE       = ${ORACLE_BASE}" 
+echo " - ORACLE_INVENTORY  = ${ORACLE_INVENTORY}" 
+echo " - ORADBA_BASE       = ${ORADBA_BASE}" 
+echo " - SOFTWARE          = ${SOFTWARE}" 
+echo " - DOWNLOAD          = ${DOWNLOAD}" 
 
 install --owner oracle --group oinstall --mode=775 --verbose --directory \
         ${ORACLE_ROOT} \
@@ -113,7 +114,7 @@ ${YUM} upgrade -y
 
 # check for legacy yum upgrade
 if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
-    echo "found /usr/bin/ol_yum_configure.sh "
+    echo " - found /usr/bin/ol_yum_configure.sh "
     /usr/bin/ol_yum_configure.sh
     ${YUM} upgrade -y
 fi
@@ -135,17 +136,17 @@ ${YUM} install -y make passwd \
 
 # remove the groups created by oracle
 for i in dba oper backupdba dgdba kmdba racdba; do
-    echo "removing group $i"
+    echo " - removing group $i"
     groupdel $i
 done
 
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
-    echo "clean up yum cache"
+    echo " - clean up yum cache"
     ${YUM} clean all
     rm -rf /var/cache/yum
 else
-    echo "yum cache is not cleaned up"
+    echo " - yum cache is not cleaned up"
 fi
 
 # - add PDB OS user ---------------------------------------------------------
