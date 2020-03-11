@@ -251,7 +251,6 @@ if running_in_docker; then
     rm -rf ${ORACLE_HOME}/lib/*.zip             # All installer files
 fi
 
-if [ $ORADBA_DEBUG == ""]
 if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
     echo "INFO:    \$ORADBA_DEBUG set to TRUE, keep temp and log files"
 else
