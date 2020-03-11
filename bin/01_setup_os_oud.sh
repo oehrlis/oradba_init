@@ -6,7 +6,7 @@
 # Name.......: 01_setup_os_oud.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2018.09.27
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: Script to configure OEL for Oracle Unified Directory installations.
 # Notes......: Script would like to be executed as root :-).

@@ -6,7 +6,7 @@
 # Name.......: 62_create_oud_instance.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2017.12.04
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: Helper script to create the OUD instance 
 # Notes......: Script to create an OUD instance. If configuration files are
@@ -132,20 +132,20 @@ if [ -z ${ADMIN_PASSWORD} ]; then
             echo "Password does not Match the criteria, re-generating..."
         fi
     done
-    echo "------------------------------------------------------------------------"
-    echo "    Oracle Unified Directory Server auto generated instance"
-    echo "    admin password :"
-    echo "    ----> Directory Admin : ${ADMIN_USER} "
-    echo "    ----> Admin password  : $s"
-    echo "------------------------------------------------------------------------"
+    echo " ------------------------------------------------------------------------"
+    echo " - Oracle Unified Directory Server auto generated instance"
+    echo " - admin password :"
+    echo " - ----> Directory Admin : ${ADMIN_USER} "
+    echo " - ----> Admin password  : $s"
+    echo " ------------------------------------------------------------------------"
 else
     s=${ADMIN_PASSWORD}
     echo "------------------------------------------------------------------------"
-    echo "    Oracle Unified Directory Server use pre defined instance"
-    echo "    admin password :"
-    echo "    ----> Directory Admin : ${ADMIN_USER} "
-    echo "    ----> Admin password  : $s"
-    echo "------------------------------------------------------------------------"
+    echo " - Oracle Unified Directory Server use pre defined instance"
+    echo " - admin password :"
+    echo " - ----> Directory Admin : ${ADMIN_USER} "
+    echo " - ----> Admin password  : $s"
+    echo " ------------------------------------------------------------------------"
 fi
 
 # write password file
@@ -169,7 +169,9 @@ echo "  PORT_HTTP          = ${PORT_HTTP}"
 echo "  PORT_HTTPS         = ${PORT_HTTPS}"
 echo "  PORT_REP           = ${PORT_REP}"
 echo "  PORT_ADMIN         = ${PORT_ADMIN}"
-echo "  PORT_ADMIN_HTTP    = ${PORT_ADMIN_HTTP}"
+echo "  PORT_REST_ADMIN    = ${PORT_REST_ADMIN}"
+echo "  PORT_REST_HTTP     = ${PORT_REST_HTTP}"
+echo "  PORT_REST_HTTPS    = ${PORT_REST_HTTPS}"
 echo "  ADMIN_USER         = ${ADMIN_USER}"
 echo "  BASEDN             = ${BASEDN}"
 echo "  SAMPLE_DATA        = ${SAMPLE_DATA}"

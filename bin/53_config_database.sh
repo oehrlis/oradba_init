@@ -6,7 +6,7 @@
 # Name.......: 53_config_database.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2017.12.04
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: Configure database using custom scripts 
 # Notes......: Script is a wrapper for custom setup script in SCRIPTS_ROOT 
@@ -38,18 +38,18 @@ fi;
 if [ -d "$SCRIPTS_ROOT" ] && [ -n "$(ls -A $SCRIPTS_ROOT)" ]; then
 
   echo "";
-  echo "Executing user defined scripts"
+  echo " - Executing user defined scripts"
 
   for f in $SCRIPTS_ROOT/*; do
       case "$f" in
-          *.sh)     echo "$0: running $f"; . "$f" ;;
-          *.sql)    echo "$0: running $f"; echo "exit" | $ORACLE_HOME/bin/sqlplus -s "/ as sysdba" @"$f"; echo ;;
-          *)        echo "$0: ignoring $f" ;;
+          *.sh)     echo " - $0: running $f"; . "$f" ;;
+          *.sql)    echo " - $0: running $f"; echo "exit" | $ORACLE_HOME/bin/sqlplus -s "/ as sysdba" @"$f"; echo ;;
+          *)        echo " - $0: ignoring $f" ;;
       esac
       echo "";
   done
   
-  echo "DONE: Executing user defined scripts"
+  echo " - DONE: Executing user defined scripts"
   echo "";
 
 fi

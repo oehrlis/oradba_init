@@ -37,7 +37,7 @@ export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}               # Check whether 
 export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}                       # default location for the Oracle root / software mountpoint
 export ORACLE_DATA=${ORACLE_DATA:-"/u01"}                       # default location for the Oracle data mountpoint
 export ORACLE_ARCH=${ORACLE_ARCH:-"/u02"}                       # default location for the second Oracle data mountpoint 
-export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.4.0.0"}         # default name for the oracle home name
+export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"19.0.0.0"}         # default name for the oracle home name
 export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}  # default location for the Oracle base directory
 export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product/ -name sqlplus -type f|sort|tail -1)))}
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-"${ORACLE_HOME}/lib:/usr/lib"}
@@ -78,21 +78,21 @@ if [ -z ${ORACLE_PWD} ]; then
         if [[ ${#s} -ge 10 && "$s" == *[A-Z]* && "$s" == *[a-z]* && "$s" == *[0-9]*  ]]; then
             break
         else
-            echo "Password does not Match the criteria, re-generating..."
+            echo " - Password does not Match the criteria, re-generating..."
         fi
     done
-    echo "------------------------------------------------------------------------"
-    echo "    Oracle Database Server auto generated password:"
-    echo "    ----> User        : SYS, SYSTEM AND PDBADMIN"
-    echo "    ----> Password    : $s"
-    echo "------------------------------------------------------------------------"
+    echo " ------------------------------------------------------------------------"
+    echo " -  Oracle Database Server auto generated password:"
+    echo " -  ----> User        : SYS, SYSTEM AND PDBADMIN"
+    echo " -  ----> Password    : $s"
+    echo " ------------------------------------------------------------------------"
 else
     s=${ORACLE_PWD}
-    echo "------------------------------------------------------------------------"
-    echo "    Oracle Database Server use pre defined password:"
-    echo "    ----> User        : SYS, SYSTEM AND PDBADMIN"
-    echo "    ----> Password    : $s"
-    echo "------------------------------------------------------------------------"
+    echo " ------------------------------------------------------------------------"
+    echo " -  Oracle Database Server use pre defined password:"
+    echo " -  ----> User        : SYS, SYSTEM AND PDBADMIN"
+    echo " -  ----> Password    : $s"
+    echo " ------------------------------------------------------------------------"
 fi
 
 # set instant init location create folder if it does exists
@@ -101,30 +101,30 @@ if [ ! -d "${INSTANCE_INIT}/setup" ]; then
 fi
 
 # inform what's done next...
-echo "Create database instance ${ORACLE_SID} using:"
-echo "ORACLE_SID            : ${ORACLE_SID}"
-echo "HOST                  : ${HOST}"
-echo "ORACLE_HOME           : ${ORACLE_HOME}"
-echo "ORACLE_RELEASE        : ${ORACLE_RELEASE}"
-echo "ORACLE_VERSION        : ${ORACLE_VERSION}"
-echo "ORACLE_BASE           : ${ORACLE_BASE}"
-echo "ORACLE_DATA           : ${ORACLE_DATA}"
-echo "ORACLE_ARCH           : ${ORACLE_ARCH}"
-echo "CONTAINER             : ${CONTAINER}"
-echo "INSTANCE_INIT         : ${INSTANCE_INIT}"
-echo "RESPONSE FOLDER       : ${ORADBA_RSP}"
-echo "RESPONSE              : ${ORADBA_RSP_FILE}"
-echo "TEMPLATE              : ${ORADBA_DBC_FILE}"
-echo "ORADBA_TEMPLATE_PREFIX: ${ORADBA_TEMPLATE_PREFIX}"
-echo "DB RESPONSE           : ${ORADBA_RESPONSE}"
-echo "DB TEMPLATE           : ${ORADBA_TEMPLATE}"
-echo "ORACLE_CHARACTERSET   : ${ORACLE_CHARACTERSET}"
+echo " - Create database instance ${ORACLE_SID} using:"
+echo " - ORACLE_SID            : ${ORACLE_SID}"
+echo " - HOST                  : ${HOST}"
+echo " - ORACLE_HOME           : ${ORACLE_HOME}"
+echo " - ORACLE_RELEASE        : ${ORACLE_RELEASE}"
+echo " - ORACLE_VERSION        : ${ORACLE_VERSION}"
+echo " - ORACLE_BASE           : ${ORACLE_BASE}"
+echo " - ORACLE_DATA           : ${ORACLE_DATA}"
+echo " - ORACLE_ARCH           : ${ORACLE_ARCH}"
+echo " - CONTAINER             : ${CONTAINER}"
+echo " - INSTANCE_INIT         : ${INSTANCE_INIT}"
+echo " - RESPONSE FOLDER       : ${ORADBA_RSP}"
+echo " - RESPONSE              : ${ORADBA_RSP_FILE}"
+echo " - TEMPLATE              : ${ORADBA_DBC_FILE}"
+echo " - ORADBA_TEMPLATE_PREFIX: ${ORADBA_TEMPLATE_PREFIX}"
+echo " - DB RESPONSE           : ${ORADBA_RESPONSE}"
+echo " - DB TEMPLATE           : ${ORADBA_TEMPLATE}"
+echo " - ORACLE_CHARACTERSET   : ${ORACLE_CHARACTERSET}"
 
 # write password file
 mkdir -p ${ORACLE_SID_ADMIN_ETC}
 export ORACLE_PWD=$s
 echo "${ORACLE_PWD}" > "${ORACLE_BASE}/admin/${ORACLE_SID}/etc/${ORACLE_SID}_password.txt"
-echo "ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ${ORACLE_PWD}";
+echo " - ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ${ORACLE_PWD}";
 
 # Replace place holders in response file
 cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}

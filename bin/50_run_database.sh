@@ -6,7 +6,7 @@
 # Name.......: 50_run_database.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2017.12.04
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: Helper script to start the Oracle database
 # Notes......: Script to create an Oracle database. If configuration files are
@@ -57,32 +57,32 @@ export INSTANCE_INIT=${INSTANCE_INIT:-"${ORACLE_BASE}/admin/${ORACLE_SID}/script
 function move_directories {
 # Purpose....: Move config directories
     # -----------------------------------------------------------------------
-    echo "---------------------------------------------------------------"
-    echo "- move directories with persistent data in ${ORACLE_BASE} to docker volume (${ORACLE_DATA})"
+    echo " ---------------------------------------------------------------"
+    echo " - move directories with persistent data in ${ORACLE_BASE} to docker volume (${ORACLE_DATA})"
 
     for i in dbs audit homes admin diag etc network; do
         # check if directory is a softlink if not move it and create one
         if [ ! -L ${ORACLE_BASE}/${i} ] && [ -d ${ORACLE_BASE}/${i} ] && [ ! -d ${ORACLE_DATA}/${i} ]; then
-            echo "- move ${ORACLE_BASE}/${i} to ${ORACLE_BASE}/${i}"
+            echo " - move ${ORACLE_BASE}/${i} to ${ORACLE_BASE}/${i}"
             mv -v ${ORACLE_BASE}/${i} ${ORACLE_DATA}
-            echo "- create softlink for ${ORACLE_BASE}/${i}"
+            echo " - - create softlink for ${ORACLE_BASE}/${i}"
             ln -s -v ${ORACLE_DATA}/${i} ${ORACLE_BASE}/${i}
             # if directory exists on /u01 just create a softlink
         elif [ ! -L ${ORACLE_BASE}/${i} ] && [ -d ${ORACLE_BASE}/${i} ] && [ -d ${ORACLE_DATA}/${i} ]; then
             rm -rf ${ORACLE_BASE}/${i}
-            echo "- re-create softlink for ${ORACLE_BASE}/${i}"
+            echo " - - re-create softlink for ${ORACLE_BASE}/${i}"
             ln -s -v ${ORACLE_DATA}/${i} ${ORACLE_BASE}/${i}
         fi
     done
-    echo "---------------------------------------------------------------"
+    echo " ----------------------------------------------------------------"
 }
 
 # -----------------------------------------------------------------------
 function move_files {
 # Purpose....: Move DB files
 # -----------------------------------------------------------------------
-    echo "---------------------------------------------------------------"
-    echo "- move files with persistent data to docker volume (${ORACLE_DATA})"
+    echo " ----------------------------------------------------------------"
+    echo " - - move files with persistent data to docker volume (${ORACLE_DATA})"
     # create admin directory on volume
     if [ ! -d ${ORACLE_DATA}/admin/${ORACLE_SID} ]; then
         mkdir -v -p ${ORACLE_DATA}/admin/${ORACLE_SID}
@@ -116,7 +116,7 @@ function move_files {
         fi
     done
     cd -
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
     # create softlinks
     sym_link_files;
 }
@@ -125,24 +125,24 @@ function move_files {
 function sym_link_files {
 # Purpose....: Symbolic link DB files
 # -----------------------------------------------------------------------
-    echo "---------------------------------------------------------------"
-    echo "- create softlinks for config files"
+    echo " ---------------------------------------------------------------"
+    echo " - create softlinks for config files"
     # check if we have a dbs in  ${ORACLE_BASE}
-    echo "- create softlinks for \${ORACLE_HOME}/dbs files"
+    echo " - create softlinks for \${ORACLE_HOME}/dbs files"
     # check if we do have orabasehome and if read/write or read-only Oracle home
     if [ -z $(command -v ${ORACLE_HOME}/bin/orabasehome) ] || [ $(${ORACLE_HOME}/bin/orabasehome) == "${ORACLE_HOME}" ]; then 
-        echo "- using read/write Oracle home. Create softlinks in \${ORACLE_HOME}/dbs."
+        echo " - using read/write Oracle home. Create softlinks in \${ORACLE_HOME}/dbs."
         for i in spfile${ORACLE_SID}.ora init${ORACLE_SID}.ora orapw${ORACLE_SID}; do
             if [ ! -L ${ORACLE_HOME}/dbs/${i} ] && [ -f ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i} ]; then
                 ln -s -v ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i} ${ORACLE_HOME}/dbs/${i}
             fi
         done
     else 
-        echo "- using read-only Oracle home. No softlinks will be created."
+        echo " - using read-only Oracle home. No softlinks will be created."
     fi
 
     # create softlinks for network configuration
-    echo "- create softlinks for network configuration in \${ORACLE_HOME}/network/admin"
+    echo " - create softlinks for network configuration in \${ORACLE_HOME}/network/admin"
     for i in sqlnet.ora listener.ora ldap.ora tnsnames.ora; do
         if [ ! -L ${ORACLE_HOME}/network/admin/${i} ] && [ -f ${TNS_ADMIN}/${i} ]; then
             ln -s -v ${TNS_ADMIN}/${i} ${ORACLE_HOME}/network/admin/${i}
@@ -153,7 +153,7 @@ function sym_link_files {
     fi
     
     # create softlinks for toolbox configuration
-    echo "- create softlinks for toolbox configuration in \${ORACLE_LOCAL}/dba/etc/"
+    echo " - create softlinks for toolbox configuration in \${ORACLE_LOCAL}/dba/etc/"
     cd ${ORACLE_LOCAL}/dba/etc/
     for i in basenv.conf orahometab sidtab sid.${ORACLE_SID}.conf; do
         if [ ! -L ${ORACLE_LOCAL}/dba/etc/${i} ] && [ -f ${ORACLE_DATA}/etc/${i} ] ; then
@@ -161,7 +161,7 @@ function sym_link_files {
         fi
     done
     cd -
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
 }
 # - EOF Functions -------------------------------------------------------
 
@@ -169,10 +169,10 @@ function sym_link_files {
 # SIGINT handler
 # ---------------------------------------------------------------------------
 function int_db() {
-    echo "---------------------------------------------------------------"
-    echo "Stopping container."
-    echo "SIGINT received, shutting down database ${ORACLE_SID}!"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - Stopping container."
+    echo " - SIGINT received, shutting down database ${ORACLE_SID}!"
+    echo " ---------------------------------------------------------------"
     sqlplus / as sysdba <<EOF
     shutdown immediate;
     exit;
@@ -184,10 +184,10 @@ EOF
 # SIGTERM handler
 # ---------------------------------------------------------------------------
 function term_db() {
-    echo "---------------------------------------------------------------"
-    echo "Stopping container."
-    echo "SIGTERM received, shutting down database ${ORACLE_SID}!"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - Stopping container."
+    echo " - SIGTERM received, shutting down database ${ORACLE_SID}!"
+    echo " ---------------------------------------------------------------"
     sqlplus / as sysdba <<EOF
     shutdown immediate;
     exit;
@@ -199,9 +199,9 @@ EOF
 # SIGKILL handler
 # ---------------------------------------------------------------------------
 function kill_db() {
-    echo "---------------------------------------------------------------"
-    echo "SIGKILL received, shutting down database ${ORACLE_SID}!"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - SIGKILL received, shutting down database ${ORACLE_SID}!"
+    echo " ---------------------------------------------------------------"
     sqlplus / as sysdba <<EOF
     shutdown abort;
     exit;
@@ -215,9 +215,9 @@ EOF
 # only check if memory digits are less than 11 (single GB range and below) 
 if [ `cat /sys/fs/cgroup/memory/memory.limit_in_bytes | wc -c` -lt 11 ]; then
    if [ `cat /sys/fs/cgroup/memory/memory.limit_in_bytes` -lt 2147483648 ]; then
-      echo "Error: The container doesn't have enough memory allocated."
-      echo "A database container needs at least 2 GB of memory."
-      echo "You currently only have $((`cat /sys/fs/cgroup/memory/memory.limit_in_bytes`/1024/1024/1024)) GB allocated to the container."
+      echo " - ERROR: The container doesn't have enough memory allocated."
+      echo " - A database container needs at least 2 GB of memory."
+      echo " - You currently only have $((`cat /sys/fs/cgroup/memory/memory.limit_in_bytes`/1024/1024/1024)) GB allocated to the container."
       exit 1
    fi
 fi
@@ -236,14 +236,14 @@ trap kill_db SIGKILL
 # Check whether SID is no longer than 12 bytes
 # Github issue #246: Cannot start OracleDB image
 if [ "${#ORACLE_SID}" -gt 12 ]; then
-    echo "Error: The ORACLE_SID must only be up to 12 characters long."
+    echo " - ERROR: The ORACLE_SID must only be up to 12 characters long."
     exit 1
 fi
 
 # Check whether SID is alphanumeric
 # Github issue #246: Cannot start OracleDB image
 if [[ "$ORACLE_SID" =~ [^a-zA-Z0-9] ]]; then
-    echo "Error: The ORACLE_SID must be alphanumeric."
+    echo " - ERROR: The ORACLE_SID must be alphanumeric."
     exit 1
 fi
 
@@ -291,23 +291,23 @@ fi
 ${ORADBA_BIN}/${CHECK_SCRIPT}
 
 if [ $? -eq 0 ]; then
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
     echo " - DATABASE ${ORACLE_SID} IS READY TO USE!"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
     # Execute custom provided startup scripts
     ${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/startup
 else
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
     echo " - DATABASE SETUP FOR ${ORACLE_SID} WAS NOT SUCCESSFUL:"
     echo " - Please check output for further info!"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
 fi;
 
 # Tail on alert log and wait (otherwise container will exit)
 echo "---------------------------------------------------------------"
-echo "   Tail output of alert log from ${ORACLE_SID}:"
+echo " - Tail output of alert log from ${ORACLE_SID}:"
 echo "---------------------------------------------------------------"
-echo "The following output is now a tail of the alert.log:"
+echo " - The following output is now a tail of the alert.log:"
 tail -f $ORACLE_BASE/diag/rdbms/*/*/trace/alert*.log &
 childPID=$!
 wait $childPID

@@ -6,7 +6,7 @@
 # Name.......: 10_setup_oud.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2019.09.27
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: generic script to install Oracle Unified Directory binaries.
 # Notes......: Script would like to be executed as oracle :-).
@@ -17,8 +17,19 @@
 # Modified...:
 # see git revision history for more information on changes/updates
 # ---------------------------------------------------------------------------
+# - Customization -----------------------------------------------------------
+# OUD_BASE_PKG="p30188352_122140_Generic.zip"         # OUD 12.2.1.4.0
+# FMW_BASE_PKG="p30188255_122140_Generic.zip"         # ORACLE FUSION MIDDLEWARE 12C (12.2.1.4.0) INFRASTRUCTURE (Patchset)
+# OUD_PATCH_PKG="p30851280_122140_Generic.zip"        # OUD BUNDLE PATCH 12.2.1.4.200204 (Patch) 
+# FMW_PATCH_PKG="p30689820_122140_Generic.zip"        # WLS PATCH SET UPDATE 12.2.1.4.191220 (Patch) 
+# OUD_OPATCH_PKG="p28186730_139422_Generic.zip"       # OPATCH 13.9.4.2.2 FOR FMW/WLS 12.2.1.3.0 AND 12.2.1.4.0 (Patch) 
+# OUI_PATCH_PKG=""
+# COHERENCE_PATCH_PKG="p30729380_122140_Generic.zip"  # Coherence 12.2.1.4.3 Cumulative Patch using OPatch (Patch) 
+# ORACLE_HOME_NAME="oud12.2.1.4.0"                    # Name of the Oracle Home directory
+# ORACLE_HOME="${ORACLE_BASE}/product/${ORACLE_HOME_NAME}"
+# - End of Customization ----------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Default Values ----------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -29,6 +40,7 @@ export OUD_PATCH_PKG=${OUD_PATCH_PKG:-""}
 export FMW_PATCH_PKG=${FMW_PATCH_PKG:-""}
 export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-""}
 export OUI_PATCH_PKG=${OUI_PATCH_PKG:-""}
+export COHERENCE_PATCH_PKG=${COHERENCE_PATCH_PKG:-""}
 
 export OUD_TYPE=${OUD_TYPE:-"OUD12"}
 export OUD_INSTALL_TYPE=${OUD_INSTALL_TYPE:-'Standalone Oracle Unified Directory Server (Managed independently of WebLogic server)'}
@@ -55,7 +67,7 @@ export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallb
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
-# - EOF Environment Variables -----------------------------------------------
+# - End of Default Values ---------------------------------------------------
 
 # - Initialization ----------------------------------------------------------
 # Make sure root does not run our script

@@ -6,7 +6,7 @@
 # Name.......: 60_start_oud_instance.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2017.12.04
+# Date.......: 2020.03.11
 # Revision...:
 # Purpose....: Helper script to start the OUD instance
 # Notes......: Script does look for the config.ldif. If it does not exist
@@ -55,9 +55,9 @@ export CHECK_SCRIPT=${CHECK_SCRIPT:-"64_check_oud_instance.sh"}
 # SIGINT handler
 # ---------------------------------------------------------------------------
 function int_oud() {
-    echo "---------------------------------------------------------------"
-    echo "SIGINT received, shutting down OUD instance!"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - SIGINT received, shutting down OUD instance!"
+    echo " ---------------------------------------------------------------"
     ${OUD_INSTANCE_HOME}/OUD/bin/stop-ds >/dev/null 2>&1
 }
 
@@ -65,9 +65,9 @@ function int_oud() {
 # SIGTERM handler
 # ---------------------------------------------------------------------------
 function term_oud() {
-    echo "---------------------------------------------------------------"
-    echo "SIGTERM received, shutting down OUD instance!"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - SIGTERM received, shutting down OUD instance!"
+    echo " ---------------------------------------------------------------"
     ${OUD_INSTANCE_HOME}/OUD/bin/stop-ds >/dev/null 2>&1
 }
 
@@ -75,9 +75,9 @@ function term_oud() {
 # SIGKILL handler
 # ---------------------------------------------------------------------------
 function kill_oud() {
-    echo "---------------------------------------------------------------"
-    echo "SIGKILL received, shutting down OUD instance!"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - SIGKILL received, shutting down OUD instance!"
+    echo " ---------------------------------------------------------------"
     kill -9 $childPID
 }
 
@@ -98,31 +98,31 @@ echo "--- Seeking for an OUD environment on volume ${ORACLE_DATA} -------------"
 # check if config.ldif does exists
 if [ -f ${OUD_INSTANCE_HOME}/OUD/config/config.ldif ]; then
     # check version of existing instance
-    echo "---------------------------------------------------------------"
-    echo "   OUD instance (${OUD_INSTANCE}) system info:"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - OUD instance (${OUD_INSTANCE}) system info:"
+    echo " ---------------------------------------------------------------"
     ${OUD_INSTANCE_HOME}/OUD/bin/start-ds -F
     
     # Start existing OUD instance
-    echo "---------------------------------------------------------------"
-    echo "   Start OUD instance (${OUD_INSTANCE}):"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - Start OUD instance (${OUD_INSTANCE}):"
+    echo " ---------------------------------------------------------------"
     ${OUD_INSTANCE_HOME}/OUD/bin/start-ds
     if [ $? -eq 1 ]; then
-        echo "---------------------------------------------------------------"
-        echo "   OUD instance (${OUD_INSTANCE}) needs to be upgraded first:"
-        echo "---------------------------------------------------------------"
+        echo " ---------------------------------------------------------------"
+        echo " - OUD instance (${OUD_INSTANCE}) needs to be upgraded first:"
+        echo " ---------------------------------------------------------------"
         ${OUD_INSTANCE_HOME}/OUD/bin/start-ds --upgrade
         
-        echo "---------------------------------------------------------------"
-        echo "   Start OUD instance (${OUD_INSTANCE}) after upgrad:"
-        echo "---------------------------------------------------------------"
+        echo " ---------------------------------------------------------------"
+        echo " - Start OUD instance (${OUD_INSTANCE}) after upgrad:"
+        echo " ---------------------------------------------------------------"
         ${OUD_INSTANCE_HOME}/OUD/bin/start-ds
     fi
     elif [ ${CREATE_INSTANCE} -eq 1 ]; then
-    echo "---------------------------------------------------------------"
-    echo "   Create OUD instance (${OUD_INSTANCE}):"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - Create OUD instance (${OUD_INSTANCE}):"
+    echo " ---------------------------------------------------------------"
     # CREATE_INSTANCE is true, therefore we will create new OUD instance
     ${ORADBA_BIN}/${CREATE_SCRIPT}
     
@@ -131,17 +131,17 @@ if [ -f ${OUD_INSTANCE_HOME}/OUD/config/config.ldif ]; then
         ${OUD_INSTANCE_HOME}/OUD/bin/stop-ds --restart
     fi
 else
-    echo "---------------------------------------------------------------"
-    echo "   WARNING: OUD config.ldif does not exist and CREATE_INSTANCE "
-    echo "   is false. OUD instance has to be created manually using"
-    echo "   oud_setup or oud-proxy-setup via cli"
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
+    echo " - WARNING: OUD config.ldif does not exist and CREATE_INSTANCE "
+    echo " - is false. OUD instance has to be created manually using"
+    echo " - oud_setup or oud-proxy-setup via cli"
+    echo " ---------------------------------------------------------------"
 fi
 
 # Check whether OUD instance is up and running
 ${ORADBA_BIN}/${CHECK_SCRIPT}
 if [ $? -eq 0 ]; then
-    echo "---------------------------------------------------------------"
+    echo " ---------------------------------------------------------------"
     echo "   OUD instance is ready to use:"
     echo "   Instance Name      : ${OUD_INSTANCE}"
     echo "   Instance Home (ok) : ${OUD_INSTANCE_HOME}"
@@ -151,15 +151,18 @@ if [ $? -eq 0 ]; then
     echo "   LDAPS Port         : ${PORT_SSL}"
     echo "   Admin Port         : ${PORT_ADMIN}"
     echo "   Replication Port   : ${PORT_REP}"
-    echo "---------------------------------------------------------------"
+    echo "   REST Admin Port    : ${PORT_REST_ADMIN-n/a}"
+    echo "   REST http Port     : ${PORT_REST_HTTP-n/a}"
+    echo "   REST https Port    : ${PORT_REST_HTTPS-n/a}"
+    echo " ---------------------------------------------------------------"
 fi
 
 # Tail on server log and wait (otherwise container will exit)
 mkdir -p ${OUD_INSTANCE_HOME}/OUD/logs
 touch ${OUD_INSTANCE_HOME}/OUD/logs/server.out
-echo "---------------------------------------------------------------"
-echo "   Tail output of OUD (${OUD_INSTANCE}) server.out logfile:"
-echo "---------------------------------------------------------------"
+echo " ---------------------------------------------------------------"
+echo " - Tail output of OUD (${OUD_INSTANCE}) server.out logfile:"
+echo " ---------------------------------------------------------------"
 tail -f ${OUD_INSTANCE_HOME}/OUD/logs/server.out &
 
 childPID=$!

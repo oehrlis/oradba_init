@@ -6,7 +6,7 @@
 # Name.......: 11_setup_db_patch.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2018.09.27
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: Script to patch Oracle Database binaries
 # Notes......: - Script would like to be executed as oracle :-)

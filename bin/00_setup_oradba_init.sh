@@ -6,7 +6,7 @@
 # Name.......: 00_setup_oradba_init.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2018.09.27
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: Script to initialize and install oradba init scripts.
 # Notes......: When executed, the oradba init scripts will be downloaded from 

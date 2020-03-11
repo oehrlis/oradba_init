@@ -6,7 +6,7 @@
 # Name.......: 10_setup_db.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2018.09.27
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: generic script to install Oracle databases binaries
 # Notes......: - Script would like to be executed as oracle :-)

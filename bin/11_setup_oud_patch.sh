@@ -6,7 +6,7 @@
 # Name.......: 11_setup_oud_patch.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2018.09.27
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: Script to patch Oracle Unified Directory binaries
 # Notes......: - Script would like to be executed as oracle :-)
@@ -30,6 +30,7 @@ export OUD_PATCH_PKG=${OUD_PATCH_PKG:-""}
 export FMW_PATCH_PKG=${FMW_PATCH_PKG:-""}
 export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-""}
 export OUI_PATCH_PKG=${OUI_PATCH_PKG:-""}
+export COHERENCE_PATCH_PKG=${COHERENCE_PATCH_PKG:-""}
 export OPATCH_NO_FUSER=true
 
 # define oradba specific variables

@@ -1,15 +1,24 @@
 #!/bin/bash
-# LICENSE UPL 1.0
-#
-# Copyright (c) 1982-2018 Oracle and/or its affiliates. All rights reserved.
-# 
-# Since: November, 2016
-# Author: gerald.venzl@oracle.com
-# Description: Sets the password for sys, system and pdb_admin
-#
-# DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-# 
-
+# ---------------------------------------------------------------------------
+# Trivadis AG, Infrastructure Managed Services
+# Saegereistrasse 29, 8152 Glattbrugg, Switzerland
+# ---------------------------------------------------------------------------
+# Name.......: 80_setPassword.sh 
+# Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
+# Editor.....: Stefan Oehrli
+# Date.......: 2020.03.11
+# Revision...: 
+# Purpose....: check the status of the OUDSM console for docker HEALTHCHECK 
+# Notes......: Script is a wrapper for a simple curl. It makes sure, that the 
+#              status of the docker OUDSM console is checked and the exit code
+#              is docker compliant (0 or 1).
+# Reference..: Oracle docker github rebository
+# License....: Licensed under the Universal Permissive License v 1.0 as 
+#              shown at http://oss.oracle.com/licenses/upl.
+# ---------------------------------------------------------------------------
+# Modified...:
+# see git revision history for more information on changes/updates
+# ---------------------------------------------------------------------------
 ORACLE_PWD=$1
 ORACLE_SID="`grep $ORACLE_HOME /etc/oratab | cut -d: -f1`"
 ORACLE_PDB="`ls -dl $ORACLE_BASE/oradata/$ORACLE_SID/*/ | grep -v pdbseed | awk '{print $9}' | cut -d/ -f6`"
@@ -23,4 +32,4 @@ sqlplus / as sysdba << EOF
       ALTER USER PDBADMIN IDENTIFIED BY "$ORACLE_PWD";
       exit;
 EOF
-
+# --- EOF -------------------------------------------------------------------

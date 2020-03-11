@@ -6,7 +6,7 @@
 # Name.......: 01_setup_os_java.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2018.09.27
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: Script to install Oracle server jre.
 # Notes......: --

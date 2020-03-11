@@ -6,7 +6,7 @@
 # Name.......: 01_setup_os_docker.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2019.10.22
+# Date.......: 2020.03.11
 # Revision...: 
 # Purpose....: Script to configure OEL for Docker.
 # Notes......: Script would like to be executed as root :-).
