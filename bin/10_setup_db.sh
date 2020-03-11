@@ -63,6 +63,7 @@ export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 export ORADBA_DEBUG=${ORADBA_DEBUG:-"FALSE"}    # enable debug mode
+export PATCH_LATER=${PATCH_LATER:-"FALSE"}    # enable debug mode
 
 # define default Oracle specific environment variables
 export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
@@ -227,15 +228,17 @@ else
 fi
 
 # install patch any of the patch variable is if defined
-if [ ! -z "${DB_PATCH_PKG}" ] || [ ! -z "${DB_OJVM_PKG}" ] || [ ! -z "${DB_OPATCH_PKG}" ]; then 
+if [ ! -z "${DB_PATCH_PKG}" ] || [ ! -z "${DB_OJVM_PKG}" ] || [ ! -z "${DB_OPATCH_PKG}" ] && [ "${PATCH_LATER^^}" == "FALSE" ]; then  
     ${ORADBA_BIN}/11_setup_db_patch.sh
+elif [ "${PATCH_LATER^^}" == "TRUE" ]; then
+    echo " - Patch later. PATCH_LATER=$PATCH_LATER"
 else
     echo " - Skip patch installation. No patch packages specified."
 fi
 
 echo " - CleanUp DB installation --------------------------------------------"
 # Remove not needed components
-if running_in_docker; then
+if running_in_docker && [ "${PATCH_LATER^^}" == "FALSE" ]; then
     echo " - remove Docker specific stuff"
     rm -rf ${ORACLE_HOME}/apex                  # APEX
     rm -rf ${ORACLE_HOME}/ords                  # ORDS
@@ -268,7 +271,7 @@ else
     find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
 fi
 
-if [ "${SLIM^^}" == "TRUE" ]; then
+if [ "${SLIM^^}" == "TRUE" ] && [ "${PATCH_LATER^^}" == "FALSE" ]; then
     echo " - \$SLIM set to TRUE, remove other stuff..."
     rm -rf ${ORACLE_HOME}/inventory             # remove inventory
     rm -rf ${ORACLE_HOME}/oui                   # remove oui
