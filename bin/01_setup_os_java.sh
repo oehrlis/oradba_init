@@ -28,7 +28,10 @@ export JAVA_PKG=${JAVA_PKG:-"p29657250_180221_Linux-x86-64.zip"}
 export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
 export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}
 export JAVA_BASE=${JAVA_BASE:-"${ORACLE_BASE}/product"} 
-
+# define oradba specific variables
+export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
+export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
+export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 # define generic variables for software, download etc
 export OPT_DIR=${OPT_DIR:-"/opt"}
 export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
@@ -56,16 +59,15 @@ if [ -n "${JAVA_PKG}" ]; then
         alternatives --install /usr/bin/javac javac $JAVA_DIR/bin/javac 20000 && \
         alternatives --install /usr/bin/jar jar $JAVA_DIR/bin/jar 20000
     else
-        echo "ERROR:   No base software package specified. Abort installation."
+        echo " - ERROR: No base software package specified. Abort installation."
         exit 1
     fi
 fi
 
-if [ ! running_in_docker ]; then
-    # add 3DES_EDE_CBC for Oracle EUS
-    JAVA_SECURITY=$(find $(dirname $(dirname $(realpath $(command -v java)))) -name java.security 2>/dev/null)
-    if [ ! -z ${JAVA_SECURITY} ] && [ -f ${JAVA_SECURITY} ]; then
-        sed -i 's/3DES_EDE_CBC//' ${JAVA_SECURITY}
-    fi
+ # add 3DES_EDE_CBC for Oracle EUS java.security.tmpl
+JAVA_SECURITY=$(find $(dirname $(dirname $(realpath $(command -v java)))) -name java.security 2>/dev/null)
+if [ ! -z ${JAVA_SECURITY} ] && [ -f ${JAVA_SECURITY} ]; then
+    echo " - Relaxe java security settings for Oracle EUS."
+    cp -v ${ORADBA_RSP}/java.security.tmpl ${JAVA_SECURITY}
 fi
 # --- EOF --------------------------------------------------------------------
