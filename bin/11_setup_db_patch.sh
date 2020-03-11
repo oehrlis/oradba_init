@@ -30,6 +30,13 @@ export DB_PATCH_PKG=${DB_PATCH_PKG:-""}
 export DB_OJVM_PKG=${DB_OJVM_PKG:-""}
 export DB_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_180000_Linux-x86-64.zip"}
 
+# get default major release based on DB_BASE_PKG
+DEFAULT_ORACLE_MAJOR_RELEASE=$(echo $DB_BASE_PKG|cut -d_ -f2|cut -c1-3)
+if [ $DEFAULT_ORACLE_MAJOR_RELEASE -gt 122 ]; then
+    DEFAULT_ORACLE_MAJOR_RELEASE=$(echo $DEFAULT_ORACLE_MAJOR_RELEASE|sed 's/.$/0/')
+fi
+export ORACLE_MAJOR_RELEASE=${ORACLE_MAJOR_RELEASE:-$DEFAULT_ORACLE_MAJOR_RELEASE}
+
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
