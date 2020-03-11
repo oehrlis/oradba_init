@@ -37,6 +37,7 @@ export OUD_INSTALL_TYPE=${OUD_INSTALL_TYPE:-'Standalone Oracle Unified Directory
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
+export ORADBA_DEBUG=${ORADBA_DEBUG:-"FALSE"}    # enable debug mode
 
 # define Oracle specific variables
 export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
@@ -59,26 +60,26 @@ export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
 # - Initialization ----------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
-   echo "This script must not be run as root" 1>&2
+   echo " - ERROR: This script must not be run as root" 1>&2
    exit 1
 fi
 
 # show what we will create later on...
-echo " - Settings -----------------------------------------------------------" && \
-echo "ORACLE_ROOT       =${ORACLE_ROOT}" && \
-echo "ORACLE_DATA       =${ORACLE_DATA}" && \
-echo "ORACLE_BASE       =${ORACLE_BASE}" && \
-echo "ORACLE_HOME       =${ORACLE_HOME}" && \
-echo "ORACLE_INVENTORY  =${ORACLE_INVENTORY}" && \
-echo "OUD_TYPE          =${OUD_TYPE}" && \
-echo "SOFTWARE          =${SOFTWARE}" && \
-echo "DOWNLOAD          =${DOWNLOAD}" && \
-echo "OUD_BASE_PKG      =${OUD_BASE_PKG}" && \
-echo "FMW_BASE_PKG      =${FMW_BASE_PKG}" && \
-echo "OUD_PATCH_PKG     =${OUD_PATCH_PKG}" && \
-echo "FMW_PATCH_PKG     =${FMW_PATCH_PKG}" && \
-echo "OUD_OPATCH_PKG    =${OUD_OPATCH_PKG}" && \
-echo "OUI_PATCH_PKG     =${OUI_PATCH_PKG}" 
+echo " - Prepare Oracle OUD binaries installation ---------------------------"
+echo " - ORACLE_ROOT       = ${ORACLE_ROOT}" 
+echo " - ORACLE_DATA       = ${ORACLE_DATA}" 
+echo " - ORACLE_BASE       = ${ORACLE_BASE}" 
+echo " - ORACLE_HOME       = ${ORACLE_HOME}" 
+echo " - ORACLE_INVENTORY  = ${ORACLE_INVENTORY}" 
+echo " - OUD_TYPE          = ${OUD_TYPE}" 
+echo " - SOFTWARE          = ${SOFTWARE}" 
+echo " - DOWNLOAD          = ${DOWNLOAD}" 
+echo " - OUD_BASE_PKG      = ${OUD_BASE_PKG}" 
+echo " - FMW_BASE_PKG      = ${FMW_BASE_PKG}" 
+echo " - OUD_PATCH_PKG     = ${OUD_PATCH_PKG}" 
+echo " - FMW_PATCH_PKG     = ${FMW_PATCH_PKG}" 
+echo " - OUD_OPATCH_PKG    = ${OUD_OPATCH_PKG}" 
+echo " - OUI_PATCH_PKG     = ${OUI_PATCH_PKG}" 
 
 # Replace place holders in responce file
 echo " - Prepare response files ---------------------------------------------"
@@ -117,7 +118,7 @@ if [ "${OUD_TYPE}" == "OUDSM12" ]; then
             rm -rf ${DOWNLOAD}/$FMW_BASE_JAR
             running_in_docker && rm -rf ${SOFTWARE}/${FMW_BASE_PKG}
         else
-            echo "ERROR:   No base software package specified. Abort installation."
+            echo " - ERROR: No base software package specified. Abort installation."
             exit 1
         fi
     fi
@@ -133,7 +134,7 @@ if [ -n "${OUD_BASE_PKG}" ]; then
         $JAVA_HOME/bin/jar xvf ${SOFTWARE}/${OUD_BASE_PKG} >${OUD_BASE_LOG}
         # identify OUD major release based on OUD_TYPE
         if [ "${OUD_TYPE}" == "OUD12" ] || [ "${OUD_TYPE}" == "OUDSM12" ]; then
-            echo "INFO:    Start to install OUD 12c (${OUD_TYPE})"
+            echo " - Start to install OUD 12c (${OUD_TYPE})"
             # get the jar file name from the logfile
             OUD_BASE_JAR=$(grep -i jar ${OUD_BASE_LOG} |cut -d' ' -f3| tr -d " ")
 
@@ -149,7 +150,7 @@ if [ -n "${OUD_BASE_PKG}" ]; then
             rm -rf ${DOWNLOAD}/$OUD_BASE_JAR
             running_in_docker && rm -rf ${SOFTWARE}/${OUD_BASE_PKG}
         else
-            echo "INFO:    Start to install OUD 11g"
+            echo " - Start to install OUD 11g"
             chmod -R u+x ${DOWNLOAD}/Disk1
             # Install OUD binaries
             ${DOWNLOAD}/Disk1/runInstaller -silent \
@@ -165,7 +166,7 @@ if [ -n "${OUD_BASE_PKG}" ]; then
             running_in_docker && rm -rf ${SOFTWARE}/${OUD_BASE_PKG}
         fi
     else
-        echo "ERROR:   No base software package specified. Abort installation."
+        echo " - ERROR: No base software package specified. Abort installation."
         exit 1
     fi
 fi
@@ -174,26 +175,36 @@ fi
 if [ ! -z "${OUD_PATCH_PKG}" ] || [ ! -z "${FMW_PATCH_PKG}" ] || [ ! -z "${OUD_OPATCH_PKG}" ] || [ ! -z "${OUI_PATCH_PKG}" ]; then 
     ${ORADBA_BIN}/11_setup_oud_patch.sh
 else
-    echo "INFO:    Skip patch installation. No patch packages specified."
+    echo " - Skip patch installation. No patch packages specified."
 fi
 
 echo " - CleanUp OUD installation -------------------------------------------"
 # Remove not needed components
-rm -rf ${ORACLE_HOME}/inventory/backup/*            # OUI backup
+if running_in_docker; then
+    echo " - remove Docker specific stuff"
+    rm -rf ${ORACLE_HOME}/inventory/backup/*            # OUI backup
+fi
 
-# Temp locations
-rm -rf ${DOWNLOAD}/*
-rm -rf /tmp/*.rsp
-rm -rf /tmp/*.loc
-rm -rf /tmp/InstallActions*
-rm -rf /tmp/CVU*oracle
-rm -rf /tmp/OraInstall*
-
-# remove all the logs....
-find ${ORACLE_INVENTORY} -type f -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
+if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
+    echo " - \$ORADBA_DEBUG set to TRUE, keep temp and log files"
+else
+    echo " - \$ORADBA_DEBUG not set, remove temp and log files"
+    # Temp locations
+    echo " - remove temp files"
+    rm -rf ${DOWNLOAD}/*
+    rm -rf /tmp/*.rsp
+    rm -rf /tmp/*.loc
+    rm -rf /tmp/InstallActions*
+    rm -rf /tmp/CVU*oracle
+    rm -rf /tmp/OraInstall*
+    # remove all the logs....
+    echo " - remove log files in \${ORACLE_INVENTORY} and \${ORACLE_BASE}/product"
+    find ${ORACLE_INVENTORY} -type f -name *.log -exec rm {} \;
+    find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
+fi
 
 if [ "${SLIM^^}" == "TRUE" ]; then
+    echo " - \$SLIM set to TRUE, remove other stuff..."
     rm -rf ${ORACLE_HOME}/inventory                 # remove inventory
     rm -rf ${ORACLE_HOME}/oui                       # remove oui
     rm -rf ${ORACLE_HOME}/OPatch                    # remove OPatch

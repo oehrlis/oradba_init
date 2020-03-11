@@ -34,6 +34,7 @@ export DB_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_180000_Linux-x86-64.zip"}
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
+export ORADBA_DEBUG=${ORADBA_DEBUG:-"FALSE"}    # enable debug mode
 
 # define Oracle specific variables
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"18.3.0.0"}
@@ -51,7 +52,7 @@ export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
 # - Initialization ----------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
-   echo "This script must not be run as root" 1>&2
+   echo " - ERROR: This script must not be run as root" 1>&2
    exit 1
 fi
 
@@ -80,10 +81,10 @@ if [ -n "${DB_OPATCH_PKG}" ]; then
         # remove files on docker builds
         running_in_docker && rm -rf ${SOFTWARE}/${DB_OPATCH_PKG}
     else
-        echo "WARNING: Could not find local or remote OPatch package. Skip OPatch update."
+        echo " - WARNING: Could not find local or remote OPatch package. Skip OPatch update."
     fi
 else
-    echo "INFO:    No OPatch package specified. Skip OPatch update."
+    echo " - No OPatch package specified. Skip OPatch update."
 fi
 
 # - Install database patch (RU/PSU) -----------------------------------------
@@ -102,10 +103,10 @@ if [ -n "${DB_PATCH_PKG}" ]; then
         rm -rf ${DOWNLOAD}/${DB_PATCH_ID}           # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Could not find local or remote database patch (RU/PSU) package. Skip database patch (RU/PSU) installation."
+        echo " - WARNING: Could not find local or remote database patch (RU/PSU) package. Skip database patch (RU/PSU) installation."
     fi
 else
-    echo "INFO:    No database patch (RU/PSU) package specified. Skip database patch (RU/PSU) installation."
+    echo " - No database patch (RU/PSU) package specified. Skip database patch (RU/PSU) installation."
 fi
 
 # - Install OJVM RU ---------------------------------------------------------
@@ -123,24 +124,34 @@ if [ -n "${DB_OJVM_PKG}" ]; then
         rm -rf ${DOWNLOAD}/${DB_OJVM_ID}            # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Could not find local or remote OJVM package. Skip OJVM installation."
+        echo " - WARNING: Could not find local or remote OJVM package. Skip OJVM installation."
     fi
 else
-    echo "INFO:    No OJVM package specified. Skip OJVM installation."
+    echo " - No OJVM package specified. Skip OJVM installation."
 fi
 
-echo " - CleanUp DB patch installation --------------------------------------"
-# Temp locations
-rm -rf ${DOWNLOAD}/*
-rm -rf /tmp/*.rsp
-rm -rf /tmp/InstallActions*
-rm -rf /tmp/CVU*oracle
-rm -rf /tmp/OraInstall*
+echo " - CleanUp DB installation --------------------------------------------"
+# Remove not needed components
+if running_in_docker; then
+    echo " - remove Docker specific stuff"
+    rm -rf ${ORACLE_HOME}/.patch_storage        # remove patch storage
+    rm -rf ${ORACLE_HOME}/inventory/backup/*    # OUI backup
+fi
 
-running_in_docker && rm -rf ${ORACLE_HOME}/.patch_storage       # remove patch storage
-running_in_docker && rm -rf ${ORACLE_HOME}/inventory/backup/*   # OUI backup
-
-# remove all the logs....
-find ${ORACLE_INVENTORY} -type f -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
+if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
+    echo " - \$ORADBA_DEBUG set to TRUE, keep temp and log files"
+else
+    echo " - \$ORADBA_DEBUG not set, remove temp and log files"
+    # Temp locations
+    echo " - remove temp files"
+    rm -rf ${DOWNLOAD}/*
+    rm -rf /tmp/*.rsp
+    rm -rf /tmp/InstallActions*
+    rm -rf /tmp/CVU*oracle
+    rm -rf /tmp/OraInstall*
+    # remove all the logs....
+    echo " - remove log files in \${ORACLE_INVENTORY} and \${ORACLE_BASE}/product"
+    find ${ORACLE_INVENTORY} -type f -name *.log -exec rm {} \;
+    find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
+fi
 # --- EOF --------------------------------------------------------------------

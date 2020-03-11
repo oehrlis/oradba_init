@@ -47,11 +47,11 @@ export DEFAULT_DOCKER_PARTITION='/dev/sdb1'     # default docker partition
 
 # Make sure only root can run our script
 if [ $EUID -ne 0 ]; then
-   echo "This script must be run as root" 1>&2
+   echo " - ERROR: This script must be run as root" 1>&2
    exit 1
 fi
 
-echo 'Installing and configuring Docker engine'
+echo " - Installing and configuring Docker engine"
 
 # install Docker engine
 yum -y install docker-engine docker-compose htop
@@ -59,9 +59,9 @@ yum -y install docker-engine docker-compose htop
 # check if partition /dev/sdb1 is in use
 blkid |grep -i ${DEFAULT_DOCKER_PARTITION}
 if [ $? -eq 0 ]; then 
-    echo "Partition ${DEFAULT_DOCKER_PARTITION} is in use"
+    echo " - Partition ${DEFAULT_DOCKER_PARTITION} is in use"
 else 
-    echo "Partition ${DEFAULT_DOCKER_PARTITION} is not in use"
+    echo " - Partition ${DEFAULT_DOCKER_PARTITION} is not in use"
     # Format spare device as Btrfs
     # Configure Btrfs storage driver
     # docker-storage-config -s btrfs -d ${DEFAULT_DOCKER_PARTITION}
@@ -77,6 +77,6 @@ usermod -a -G docker oracle
 # Relax /etc/docker permissions (vagrant-proxyconf maintains system-wide config)
 chmod a+x /etc/docker
 
-echo 'Docker engine is ready to use'
+echo " - Docker engine is ready to use"
 echo
 # --- EOF --------------------------------------------------------------------

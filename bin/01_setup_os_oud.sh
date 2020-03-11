@@ -41,7 +41,7 @@ export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 
 # Make sure only root can run our script
 if [ $EUID -ne 0 ]; then
-   echo "This script must be run as root" 1>&2
+   echo " - ERROR: This script must be run as root" 1>&2
    exit 1
 fi
 
@@ -68,12 +68,14 @@ if [ ! running_in_docker ]; then
 fi
 
 # show what we will create later on...
-echo "ORACLE_ROOT       =${ORACLE_ROOT}" && \
-echo "ORACLE_DATA       =${ORACLE_DATA}" && \
-echo "ORACLE_BASE       =${ORACLE_BASE}" && \
-echo "ORACLE_INVENTORY  =${ORACLE_INVENTORY}" && \
-echo "SOFTWARE          =${SOFTWARE}" && \
-echo "DOWNLOAD          =${DOWNLOAD}" 
+echo " - Prepare DB server OS> installation ---------------------------------"
+echo " - ORACLE_ROOT       = ${ORACLE_ROOT}" 
+echo " - ORACLE_DATA       = ${ORACLE_DATA}" 
+echo " - ORACLE_BASE       = ${ORACLE_BASE}" 
+echo " - ORACLE_INVENTORY  = ${ORACLE_INVENTORY}" 
+echo " - ORADBA_BASE       = ${ORADBA_BASE}" 
+echo " - SOFTWARE          = ${SOFTWARE}" 
+echo " - DOWNLOAD          = ${DOWNLOAD}" 
 
 # create the directory tree
 install --owner oracle --group oinstall --mode=775 --verbose --directory \
@@ -99,7 +101,7 @@ running_in_docker && yum-config-manager --disable ol7_ociyum_config
 
 # check for legacy yum upgrade
 if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
-    echo "found /usr/bin/ol_yum_configure.sh "
+    echo " - found /usr/bin/ol_yum_configure.sh "
     /usr/bin/ol_yum_configure.sh
     ${YUM} upgrade -y
 fi
@@ -109,11 +111,11 @@ ${YUM} install -y libaio gzip tar zip unzip
 
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
-    echo "clean up yum cache"
+    echo " - clean up yum cache"
     ${YUM} clean all 
     rm -rf /var/cache/yum
 else
-    echo "yum cache is not cleaned up"
+    echo " - yum cache is not cleaned up"
 fi
 
 # create a bunch of other directories
@@ -126,9 +128,10 @@ mkdir -p ${ORADBA_RSP}
 # change owner of ORACLE_BASE and ORACLE_INVENTORY
 chown -R oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
 
-# add 3DES_EDE_CBC for Oracle EUS
-JAVA_SECURITY=$(find /usr/java -name java.db 2>/dev/null)
+# add 3DES_EDE_CBC for Oracle EUS java.security.tmpl
+JAVA_SECURITY=$(find $(dirname $(dirname $(realpath $(command -v java)))) -name java.security 2>/dev/null)
 if [ ! -z ${JAVA_SECURITY} ] && [ -f ${JAVA_SECURITY} ]; then
-    sed -i 's/, 3DES_EDE_CBC//' ${JAVA_SECURITY}
+    echo " - Relaxe java security settings for Oracle EUS."
+    cp -v ${ORADBA_RSP}/java.security.tmpl ${JAVA_SECURITY}
 fi
 # --- EOF --------------------------------------------------------------------

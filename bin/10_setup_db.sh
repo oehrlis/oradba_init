@@ -115,9 +115,9 @@ REQUIRED_SPACE_GB=15
 AVAILABLE_SPACE_GB=$(df -PB 1G $ORACLE_BASE | tail -n 1 | awk '{ print $4 }')
 
 if [ $AVAILABLE_SPACE_GB -lt $REQUIRED_SPACE_GB ]; then
-    echo "ERROR:   There is not enough space available."
-    echo "         There has to be at least $REQUIRED_SPACE_GB GB, "
-    echo "         but only $AVAILABLE_SPACE_GB GB are available."
+    echo " - ERROR: There is not enough space available."
+    echo " -        There has to be at least $REQUIRED_SPACE_GB GB, "
+    echo " -        but only $AVAILABLE_SPACE_GB GB are available."
     exit 1;
 fi;
 # - EOF Initialization ------------------------------------------------------
@@ -192,7 +192,7 @@ if [ -n "${DB_BASE_PKG}" ]; then
             running_in_docker && rm -rf ${SOFTWARE}/${DB_BASE2_PKG}
         fi
     else
-        echo " - ERROR:   No base software package specified. Abort installation."
+        echo " - ERROR: No base software package specified. Abort installation."
         exit 1
     fi
 fi

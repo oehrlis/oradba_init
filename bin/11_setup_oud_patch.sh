@@ -35,6 +35,7 @@ export OPATCH_NO_FUSER=true
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
+export ORADBA_DEBUG=${ORADBA_DEBUG:-"FALSE"}    # enable debug mode
 
 # define Oracle specific variables
 export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"oud11.1.2.3.0"}
@@ -53,7 +54,7 @@ export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
 # - Initialization ----------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
-   echo "This script must not be run as root" 1>&2
+   echo " - ERROR: This script must not be run as root" 1>&2
    exit 1
 fi
 
@@ -77,10 +78,10 @@ if [ -n "${OUD_OPATCH_PKG}" ]; then
         rm -rf ${DOWNLOAD}/6880880
         running_in_docker && rm -rf ${SOFTWARE}/${OUD_OPATCH_PKG}
     else
-        echo "WARNING: Could not find local or remote OPatch package. Skip OPatch update."
+        echo " - WARNING: Could not find local or remote OPatch package. Skip OPatch update."
     fi
 else
-    echo "INFO:    No OPatch package specified. Skip OPatch update."
+    echo " - No OPatch package specified. Skip OPatch update."
 fi
 
 # - Install OUI patch -------------------------------------------------------
@@ -98,10 +99,10 @@ if [ -n "${OUI_PATCH_PKG}" ]; then
         rm -rf ${DOWNLOAD}/${OUI_PATCH_ID}          # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Could not find local or remote FMW patch package. Skip FMW patch installation."
+        echo " - WARNING: Could not find local or remote FMW patch package. Skip FMW patch installation."
     fi
 else
-    echo "INFO:    No FMW patch package specified. Skip FMW patch installation."
+    echo " - No FMW patch package specified. Skip FMW patch installation."
 fi
 
 # - Install FMW patch -------------------------------------------------------
@@ -119,10 +120,10 @@ if [ -n "${FMW_PATCH_PKG}" ]; then
         rm -rf ${DOWNLOAD}/${FMW_PATCH_ID}          # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Could not find local or remote FMW patch package. Skip FMW patch installation."
+        echo " - WARNING: Could not find local or remote FMW patch package. Skip FMW patch installation."
     fi
 else
-    echo "INFO:    No FMW patch package specified. Skip FMW patch installation."
+    echo " - No FMW patch package specified. Skip FMW patch installation."
 fi
 
 # - Install Coherence patch -------------------------------------------------------
@@ -140,10 +141,10 @@ if [ -n "${COHERENCE_PATCH_PKG}" ]; then
         rm -rf ${DOWNLOAD}/${COHERENCE_PATCH_ID}          # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Could not find local or remote coherence patch package. Skip coherence patch installation."
+        echo " - WARNING: Could not find local or remote coherence patch package. Skip coherence patch installation."
     fi
 else
-    echo "INFO:    No coherence patch package specified. Skip coherence patch installation."
+    echo " - No coherence patch package specified. Skip coherence patch installation."
 fi
 
 # - Install OUD patch -------------------------------------------------------
@@ -161,24 +162,45 @@ if [ -n "${OUD_PATCH_PKG}" ]; then
         rm -rf ${DOWNLOAD}/${OUD_PATCH_ID}          # remove the binary packages
         rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
     else
-        echo "WARNING: Could not find local or remote OUD patch package. Skip OUD patch installation."
+        echo " - WARNING: Could not find local or remote OUD patch package. Skip OUD patch installation."
     fi
 else
-    echo "INFO:    No OUD patch package specified. Skip OUD patch installation."
+    echo " - No OUD patch package specified. Skip OUD patch installation."
 fi
 
-echo " - CleanUp OUD patch installation -------------------------------------"
-# Temp locations
-rm -rf ${DOWNLOAD}/*
-rm -rf /tmp/*.rsp
-rm -rf /tmp/InstallActions*
-rm -rf /tmp/CVU*oracle
-rm -rf /tmp/OraInstall*
+echo " - CleanUp OUD installation -------------------------------------------"
+# Remove not needed components
+if running_in_docker; then
+    echo " - remove Docker specific stuff"
+    rm -rf ${ORACLE_HOME}/inventory/backup/*    # OUI backup
+    rm -rf ${ORACLE_HOME}/.patch_storage        # remove patch storage
+fi
 
-running_in_docker && rm -rf ${ORACLE_HOME}/.patch_storage       # remove patch storage
-running_in_docker && rm -rf ${ORACLE_HOME}/inventory/backup/*   # OUI backup
+if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
+    echo " - \$ORADBA_DEBUG set to TRUE, keep temp and log files"
+else
+    echo " - \$ORADBA_DEBUG not set, remove temp and log files"
+    # Temp locations
+    echo " - remove temp files"
+    rm -rf ${DOWNLOAD}/*
+    rm -rf /tmp/*.rsp
+    rm -rf /tmp/*.loc
+    rm -rf /tmp/InstallActions*
+    rm -rf /tmp/CVU*oracle
+    rm -rf /tmp/OraInstall*
+    # remove all the logs....
+    echo " - remove log files in \${ORACLE_INVENTORY} and \${ORACLE_BASE}/product"
+    find ${ORACLE_INVENTORY} -type f -name *.log -exec rm {} \;
+    find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
+fi
 
-# remove all the logs....
-find ${ORACLE_INVENTORY} -type f -name *.log -exec rm {} \;
-find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
+if [ "${SLIM^^}" == "TRUE" ]; then
+    echo " - \$SLIM set to TRUE, remove other stuff..."
+    rm -rf ${ORACLE_HOME}/inventory                 # remove inventory
+    rm -rf ${ORACLE_HOME}/oui                       # remove oui
+    rm -rf ${ORACLE_HOME}/OPatch                    # remove OPatch
+    rm -rf ${DOWNLOAD}/*
+    rm -rf /tmp/OraInstall*
+    rm -rf ${ORACLE_HOME}/.patch_storage            # remove patch storage
+fi
 # --- EOF --------------------------------------------------------------------

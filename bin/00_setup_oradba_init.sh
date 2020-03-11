@@ -35,6 +35,7 @@ export ORACLE_INVENTORY=${ORACLE_INVENTORY:-${ORACLE_ROOT}/app/oraInventory}
 # define the oradba url and package name
 export GITHUB_URL="https://codeload.github.com/oehrlis/oradba_init/zip/master"
 export ORADBA_PKG="oradba_init.zip"
+export ORADBA_DEBUG=${ORADBA_DEBUG:-"FALSE"}    # enable debug mode
 
 # define the defaults for software, download etc
 export OPT_DIR=${OPT_DIR:-"/opt"}
@@ -53,19 +54,19 @@ function get_software {
     PKG=$1
     if [ ! -s "${SOFTWARE}/${PKG}" ]; then
         if [ ! -z "${SOFTWARE_REPO}" ]; then
-            echo "INFO:    Try to download ${PKG} from ${SOFTWARE_REPO}"
+            echo " - Try to download ${PKG} from ${SOFTWARE_REPO}"
             curl -f ${SOFTWARE_REPO}/${PKG} -o ${SOFTWARE}/${PKG} 2>&1
             CURL_ERR=$?
             if [ ${CURL_ERR} -ne 0 ]; then
-                echo "WARNING: Unable to access software repository or ${PKG} (curl error ${CURL_ERR})"
+                echo " - WARNING: Unable to access software repository or ${PKG} (curl error ${CURL_ERR})"
                 return 1
             fi
         else
-            echo "WARNING: No software repository specified"
+            echo " - WARNING: No software repository specified"
             return 1
         fi
     else
-        echo "Found package ${PKG} for installation."
+        echo " - Found package ${PKG} for installation."
         return 0
     fi
 }
@@ -92,7 +93,7 @@ fi
 # Still here, seems that script is executed
 # Make sure only root can run our script
 if [ $EUID -ne 0 ]; then
-    echo "This script must be run as root" 1>&2
+    echo " - ERROR: This script must be run as root" 1>&2
     exit 1
 fi
 
@@ -112,7 +113,7 @@ if [ ! -z $(command -v unzip) ]; then
 else 
     # missing unzip fallback to a simple phyton script as python seems
     # to be available on Docker image oraclelinx:7-slim
-    echo "no unzip available, fallback to python script"
+    echo " - no unzip available, fallback to python script"
     echo "import zipfile" >${DOWNLOAD}/unzipfile.py
     echo "with zipfile.ZipFile('${DOWNLOAD}/${ORADBA_PKG}', 'r') as z:" >>${DOWNLOAD}/unzipfile.py
     echo "   z.extractall('${OPT_DIR}')">>${DOWNLOAD}/unzipfile.py

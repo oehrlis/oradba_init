@@ -34,6 +34,7 @@ export BACKUP_PKG=${BACKUP_PKG:-tvdbackup-le-19.11.final.a.tar.gz}
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
+export ORADBA_DEBUG=${ORADBA_DEBUG:-"FALSE"}    # enable debug mode
 
 export DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-$(domainname 2>/dev/null ||cat /etc/domainname ||echo "postgasse.org")}
 
@@ -60,7 +61,7 @@ export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 # - Initialization ----------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
-   echo "This script must not be run as root" 1>&2
+   echo " - ERROR: This script must not be run as root" 1>&2
    exit 1
 fi
 
@@ -71,6 +72,7 @@ echo " - ORACLE_HOME    = $ORACLE_HOME"
 echo " - TNS_ADMIN      = $TNS_ADMIN"
 echo " - ETC_BASE       = $ETC_BASE"
 echo " - DEFAULT_DOMAIN = $DEFAULT_DOMAIN"
+
 # prepare response file
 cp ${ORADBA_RSP}/base_install.rsp.tmpl /tmp/base_install.rsp
 sed -i -e "s|###ORACLE_BASE###|${ORACLE_BASE}|g"        /tmp/base_install.rsp
@@ -87,7 +89,7 @@ sed -i -e "s|###ETC_BASE###|${ETC_BASE}|g"              /tmp/base_install.rsp
 echo " - Install Trivadis toolbox -------------------------------------------"
 if [ -n "${BASENV_PKG}" ]; then
     if ! get_software "${BASENV_PKG}" ; then
-        echo "WARN:    Fallback to oradba..."
+        echo "- WARNING: Fallback to oradba..."
         curl -f http://docker.oradba.ch/${BASENV_ORADBA} -o ${SOFTWARE}/${BASENV_ORADBA}
     fi
 
@@ -102,7 +104,7 @@ if [ -n "${BASENV_PKG}" ]; then
         rm -rf ${ORACLE_LOCAL}/basenv-* ${ORACLE_LOCAL}/runInstaller* /tmp/*.rsp
         if [ "${DOCKER^^}" == "TRUE" ]; then rm -rf ${SOFTWARE}/${BASENV_PKG}; fi
     else
-        echo "ERROR:   No base software package specified. Abort installation."
+        echo " - ERROR: No base software package specified. Abort installation."
         exit 1
     fi
 fi
@@ -124,7 +126,7 @@ if [ ! -z $(command -v unzip) ]; then
 else 
     # missing unzip fallback to a simple phyton script as python seems
     # to be available on Docker image oraclelinx:7-slim
-    echo "no unzip available, fallback to python script"
+    echo " - no unzip available, fallback to python script"
     echo "import zipfile" >${DOWNLOAD}/unzipfile.py
     echo "with zipfile.ZipFile('${DOWNLOAD}/${ORADBA_PKG}', 'r') as z:" >>${DOWNLOAD}/unzipfile.py
     echo "   z.extractall('${ORACLE_LOCAL}')">>${DOWNLOAD}/unzipfile.py
@@ -156,36 +158,36 @@ if ! running_in_docker; then
             echo "<SHOW_ALL>show all;"                                              >${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv
             echo "<SET_GLOBAL_OPERATIONS>"                                          >>${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv
             echo "delete noprompt archivelog <ARCHIVE_RANGE> <ARCHIVE_PATTERN>;"    >>${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv
-            echo "INFO:    Create rman archive delete job. Add the following line to your crontab."
-            echo "INFO:    Change TEMPLATE to your DB SID's."
+            echo " - Create rman archive delete job. Add the following line to your crontab."
+            echo " - Change TEMPLATE to your DB SID's."
             echo ""
             echo "00 0,4,8,16,20 * * * /u01/app/oracle/local/tvdbackup/bin/rman_exec.ksh -t TEMPLATE -s ${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv >/dev/null 2>&1"
         else
-            echo "INFO:    No backup software package specified. Skip this step."
+            echo " - No backup software package specified. Skip this step."
         fi
     fi
 
     # - Create houskeeping job -----------------------------------------------
     cp -v ${ORACLE_BASE}/local/dba/templates/etc/housekeep.conf.tpl ${ORACLE_BASE}/local/dba/etc/housekeep.conf
     cp -v ${ORACLE_BASE}/local/dba/templates/etc/housekeep_work.conf.tpl.unix ${ORACLE_BASE}/local/dba/etc/housekeep_work.conf
-    echo "INFO:    Create housekeep config files. Please adapt ${ORACLE_BASE}/local/dba/etc/housekeep_work.conf"
-    echo "INFO:    and add the following line to your crontab."
+    echo " - Create housekeep config files. Please adapt ${ORACLE_BASE}/local/dba/etc/housekeep_work.conf"
+    echo " - and add the following line to your crontab."
     echo ""
     echo "00 01 * * * ${ORACLE_BASE}/local/dba/bin/housekeep.ksh >> ${ORACLE_BASE}/local/dba/log/housekeep.log 2>&1"
 
     # - Configure autostart for none docker environments ---------------------
-    echo "INFO:    Configure Oracle service for none Docker environments."
+    echo " - Configure Oracle service for none Docker environments."
     cp -v ${ORACLE_BASE}/local/dba/templates/init.d/oracle.service ${ORACLE_BASE}/local/dba/etc/oracle.service
     cp -v ${ORACLE_BASE}/local/dba/templates/etc/oracle_start_stop.conf ${ORACLE_BASE}/local/dba/etc/oracle_start_stop.conf
     sed -i -e "s|${ORACLE_BASE}/tvdtoolbox/dba/etc/oracle_start_stop.conf|${ORACLE_BASE}/local/dba/etc/oracle_start_stop.conf|g" ${ORACLE_BASE}/local/dba/etc/oracle.service
-    echo "INFO:    Run the following commands to enable the oracle service."
+    echo " - Run the following commands to enable the oracle service."
     echo ""
     echo "sudo cp ${ORACLE_BASE}/local/dba/etc/oracle.service /usr/lib/systemd/system/"
     echo "sudo systemctl --system daemon-reload"
     echo "sudo systemctl enable oracle"
     echo ""
 else
-    echo "INFO:    Seems that I do run in a Docker container."
+    echo " - Seems that I do run in a Docker container."
 fi
 
 # fix bash_profile for docker environment and remove BE_INITIALSID
