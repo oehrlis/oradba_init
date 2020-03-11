@@ -86,28 +86,28 @@ export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
 # - Initialization ----------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
-   echo "This script must not be run as root" 1>&2
+   echo " - ERROR: This script must not be run as root" 1>&2
    exit 1
 fi
 
 # show what we will create later on...
 echo " - Prepare Oracle DB binaries installation ----------------------------"
-echo "ORACLE_ROOT           =${ORACLE_ROOT}"
-echo "ORACLE_DATA           =${ORACLE_DATA}"
-echo "ORACLE_ARCH           =${ORACLE_ARCH}"
-echo "ORACLE_BASE           =${ORACLE_BASE}"
-echo "ORACLE_HOME           =${ORACLE_HOME}"
-echo "ORACLE_INVENTORY      =${ORACLE_INVENTORY}"
-echo "ORACLE_EDITION        =${ORACLE_EDITION}"
-echo "ORACLE_MAJOR_RELEASE  =${ORACLE_MAJOR_RELEASE}"
-echo "SOFTWARE              =${SOFTWARE}"
-echo "DOWNLOAD              =${DOWNLOAD}"
-echo "DB_BASE_PKG           =${DB_BASE_PKG}"
-echo "DB_EXAMPLE_PKG        =${DB_EXAMPLE_PKG}"
-echo "DB_PATCH_PKG          =${DB_PATCH_PKG}"
-echo "DB_OJVM_PKG           =${DB_OJVM_PKG}"
-echo "DB_OPATCH_PKG         =${DB_OPATCH_PKG}"
-echo "RESPONSE_FILE_VERSION   =${RESPONSE_FILE_VERSION}"
+echo " - ORACLE_ROOT           = ${ORACLE_ROOT}"
+echo " - ORACLE_DATA           = ${ORACLE_DATA}"
+echo " - ORACLE_ARCH           = ${ORACLE_ARCH}"
+echo " - ORACLE_BASE           = ${ORACLE_BASE}"
+echo " - ORACLE_HOME           = ${ORACLE_HOME}"
+echo " - ORACLE_INVENTORY      = ${ORACLE_INVENTORY}"
+echo " - ORACLE_EDITION        = ${ORACLE_EDITION}"
+echo " - ORACLE_MAJOR_RELEASE  = ${ORACLE_MAJOR_RELEASE}"
+echo " - SOFTWARE              = ${SOFTWARE}"
+echo " - DOWNLOAD              = ${DOWNLOAD}"
+echo " - DB_BASE_PKG           = ${DB_BASE_PKG}"
+echo " - DB_EXAMPLE_PKG        = ${DB_EXAMPLE_PKG}"
+echo " - DB_PATCH_PKG          = ${DB_PATCH_PKG}"
+echo " - DB_OJVM_PKG           = ${DB_OJVM_PKG}"
+echo " - DB_OPATCH_PKG         = ${DB_OPATCH_PKG}"
+echo " - RESPONSE_FILE_VERSION = ${RESPONSE_FILE_VERSION}"
 
 # check space
 echo " - Check available space ----------------------------------------------"
@@ -168,11 +168,11 @@ if [ -n "${DB_BASE_PKG}" ]; then
         fi
         # check if we have a legacy installer (pre 18c)
         if [ -d "${ORACLE_HOME}/database" ]; then
-            echo "INFO:    Legacy OUI software setup"
+            echo " - Legacy OUI software setup"
             mv ${ORACLE_HOME}/database ${ORACLE_HOME}/..
             SETUP_PATH="${ORACLE_HOME}/../database"
         else
-            echo "INFO:    New OUI inplace software setup"
+            echo " - New OUI inplace software setup"
             SETUP_PATH="${ORACLE_HOME}"
         fi
         # Install Oracle binaries -ignorePrereqFailure/-ignoreSysPrereqs
@@ -192,7 +192,7 @@ if [ -n "${DB_BASE_PKG}" ]; then
             running_in_docker && rm -rf ${SOFTWARE}/${DB_BASE2_PKG}
         fi
     else
-        echo "ERROR:   No base software package specified. Abort installation."
+        echo " - ERROR:   No base software package specified. Abort installation."
         exit 1
     fi
 fi
@@ -220,23 +220,23 @@ if [ -n "${DB_EXAMPLE_PKG}" ]; then
         rm -rf ${DOWNLOAD}/examples
         running_in_docker && rm -rf ${SOFTWARE}/${DB_EXAMPLE_PKG}
     else
-        echo "WARNING: Could not find local or remote example package. Skip example installation."
+        echo " - WARNING: Could not find local or remote example package. Skip example installation."
     fi
 else
-    echo "INFO:    No example package specified. Skip example installation."
+    echo " - No example package specified. Skip example installation."
 fi
 
 # install patch any of the patch variable is if defined
 if [ ! -z "${DB_PATCH_PKG}" ] || [ ! -z "${DB_OJVM_PKG}" ] || [ ! -z "${DB_OPATCH_PKG}" ]; then 
     ${ORADBA_BIN}/11_setup_db_patch.sh
 else
-    echo "INFO:    Skip patch installation. No patch packages specified."
+    echo " - Skip patch installation. No patch packages specified."
 fi
 
 echo " - CleanUp DB installation --------------------------------------------"
 # Remove not needed components
 if running_in_docker; then
-    echo "INFO:    remove Docker specific stuff"
+    echo " - remove Docker specific stuff"
     rm -rf ${ORACLE_HOME}/apex                  # APEX
     rm -rf ${ORACLE_HOME}/ords                  # ORDS
     rm -rf ${ORACLE_HOME}/bin/oracle_*          # Oracle Binaries
@@ -252,24 +252,24 @@ if running_in_docker; then
 fi
 
 if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
-    echo "INFO:    \$ORADBA_DEBUG set to TRUE, keep temp and log files"
+    echo " - \$ORADBA_DEBUG set to TRUE, keep temp and log files"
 else
-    echo "INFO:    \$ORADBA_DEBUG not set, remove temp and log files"
+    echo " - \$ORADBA_DEBUG not set, remove temp and log files"
     # Temp locations
-    echo "INFO:    remove temp files"
+    echo " - remove temp files"
     rm -rf ${DOWNLOAD}/*
     rm -rf /tmp/*.rsp
     rm -rf /tmp/InstallActions*
     rm -rf /tmp/CVU*oracle
     rm -rf /tmp/OraInstall*
     # remove all the logs....
-    echo "INFO:    remove log files in \${ORACLE_INVENTORY} and \${ORACLE_BASE}/product"
+    echo " - remove log files in \${ORACLE_INVENTORY} and \${ORACLE_BASE}/product"
     find ${ORACLE_INVENTORY} -type f -name *.log -exec rm {} \;
     find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
 fi
 
 if [ "${SLIM^^}" == "TRUE" ]; then
-    echo "INFO:    \$SLIM set to TRUE, remove other stuff..."
+    echo " - \$SLIM set to TRUE, remove other stuff..."
     rm -rf ${ORACLE_HOME}/inventory             # remove inventory
     rm -rf ${ORACLE_HOME}/oui                   # remove oui
     rm -rf ${ORACLE_HOME}/OPatch                # remove OPatch
