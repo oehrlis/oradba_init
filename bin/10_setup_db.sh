@@ -256,6 +256,8 @@ fi
 
 if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
     echo " - \$ORADBA_DEBUG set to TRUE, keep temp and log files"
+elif [ "${PATCH_LATER^^}" == "TRUE" ]; then
+    echo " - keep temp and log files patch later. PATCH_LATER=$PATCH_LATER"
 else
     echo " - \$ORADBA_DEBUG not set, remove temp and log files"
     # Temp locations
