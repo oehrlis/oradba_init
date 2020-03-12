@@ -63,7 +63,7 @@ export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP="${ORADBA_BASE}/rsp"          # oradba init response file folder
 export ORADBA_DEBUG=${ORADBA_DEBUG:-"FALSE"}    # enable debug mode
-export PATCH_LATER=${PATCH_LATER:-"FALSE"}    # enable debug mode
+export PATCH_LATER=${PATCH_LATER:-"FALSE"}      # Flag to postpone patch and clear stuff
 
 # define default Oracle specific environment variables
 export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}       # root folder for ORACLE_BASE and binaries
