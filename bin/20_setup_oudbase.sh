@@ -85,6 +85,6 @@ if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
 else
     echo " - \$ORADBA_DEBUG not set, remove temp and log files"
     echo " - remove log files"
-    ${DOWNLOAD}/oudbase_install.log
+    rm -rf  ${DOWNLOAD}/oudbase_install.log
 fi
 # --- EOF --------------------------------------------------------------------
