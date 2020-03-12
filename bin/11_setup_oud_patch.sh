@@ -103,7 +103,7 @@ if [ -n "${OUI_PATCH_PKG}" ]; then
         echo " - WARNING: Could not find local or remote FMW patch package. Skip FMW patch installation."
     fi
 else
-    echo " - No FMW patch package specified. Skip FMW patch installation."
+    echo " - No OUI patch package specified. Skip FMW patch installation."
 fi
 
 # - Install FMW patch -------------------------------------------------------
