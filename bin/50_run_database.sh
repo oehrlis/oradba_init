@@ -86,16 +86,19 @@ function move_files {
     # create admin directory on volume
     if [ ! -d ${ORACLE_DATA}/admin/${ORACLE_SID} ]; then
         mkdir -v -p ${ORACLE_DATA}/admin/${ORACLE_SID}
+        mkdir -v -p ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile
     fi
+
+    # move init.ora, spfile and password file to volume
+    for i in spfile${ORACLE_SID}.ora init${ORACLE_SID}.ora orapw${ORACLE_SID}; do
+        if [ -f ${ORACLE_HOME}/dbs/${i} ]  && [ ! -f ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i} ]; then
+            mv -v ${ORACLE_HOME}/dbs/${i} ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i}
+        fi
+    done
 
     # create network directory on volume
     if [ ! -d ${ORACLE_DATA}/network ]; then
         mkdir -v -p ${ORACLE_DATA}/network
-    fi
-
-    # create etc directory on volume
-    if [ ! -d ${ORACLE_DATA}/etc ]; then
-        mkdir -v -p ${ORACLE_DATA}/etc
     fi
 
     for i in sqlnet.ora listener.ora ldap.ora tnsnames.ora; do
@@ -106,6 +109,11 @@ function move_files {
 
     if [ -f ${ORACLE_HOME}/ldap/admin/dsi.ora ] && [ ! -f ${TNS_ADMIN}/dsi.ora ]; then
         mv -v ${ORACLE_HOME}/ldap/admin/dsi.ora ${TNS_ADMIN}/dsi.ora
+    fi
+
+    # create etc directory on volume
+    if [ ! -d ${ORACLE_DATA}/etc ]; then
+        mkdir -v -p ${ORACLE_DATA}/etc
     fi
 
     # move toolbox config files
@@ -250,6 +258,7 @@ fi
 # Check whether database already exists
 if [ -d ${ORACLE_DATA}/oradata/${ORACLE_SID} ]; then
     move_directories
+    move_files
     sym_link_files;
 
     # Make sure audit file destination exists
