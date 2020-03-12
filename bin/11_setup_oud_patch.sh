@@ -86,7 +86,7 @@ else
 fi
 
 # - Install OUI patch -------------------------------------------------------
-echo " - Install OUI patch (${OUI_PATCH_PKG}zip) -------------------"
+echo " - Install OUI patch (${OUI_PATCH_PKG}) -------------------"
 if [ -n "${OUI_PATCH_PKG}" ]; then
     if get_software "${OUI_PATCH_PKG}"; then        # Check and get binaries
         OUI_PATCH_ID=$(echo ${OUI_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
