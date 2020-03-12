@@ -28,7 +28,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 # define the software packages
 export DB_PATCH_PKG=${DB_PATCH_PKG:-""}
 export DB_OJVM_PKG=${DB_OJVM_PKG:-""}
-export DB_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_180000_Linux-x86-64.zip"}
+export DB_OPATCH_PKG=${DB_OPATCH_PKG:-""}
 
 # get default major release based on DB_BASE_PKG
 DEFAULT_ORACLE_MAJOR_RELEASE=$(echo $DB_BASE_PKG|cut -d_ -f2|cut -c1-3)
