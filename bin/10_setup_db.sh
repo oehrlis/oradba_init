@@ -240,7 +240,7 @@ echo " - CleanUp DB installation --------------------------------------------"
 # Remove not needed components
 if running_in_docker && [ "${PATCH_LATER^^}" == "FALSE" ]; then
     echo " - remove Docker specific stuff"
-    # rm -rf ${ORACLE_HOME}/apex                  # APEX
+    rm -rf ${ORACLE_HOME}/apex                  # APEX
     # rm -rf ${ORACLE_HOME}/ords                  # ORDS
     rm -rf ${ORACLE_HOME}/bin/oracle_*          # Oracle Binaries
     rm -rf ${ORACLE_HOME}/sqldeveloper          # SQL Developer
