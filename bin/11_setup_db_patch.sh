@@ -142,7 +142,7 @@ echo " - CleanUp DB patch installation --------------------------------------"
 if running_in_docker; then
     echo " - remove Docker specific stuff"
     rm -rf ${ORACLE_HOME}/.patch_storage        # remove patch storage
-    # rm -rf ${ORACLE_HOME}/apex                  # APEX
+    rm -rf ${ORACLE_HOME}/apex                  # APEX
     # rm -rf ${ORACLE_HOME}/ords                  # ORDS
     rm -rf ${ORACLE_HOME}/bin/oracle_*          # Oracle Binaries
     rm -rf ${ORACLE_HOME}/sqldeveloper          # SQL Developer
