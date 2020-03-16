@@ -169,7 +169,7 @@ else
     echo " - No OUD patch package specified. Skip OUD patch installation."
 fi
 
-echo " - CleanUp OUD installation -------------------------------------------"
+echo " - CleanUp OUD patch installation -------------------------------------"
 # Remove not needed components
 if running_in_docker; then
     echo " - remove Docker specific stuff"

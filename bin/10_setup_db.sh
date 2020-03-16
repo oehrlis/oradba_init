@@ -240,18 +240,18 @@ echo " - CleanUp DB installation --------------------------------------------"
 # Remove not needed components
 if running_in_docker && [ "${PATCH_LATER^^}" == "FALSE" ]; then
     echo " - remove Docker specific stuff"
-    rm -rf ${ORACLE_HOME}/apex                  # APEX
-    rm -rf ${ORACLE_HOME}/ords                  # ORDS
+    # rm -rf ${ORACLE_HOME}/apex                  # APEX
+    # rm -rf ${ORACLE_HOME}/ords                  # ORDS
     rm -rf ${ORACLE_HOME}/bin/oracle_*          # Oracle Binaries
     rm -rf ${ORACLE_HOME}/sqldeveloper          # SQL Developer
     rm -rf ${ORACLE_HOME}/inventory/backup/*    # OUI backup
-    rm -rf ${ORACLE_HOME}/network/tools/help    # Network tools help
-    rm -rf ${ORACLE_HOME}/assistants/dbua       # Database upgrade assistant
-    rm -rf ${ORACLE_HOME}/dmu                   # Database migration assistant
-    rm -rf ${ORACLE_HOME}/install/pilot         # Remove pilot workflow installer
-    rm -rf ${ORACLE_HOME}/suptools              # Support tools
-    rm -rf ${ORACLE_HOME}/ucp                   # UCP connection pool
-    rm -rf ${ORACLE_HOME}/lib/*.zip             # All installer files
+    # rm -rf ${ORACLE_HOME}/network/tools/help    # Network tools help
+    # rm -rf ${ORACLE_HOME}/assistants/dbua       # Database upgrade assistant
+    # rm -rf ${ORACLE_HOME}/dmu                   # Database migration assistant
+    # rm -rf ${ORACLE_HOME}/install/pilot         # Remove pilot workflow installer
+    # rm -rf ${ORACLE_HOME}/suptools              # Support tools
+    # rm -rf ${ORACLE_HOME}/ucp                   # UCP connection pool
+    # rm -rf ${ORACLE_HOME}/lib/*.zip             # All installer files
 fi
 
 if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
