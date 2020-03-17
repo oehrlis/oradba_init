@@ -60,7 +60,9 @@ function move_directories {
     echo " ---------------------------------------------------------------"
     echo " - move directories with persistent data in ${ORACLE_BASE} to docker volume (${ORACLE_DATA})"
 
-    for i in dbs audit homes admin diag etc network; do
+    # remove homes from the list
+    # for i in dbs audit homes admin diag etc network; do
+    for i in dbs audit admin diag etc network; do
         # check if directory is a softlink if not move it and create one
         if [ ! -L ${ORACLE_BASE}/${i} ] && [ -d ${ORACLE_BASE}/${i} ] && [ ! -d ${ORACLE_DATA}/${i} ]; then
             echo " - move ${ORACLE_BASE}/${i} to ${ORACLE_BASE}/${i}"
