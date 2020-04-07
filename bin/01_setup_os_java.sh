@@ -65,7 +65,7 @@ if [ -n "${JAVA_PKG}" ]; then
 fi
 
 # add 3DES_EDE_CBC for Oracle EUS java.security.tmpl
-JAVA_SECURITY=$(find $(dirname $(dirname $(realpath $(command -v java)))) -name java.security 2>/dev/null)
+JAVA_SECURITY=$(find $(dirname $(dirname $(realpath $(command -v ${JAVA_DIR}/bin/java)))) -name java.security 2>/dev/null)
 if [ ! -z ${JAVA_SECURITY} ] && [ -f ${JAVA_SECURITY} ]; then
     echo " - Relaxe java security settings for Oracle EUS."
     cp -v ${ORADBA_RSP}/java.security.tmpl ${JAVA_SECURITY}
