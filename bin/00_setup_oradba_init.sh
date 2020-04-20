@@ -85,46 +85,45 @@ function running_in_docker() {
 # - EOF Functions -----------------------------------------------------------
 
 # check if script is sourced and return/exit
-if [ "${BASH_SOURCE[0]}" != "${0}" ]; then
+
+if [ "$0" = "$BASH_SOURCE" ]; then
+    # Make sure only root can run our script
+    if [ $EUID -ne 0 ]; then
+        echo " - ERROR: This script must be run as root" 1>&2
+        exit 1
+    fi
+    # create a software depot
+    mkdir -p ${SOFTWARE}
+    chmod 777 ${SOFTWARE}
+
+    # - Get oradba init scripts -----------------------------------------------
+    echo " - Get oradba init scripts --------------------------------------------"
+    mkdir -p ${DOWNLOAD}                                    # create download folder
+    curl -Lf ${GITHUB_URL} -o ${DOWNLOAD}/${ORADBA_PKG}
+
+    # check if we do have an unzip command
+    if [ ! -z $(command -v unzip) ]; then 
+        # unzip seems to be available
+        unzip -o ${DOWNLOAD}/${ORADBA_PKG} -d /opt          # unzip scripts
+    else 
+        # missing unzip fallback to a simple phyton script as python seems
+        # to be available on Docker image oraclelinx:7-slim
+        echo " - no unzip available, fallback to python script"
+        echo "import zipfile" >${DOWNLOAD}/unzipfile.py
+        echo "with zipfile.ZipFile('${DOWNLOAD}/${ORADBA_PKG}', 'r') as z:" >>${DOWNLOAD}/unzipfile.py
+        echo "   z.extractall('${OPT_DIR}')">>${DOWNLOAD}/unzipfile.py
+        python ${DOWNLOAD}/unzipfile.py
+
+        # adjust file mods
+        find ${OPT_DIR} -type f -name *.sh -exec chmod 755 {} \;
+    fi
+
+    mv ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
+    [ -f ${OPT_DIR}/oradba/README.md ] && mv ${OPT_DIR}/oradba/README.md ${OPT_DIR}/oradba/doc    # move documentation
+    [ -f rm ${OPT_DIR}/oradba/.gitignore ] && rm ${OPT_DIR}/oradba/.gitignore                         # remove gitignore
+    rm -rf ${DOWNLOAD}                                      # clean up
+else
     echo " - Set common functions and variables ---------------------------------"
     return
 fi
-
-# Still here, seems that script is executed
-# Make sure only root can run our script
-if [ $EUID -ne 0 ]; then
-    echo " - ERROR: This script must be run as root" 1>&2
-    exit 1
-fi
-
-# create a software depot
-mkdir -p ${SOFTWARE}
-chmod 777 ${SOFTWARE}
-
-# - Get oradba init scripts -----------------------------------------------
-echo " - Get oradba init scripts --------------------------------------------"
-mkdir -p ${DOWNLOAD}                                    # create download folder
-curl -Lf ${GITHUB_URL} -o ${DOWNLOAD}/${ORADBA_PKG}
-
-# check if we do have an unzip command
-if [ ! -z $(command -v unzip) ]; then 
-    # unzip seems to be available
-    unzip -o ${DOWNLOAD}/${ORADBA_PKG} -d /opt          # unzip scripts
-else 
-    # missing unzip fallback to a simple phyton script as python seems
-    # to be available on Docker image oraclelinx:7-slim
-    echo " - no unzip available, fallback to python script"
-    echo "import zipfile" >${DOWNLOAD}/unzipfile.py
-    echo "with zipfile.ZipFile('${DOWNLOAD}/${ORADBA_PKG}', 'r') as z:" >>${DOWNLOAD}/unzipfile.py
-    echo "   z.extractall('${OPT_DIR}')">>${DOWNLOAD}/unzipfile.py
-    python ${DOWNLOAD}/unzipfile.py
-
-    # adjust file mods
-    find ${OPT_DIR} -type f -name *.sh -exec chmod 755 {} \;
-fi
-
-mv ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
-mv ${OPT_DIR}/oradba/README.md ${OPT_DIR}/oradba/doc    # move documentation
-rm ${OPT_DIR}/oradba/.gitignore                         # remove gitignore
-rm -rf ${DOWNLOAD}                                      # clean up
 # --- EOF --------------------------------------------------------------------
