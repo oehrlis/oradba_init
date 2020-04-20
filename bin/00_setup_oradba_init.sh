@@ -121,7 +121,7 @@ if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
 
     mv ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
     [ -f ${OPT_DIR}/oradba/README.md ] && mv ${OPT_DIR}/oradba/README.md ${OPT_DIR}/oradba/doc    # move documentation
-    [ -f rm ${OPT_DIR}/oradba/.gitignore ] && rm ${OPT_DIR}/oradba/.gitignore                         # remove gitignore
+    [ -f ${OPT_DIR}/oradba/.gitignore ] && rm ${OPT_DIR}/oradba/.gitignore                         # remove gitignore
     rm -rf ${DOWNLOAD}                                      # clean up
 else
     echo " - Set common functions and variables ---------------------------------"
