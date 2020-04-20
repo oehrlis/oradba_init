@@ -86,7 +86,8 @@ function running_in_docker() {
 
 # check if script is sourced and return/exit
 
-if [ "$0" = "$BASH_SOURCE" ]; then
+if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
+    echo " - Script is executed -------------------------------------------------"
     # Make sure only root can run our script
     if [ $EUID -ne 0 ]; then
         echo " - ERROR: This script must be run as root" 1>&2
