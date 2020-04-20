@@ -87,7 +87,7 @@ function running_in_docker() {
 # check if script is sourced and return/exit
 if [ "${BASH_SOURCE[0]}" != "${0}" ]; then
     echo " - Set common functions and variables ---------------------------------"
-    return
+    exit
 fi
 
 # Still here, seems that script is executed
