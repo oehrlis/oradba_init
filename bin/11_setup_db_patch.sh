@@ -29,6 +29,9 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 export DB_PATCH_PKG=${DB_PATCH_PKG:-""}
 export DB_OJVM_PKG=${DB_OJVM_PKG:-""}
 export DB_OPATCH_PKG=${DB_OPATCH_PKG:-""}
+export DB_JDKPATCH_PKG=${DB_JDKPATCH_PKG:-""}
+export DB_PERLPATCH_PKG=${DB_PERLPATCH_PKG:-""}
+export DB_ONEOFF_PKGS=${DB_ONEOFF_PKGS:-""}
 
 # get default major release based on DB_BASE_PKG
 DEFAULT_ORACLE_MAJOR_RELEASE=$(echo $DB_BASE_PKG|cut -d_ -f2|cut -c1-3)
@@ -56,6 +59,42 @@ export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
 # - EOF Environment Variables -----------------------------------------------
 
+# - Functions ---------------------------------------------------------------
+function install_patch {
+# ---------------------------------------------------------------------------
+# Purpose....: function to install a DB patch using opatch apply 
+# ---------------------------------------------------------------------------
+    PATCH_PKG=${1:-""}
+    if [ -n "${PATCH_PKG}" ]; then
+        if get_software "${PATCH_PKG}"; then         # Check and get binaries
+            PATCH_ID=$(echo ${PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
+            echo " - unzip ${SOFTWARE}/${PATCH_PKG} to ${DOWNLOAD}"
+            unzip -q -o ${SOFTWARE}/${PATCH_PKG} \
+                -d ${DOWNLOAD}/                      # unpack OPatch binary package
+            cd ${DOWNLOAD}/${PATCH_ID}
+
+            ${ORACLE_HOME}/OPatch/opatch apply -silent $OPATCH_RSP
+            OPATCH_ERR=$?
+            if [ ${OPATCH_ERR} -ne 0 ]; then
+                echo " - WARNING: opatch apply failed with error ${OPATCH_ERR})"
+                return 1
+            fi
+
+            # remove files on docker builds
+            running_in_docker && rm -rf ${SOFTWARE}/${PATCH_PKG}
+            rm -rf ${DOWNLOAD}/${PATCH_ID}           # remove the binary packages
+            rm -rf ${DOWNLOAD}/PatchSearch.xml       # remove the binary packages
+        else
+            echo " - WARNING: Could not find local or remote patch package ${PATCH_PKG}. Skip patch installation for ${PATCH_PKG}"
+            echo " - WARNING: Skip patch installation."
+        fi
+    else
+        echo " - No package specified. Skip patch installation."
+    fi
+}
+# - EOF Functions -----------------------------------------------------------
+
+
 # - Initialization ----------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
@@ -75,10 +114,19 @@ if [ ! -n "$(command -v perl)" ]; then
 fi
 
 # - EOF Initialization ------------------------------------------------------
+echo " - database patch task overview ---------------------------------------"
+echo "DB_OPATCH_PKG         = ${DB_OPATCH_PKG}"
+echo "DB_PATCH_PKG          = ${DB_PATCH_PKG}"
+echo "DB_OJVM_PKG           = ${DB_OJVM_PKG}"
+echo "DB_JDKPATCH_PKG       = ${DB_JDKPATCH_PKG}"
+echo "DB_PERLPATCH_PKG      = ${DB_PERLPATCH_PKG}"
+echo "DB_ONEOFF_PKGS        = ${DB_ONEOFF_PKGS}"
+echo "ORACLE_MAJOR_RELEASE  = ${ORACLE_MAJOR_RELEASE}"
+echo "ORACLE_HOME           = ${ORACLE_HOME}"
 
 # - Main --------------------------------------------------------------------
 # - Install OPatch ----------------------------------------------------------
-echo " - Install OPatch -----------------------------------------------------"
+echo " - Step 1: Install OPatch ---------------------------------------------"
 if [ -n "${DB_OPATCH_PKG}" ]; then
     if get_software "${DB_OPATCH_PKG}"; then           # Check and get binaries
         rm -rf ${ORACLE_HOME}/OPatch                # remove old OPatch
@@ -94,50 +142,30 @@ else
     echo " - No OPatch package specified. Skip OPatch update."
 fi
 
-# - Install database patch (RU/PSU) -----------------------------------------
-echo " - Install database patch (RU/PSU) ------------------------------------"
-if [ -n "${DB_PATCH_PKG}" ]; then
-    if get_software "${DB_PATCH_PKG}"; then         # Check and get binaries
-        DB_PATCH_ID=$(echo ${DB_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        echo " - unzip ${SOFTWARE}/${DB_PATCH_PKG} to ${DOWNLOAD}"
-        unzip -q -o ${SOFTWARE}/${DB_PATCH_PKG} \
-            -d ${DOWNLOAD}/                         # unpack OPatch binary package
-        cd ${DOWNLOAD}/${DB_PATCH_ID}
+# - Install database patch --------------------------------------------------
+echo " - Step 2: Install database patch (RU/PSU) ----------------------------"
+install_patch ${DB_PATCH_PKG}
 
-        ${ORACLE_HOME}/OPatch/opatch apply -silent $OPATCH_RSP
-        # remove files on docker builds
-        running_in_docker && rm -rf ${SOFTWARE}/${DB_PATCH_PKG}
-        rm -rf ${DOWNLOAD}/${DB_PATCH_ID}           # remove the binary packages
-        rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
-    else
-        echo " - WARNING: Could not find local or remote database patch (RU/PSU) package. Skip database patch (RU/PSU) installation."
-    fi
+echo " - Step 3: Install OJVM RU --------------------------------------------"
+install_patch ${DB_OJVM_PKG}
+
+echo " - Step 4: Install JDK patch Oracle home ------------------------------"
+install_patch ${DB_JDKPATCH_PKG}
+
+echo " - Step 5: Install Perl patch Oracle home -----------------------------"
+install_patch ${DB_PERLPATCH_PKG}
+
+echo " - Step 6: Install One-off patches ------------------------------------"
+if [ -n "${DB_ONEOFF_PKGS}" ]; then
+    for oneoff_patch in $(echo "${DB_ONEOFF_PKGS}"|sed s/\;/\ /g); do
+        echo " - Step 6.1: Install One-off patch ${oneoff_patch} ------------"
+        install_patch ${oneoff_patch}
+    done
 else
-    echo " - No database patch (RU/PSU) package specified. Skip database patch (RU/PSU) installation."
+    echo " - No one-off packages specified. Skip one-off installation."
 fi
 
-# - Install OJVM RU ---------------------------------------------------------
-echo " - Install OJVM RU ----------------------------------------------------"
-if [ -n "${DB_OJVM_PKG}" ]; then
-    if get_software "${DB_OJVM_PKG}"; then          # Check and get binaries
-        DB_OJVM_ID=$(echo ${DB_OJVM_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        echo " - unzip ${SOFTWARE}/${DB_OJVM_PKG} to ${DOWNLOAD}"
-        unzip -q -o ${SOFTWARE}/${DB_OJVM_PKG} \
-            -d ${DOWNLOAD}/                         # unpack OPatch binary package
-        cd ${DOWNLOAD}/${DB_OJVM_ID}
-        ${ORACLE_HOME}/OPatch/opatch apply -silent $OPATCH_RSP
-        # remove files on docker builds
-        running_in_docker && rm -rf ${SOFTWARE}/${DB_OJVM_PKG}
-        rm -rf ${DOWNLOAD}/${DB_OJVM_ID}            # remove the binary packages
-        rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
-    else
-        echo " - WARNING: Could not find local or remote OJVM package. Skip OJVM installation."
-    fi
-else
-    echo " - No OJVM package specified. Skip OJVM installation."
-fi
-
-echo " - CleanUp DB patch installation --------------------------------------"
+echo " - Step 7: CleanUp DB patch installation ------------------------------"
 # Remove not needed components
 if running_in_docker; then
     echo " - remove Docker specific stuff"
