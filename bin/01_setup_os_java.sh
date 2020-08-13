@@ -53,6 +53,7 @@ if [ -n "${JAVA_PKG}" ]; then
         # set alternative stuff
         running_in_docker && \
         export JAVA_DIR=$(ls -1 -d ${JAVA_BASE}/jdk*|tail -1) && \
+        mkdir -p /usr/java && \
         ln -s $JAVA_DIR /usr/java/latest && \
         ln -s $JAVA_DIR /usr/java/default && \
         alternatives --install /usr/bin/java java $JAVA_DIR/bin/java 20000 && \
@@ -67,7 +68,7 @@ fi
 # add 3DES_EDE_CBC for Oracle EUS java.security.tmpl
 JAVA_SECURITY=$(find $(dirname $(dirname $(realpath $(command -v ${JAVA_DIR}/bin/java)))) -name java.security 2>/dev/null)
 if [ ! -z ${JAVA_SECURITY} ] && [ -f ${JAVA_SECURITY} ]; then
-    echo " - Relaxe java security settings for Oracle EUS."
+    echo " - Relax java security settings for Oracle EUS."
     cp -v ${ORADBA_RSP}/java.security.tmpl ${JAVA_SECURITY}
 fi
 # --- EOF --------------------------------------------------------------------
