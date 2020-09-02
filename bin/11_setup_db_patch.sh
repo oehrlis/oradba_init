@@ -76,7 +76,7 @@ function install_patch {
             ${ORACLE_HOME}/OPatch/opatch apply -silent $OPATCH_RSP
             OPATCH_ERR=$?
             if [ ${OPATCH_ERR} -ne 0 ]; then
-                echo " - WARNING: opatch apply failed with error ${OPATCH_ERR})"
+                echo " - WARNING: opatch apply failed with error ${OPATCH_ERR}"
                 return 1
             fi
 
@@ -84,6 +84,7 @@ function install_patch {
             running_in_docker && rm -rf ${SOFTWARE}/${PATCH_PKG}
             rm -rf ${DOWNLOAD}/${PATCH_ID}           # remove the binary packages
             rm -rf ${DOWNLOAD}/PatchSearch.xml       # remove the binary packages
+            echo " - Successfully install patch package ${PATCH_PKG}"
         else
             echo " - WARNING: Could not find local or remote patch package ${PATCH_PKG}. Skip patch installation for ${PATCH_PKG}"
             echo " - WARNING: Skip patch installation."
