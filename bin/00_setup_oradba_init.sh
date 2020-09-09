@@ -120,9 +120,11 @@ if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
     fi
 
     if [ -d ${OPT_DIR}/oradba ]; then
+        echo "update existing"
         \cp -rfv ${OPT_DIR}/oradba_init-master/* ${OPT_DIR}/oradba/
         rm -rvf ${OPT_DIR}/oradba_init-master
     else
+        echo " create new"
         mv -v ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
     fi
     [ -f ${OPT_DIR}/oradba/README.md ] && mv ${OPT_DIR}/oradba/README.md ${OPT_DIR}/oradba/doc    # move documentation
