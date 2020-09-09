@@ -119,7 +119,11 @@ if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
         find ${OPT_DIR} -type f -name *.sh -exec chmod 755 {} \;
     fi
 
-    mv ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
+    if [ -d ${OPT_DIR}/oradba ]; then
+        \cp -rfv ${OPT_DIR}/oradba_init-master/* ${OPT_DIR}/oradba/
+    else
+        mv ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
+    fi
     [ -f ${OPT_DIR}/oradba/README.md ] && mv ${OPT_DIR}/oradba/README.md ${OPT_DIR}/oradba/doc    # move documentation
     [ -f ${OPT_DIR}/oradba/.gitignore ] && rm ${OPT_DIR}/oradba/.gitignore                         # remove gitignore
     rm -rf ${DOWNLOAD}                                      # clean up
