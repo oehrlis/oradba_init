@@ -121,6 +121,7 @@ if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
 
     if [ -d ${OPT_DIR}/oradba ]; then
         \cp -rfv ${OPT_DIR}/oradba_init-master/* ${OPT_DIR}/oradba/
+        rm -rvf ${OPT_DIR}/oradba_init-master
     else
         mv ${OPT_DIR}/oradba_init-master ${OPT_DIR}/oradba      # get rid of master folder
     fi
