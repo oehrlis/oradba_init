@@ -29,7 +29,8 @@ LOCAL_ORACLE_SID=${1:-"TDB183C"}                                # Default name f
 LOCAL_ORACLE_PDB=${2:-"PDB1"}                                   # Check whether ORACLE_PDB is passed on
 LOCAL_CONTAINER=${3:-"false"}                                   # Check whether CONTAINER is passed on
 
-export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}            # Default name for Oracle database
+export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}            # Default SID for Oracle database
+export ORACLE_DBNAME=${ORACLE_DBNAME:-${ORACLE_SID}}            # Default name for Oracle database
 export ORACLE_PDB=${ORACLE_PDB:-${LOCAL_ORACLE_PDB}}            # Check whether ORACLE_PDB is passed on
 export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}               # Check whether CONTAINER is passed on
 
@@ -102,6 +103,7 @@ fi
 
 # inform what's done next...
 echo " - Create database instance ${ORACLE_SID} using:"
+echo " - ORACLE_DBNAME         : ${ORACLE_DBNAME}"
 echo " - ORACLE_SID            : ${ORACLE_SID}"
 echo " - HOST                  : ${HOST}"
 echo " - ORACLE_HOME           : ${ORACLE_HOME}"
@@ -130,6 +132,7 @@ echo " - ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ${ORACLE_PWD}";
 cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}
 sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"          ${ORADBA_TEMPLATE}
 sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"          ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"      ${ORADBA_TEMPLATE}
 sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"            ${ORADBA_TEMPLATE}
 sed -i -e "s|###DEFAULT_DOMAIN###|$DEFAULT_DOMAIN|g"    ${ORADBA_TEMPLATE}
 
@@ -139,6 +142,7 @@ sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORADBA_RESPONS
 sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORADBA_RESPONSE}
 sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                  ${ORADBA_RESPONSE}
 sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                  ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"              ${ORADBA_RESPONSE}
 sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                    ${ORADBA_RESPONSE}
 sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                    ${ORADBA_RESPONSE}
 sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                    ${ORADBA_RESPONSE}
