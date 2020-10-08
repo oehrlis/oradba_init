@@ -25,21 +25,22 @@
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
-LOCAL_ORACLE_SID=${1:-"TDB183C"}                                # Default name for Oracle database
-LOCAL_ORACLE_PDB=${2:-"PDB1"}                                   # Check whether ORACLE_PDB is passed on
-LOCAL_CONTAINER=${3:-"false"}                                   # Check whether CONTAINER is passed on
+LOCAL_ORACLE_SID=${1:-"TDB183C"}                                        # Default name for Oracle database
+LOCAL_ORACLE_PDB=${2:-"PDB1"}                                           # Check whether ORACLE_PDB is passed on
+LOCAL_CONTAINER=${3:-"false"}                                           # Check whether CONTAINER is passed on
 
-export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}            # Default SID for Oracle database
-export ORACLE_DBNAME=${ORACLE_DBNAME:-${ORACLE_SID}}            # Default name for Oracle database
-export ORACLE_PDB=${ORACLE_PDB:-${LOCAL_ORACLE_PDB}}            # Check whether ORACLE_PDB is passed on
-export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}               # Check whether CONTAINER is passed on
+export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}                    # Default SID for Oracle database
+export ORACLE_DBNAME=${ORACLE_DBNAME:-${ORACLE_SID}}                    # Default name for Oracle database
+export ORACLE_DB_UNIQUE_NAME=${ORACLE_DB_UNIQUE_NAME:-${ORACLE_DBNAME}} # Default name for Oracle database
+export ORACLE_PDB=${ORACLE_PDB:-${LOCAL_ORACLE_PDB}}                    # Check whether ORACLE_PDB is passed on
+export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}                       # Check whether CONTAINER is passed on
 
 # 
-export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}                       # default location for the Oracle root / software mountpoint
-export ORACLE_DATA=${ORACLE_DATA:-"/u01"}                       # default location for the Oracle data mountpoint
-export ORACLE_ARCH=${ORACLE_ARCH:-"/u02"}                       # default location for the second Oracle data mountpoint 
-export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"19.0.0.0"}         # default name for the oracle home name
-export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}  # default location for the Oracle base directory
+export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}                               # default location for the Oracle root / software mountpoint
+export ORACLE_DATA=${ORACLE_DATA:-"/u01"}                               # default location for the Oracle data mountpoint
+export ORACLE_ARCH=${ORACLE_ARCH:-"/u02"}                               # default location for the second Oracle data mountpoint 
+export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"19.0.0.0"}                 # default name for the oracle home name
+export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}          # default location for the Oracle base directory
 export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product/ -name sqlplus -type f|sort|tail -1)))}
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-"${ORACLE_HOME}/lib:/usr/lib"}
     
@@ -49,8 +50,8 @@ export ORACLE_RELEASE="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release'|sed 's
 # define oradba specific variables
 export ORADBA_BIN=${ORADBA_INIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)}
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-export ORADBA_RSP=${ORADBA_RSP:-"${ORADBA_BASE}/rsp"}           # oradba init response file folder
-export ORADBA_RSP=${CUSTOM_RSP:-"${ORADBA_RSP}"}                # custom response file folder
+export ORADBA_RSP=${ORADBA_RSP:-"${ORADBA_BASE}/rsp"}                   # oradba init response file folder
+export ORADBA_RSP=${CUSTOM_RSP:-"${ORADBA_RSP}"}                        # custom response file folder
 export CONFIG_SCRIPT=${CONFIG_SCRIPT:-"53_config_database.sh"}
 export ORADBA_TEMPLATE_PREFIX=${ORADBA_TEMPLATE_PREFIX:-""}
 export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca${ORACLE_RELEASE}.rsp.tmpl"} # oradba init response file
@@ -58,10 +59,10 @@ export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"${ORADBA_TEMPLATE_PREFIX}dbca${ORACLE
 export ORACLE_SID_ADMIN_ETC="${ORACLE_BASE}/admin/${ORACLE_SID}/etc"
 export ORADBA_TEMPLATE=${ORADBA_TEMPLATE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.dbc"}
 export ORADBA_RESPONSE=${ORADBA_RESPONSE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.rsp"}
-export ORACLE_PWD=${ORACLE_PWD:-""}             # Default admin password
+export ORACLE_PWD=${ORACLE_PWD:-""}                                     # Default admin password
 
-HOSTNAME_BIN=$(command -v hostname)                             # get the binary for hostname
-HOSTNAME_BIN=${HOSTNAME_BIN:-"cat /proc/sys/kernel/hostname"}   # fallback to /proc/sys/kernel/hostname
+HOSTNAME_BIN=$(command -v hostname)                                     # get the binary for hostname
+HOSTNAME_BIN=${HOSTNAME_BIN:-"cat /proc/sys/kernel/hostname"}           # fallback to /proc/sys/kernel/hostname
 export HOST=$(${HOSTNAME_BIN})
 export DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-$(hostname -d 2>/dev/null ||cat /etc/domainname ||echo "postgasse.org")}
 
@@ -104,6 +105,7 @@ fi
 # inform what's done next...
 echo " - Create database instance ${ORACLE_SID} using:"
 echo " - ORACLE_DBNAME         : ${ORACLE_DBNAME}"
+echo " - ORACLE_DB_UNIQUE_NAME : ${ORACLE_DB_UNIQUE_NAME}"
 echo " - ORACLE_SID            : ${ORACLE_SID}"
 echo " - HOST                  : ${HOST}"
 echo " - ORACLE_HOME           : ${ORACLE_HOME}"
@@ -130,25 +132,28 @@ echo " - ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ${ORACLE_PWD}";
 
 # Replace place holders in response file
 cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"          ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"          ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"      ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"            ${ORADBA_TEMPLATE}
-sed -i -e "s|###DEFAULT_DOMAIN###|$DEFAULT_DOMAIN|g"    ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_TEMPLATE}
+sed -i -e "s|###DEFAULT_DOMAIN###|$DEFAULT_DOMAIN|g"                ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_TEMPLATE}
 
 # Replace place holders in response file
 cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                  ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                  ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                  ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                  ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"              ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                    ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                    ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                    ${ORADBA_RESPONSE}
-sed -i -e "s|###CONTAINER###|$CONTAINER|g"                      ${ORADBA_RESPONSE}
-sed -i -e "s|###TEMPLATE###|${ORADBA_TEMPLATE}|g"               ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"  ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                      ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                      ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_TEMPLATE}
+sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                        ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                        ${ORADBA_RESPONSE}
+sed -i -e "s|###CONTAINER###|$CONTAINER|g"                          ${ORADBA_RESPONSE}
+sed -i -e "s|###TEMPLATE###|${ORADBA_TEMPLATE}|g"                   ${ORADBA_RESPONSE}
+sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_RESPONSE}
 
 # If there is greater than 8 CPUs default back to dbca memory calculations
 # dbca will automatically pick 40% of available memory for Oracle DB
@@ -196,6 +201,10 @@ MY_ORACLE_SID=${ORACLE_SID}
 
 sed -i "/$MY_ORACLE_SID/{s/;[0-9][0-9];/;10;/}" $ETC_BASE/sidtab
 echo "[${MY_ORACLE_SID}]">$ETC_BASE/sid.${MY_ORACLE_SID}.conf
-echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >>${ORACLE_BASE}/etc/oratab
-
+# update oratab
+if [ $(grep -c "^${ORACLE_SID}" ${ORACLE_BASE}/etc/oratab) -gt 0 ]; then
+    sed -i "s|^${ORACLE_SID}.*|${ORACLE_SID}:${ORACLE_HOME}:Y|" ${ORACLE_BASE}/etc/oratab
+else
+    echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >>${ORACLE_BASE}/etc/oratab
+fi
 # --- EOF -------------------------------------------------------------------
