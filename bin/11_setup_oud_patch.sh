@@ -31,6 +31,7 @@ export FMW_PATCH_PKG=${FMW_PATCH_PKG:-""}
 export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-""}
 export OUI_PATCH_PKG=${OUI_PATCH_PKG:-""}
 export COHERENCE_PATCH_PKG=${COHERENCE_PATCH_PKG:-""}
+export OUD_ONEOFF_PKGS=${OUD_ONEOFF_PKGS:-""}
 export OPATCH_NO_FUSER=true
 
 # define oradba specific variables
@@ -52,6 +53,42 @@ export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
 # - EOF Environment Variables -----------------------------------------------
 
+# - Functions ---------------------------------------------------------------
+function install_patch {
+# ---------------------------------------------------------------------------
+# Purpose....: function to install a DB patch using opatch apply 
+# ---------------------------------------------------------------------------
+    PATCH_PKG=${1:-""}
+    if [ -n "${PATCH_PKG}" ]; then
+        if get_software "${PATCH_PKG}"; then         # Check and get binaries
+            PATCH_ID=$(echo ${PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
+            echo " - unzip ${SOFTWARE}/${PATCH_PKG} to ${DOWNLOAD}"
+            unzip -q -o ${SOFTWARE}/${PATCH_PKG} \
+                -d ${DOWNLOAD}/                      # unpack OPatch binary package
+            cd ${DOWNLOAD}/${PATCH_ID}
+
+            ${ORACLE_HOME}/OPatch/opatch apply -silent $OPATCH_RSP
+            OPATCH_ERR=$?
+            if [ ${OPATCH_ERR} -ne 0 ]; then
+                echo " - WARNING: opatch apply failed with error ${OPATCH_ERR}"
+                return 1
+            fi
+
+            # remove files on docker builds
+            running_in_docker && rm -rf ${SOFTWARE}/${PATCH_PKG}
+            rm -rf ${DOWNLOAD}/${PATCH_ID}           # remove the binary packages
+            rm -rf ${DOWNLOAD}/PatchSearch.xml       # remove the binary packages
+            echo " - Successfully install patch package ${PATCH_PKG}"
+        else
+            echo " - WARNING: Could not find local or remote patch package ${PATCH_PKG}. Skip patch installation for ${PATCH_PKG}"
+            echo " - WARNING: Skip patch installation."
+        fi
+    else
+        echo " - No package specified. Skip patch installation."
+    fi
+}
+# - EOF Functions -----------------------------------------------------------
+
 # - Initialization ----------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
@@ -61,12 +98,11 @@ fi
 
 # fuser issue see MOS Note 2429708.1 OPatch Fails with Error "fuser could not be located"
 running_in_docker && export OPATCH_NO_FUSER=true
-
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
 # - Install OPatch ----------------------------------------------------------
-echo " - Install OPatch (${OUD_OPATCH_PKG}) ----------------------"
+echo " - Step 1: Install OPatch ---------------------------------------------"
 if [ -n "${OUD_OPATCH_PKG}" ]; then
     if get_software "${OUD_OPATCH_PKG}"; then       # Check and get binaries
         echo " - unzip ${SOFTWARE}/${OUD_OPATCH_PKG} to ${DOWNLOAD}"
@@ -86,49 +122,15 @@ else
 fi
 
 # - Install OUI patch -------------------------------------------------------
-echo " - Install OUI patch (${OUI_PATCH_PKG}) -------------------"
-if [ -n "${OUI_PATCH_PKG}" ]; then
-    if get_software "${OUI_PATCH_PKG}"; then        # Check and get binaries
-        OUI_PATCH_ID=$(echo ${OUI_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        echo " - unzip ${SOFTWARE}/${FMW_PATCH_PKG} to ${DOWNLOAD}"
-        unzip -q -o ${SOFTWARE}/${OUI_PATCH_PKG} \
-            -d ${DOWNLOAD}/                         # unpack OPatch binary package
-        cd ${DOWNLOAD}/${OUI_PATCH_ID}
-        ${ORACLE_HOME}/OPatch/opatch apply -silent -jre $JAVA_HOME
-        # remove binary packages on docker builds
-        running_in_docker && rm -rf ${SOFTWARE}/${OUI_PATCH_PKG}
-        rm -rf ${DOWNLOAD}/${OUI_PATCH_ID}          # remove the binary packages
-        rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
-    else
-        echo " - WARNING: Could not find local or remote FMW patch package. Skip FMW patch installation."
-    fi
-else
-    echo " - No OUI patch package specified. Skip FMW patch installation."
-fi
+echo " - Step 2: Install OUI patch ------------------------------------------"
+install_patch ${OUI_PATCH_PKG}
 
 # - Install FMW patch -------------------------------------------------------
-echo " - Install FMW patch (${FMW_PATCH_PKG}) -------------------"
-if [ -n "${FMW_PATCH_PKG}" ]; then
-    if get_software "${FMW_PATCH_PKG}"; then        # Check and get binaries
-        FMW_PATCH_ID=$(echo ${FMW_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        echo " - unzip ${SOFTWARE}/${FMW_PATCH_PKG} to ${DOWNLOAD}"
-        unzip -q -o ${SOFTWARE}/${FMW_PATCH_PKG} \
-            -d ${DOWNLOAD}/                         # unpack OPatch binary package
-        cd ${DOWNLOAD}/${FMW_PATCH_ID}
-        ${ORACLE_HOME}/OPatch/opatch apply -silent
-        # remove binary packages on docker builds
-        running_in_docker && rm -rf ${SOFTWARE}/${FMW_PATCH_PKG}
-        rm -rf ${DOWNLOAD}/${FMW_PATCH_ID}          # remove the binary packages
-        rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
-    else
-        echo " - WARNING: Could not find local or remote FMW patch package. Skip FMW patch installation."
-    fi
-else
-    echo " - No FMW patch package specified. Skip FMW patch installation."
-fi
+echo " - Step 3: Install FMW patch (RU/PSU) ---------------------------------"
+install_patch ${FMW_PATCH_PKG}
 
-# - Install Coherence patch -------------------------------------------------------
-echo " - Install Coherence patch (${COHERENCE_PATCH_PKG}) -------------------"
+# - Install Coherence patch -------------------------------------------------
+echo " - Step 4: Install Coherence patch ------------------------------------"
 if [ -n "${COHERENCE_PATCH_PKG}" ]; then
     if get_software "${COHERENCE_PATCH_PKG}"; then        # Check and get binaries
         COHERENCE_PATCH_ID=$(unzip -qql ${SOFTWARE}/${COHERENCE_PATCH_PKG}| sed -r '1 {s/([ ]+[^ ]+){3}\s+//;q}')
@@ -149,24 +151,17 @@ else
 fi
 
 # - Install OUD patch -------------------------------------------------------
-echo " - Install OUD patch (${OUD_PATCH_PKG}) -------------------"
-if [ -n "${OUD_PATCH_PKG}" ]; then
-    if get_software "${OUD_PATCH_PKG}"; then        # Check and get binaries
-        OUD_PATCH_ID=$(echo ${OUD_PATCH_PKG}| sed -E 's/p([[:digit:]]+).*/\1/')
-        echo " - unzip ${SOFTWARE}/${OUD_PATCH_PKG} to ${DOWNLOAD}"
-        unzip -q -o ${SOFTWARE}/${OUD_PATCH_PKG} \
-            -d ${DOWNLOAD}/                         # unpack OPatch binary package
-        cd ${DOWNLOAD}/${OUD_PATCH_ID}
-        ${ORACLE_HOME}/OPatch/opatch apply -silent
-        # remove files on docker builds
-        running_in_docker && rm -rf ${SOFTWARE}/${OUD_PATCH_PKG}
-        rm -rf ${DOWNLOAD}/${OUD_PATCH_ID}          # remove the binary packages
-        rm -rf ${DOWNLOAD}/PatchSearch.xml          # remove the binary packages
-    else
-        echo " - WARNING: Could not find local or remote OUD patch package. Skip OUD patch installation."
-    fi
+echo " - Step 5: Install OUD patch (RU/PSU) ---------------------------------"
+install_patch ${OUD_PATCH_PKG}
+
+echo " - Step 6: Install One-off patches ------------------------------------"
+if [ -n "${OUD_ONEOFF_PKGS}" ]; then
+    for oneoff_patch in $(echo "${OUD_ONEOFF_PKGS}"|sed s/\;/\ /g); do
+        echo " - Step 6.1: Install One-off patch ${oneoff_patch} ------------"
+        install_patch ${oneoff_patch}
+    done
 else
-    echo " - No OUD patch package specified. Skip OUD patch installation."
+    echo " - No one-off packages specified. Skip one-off installation."
 fi
 
 echo " - CleanUp OUD patch installation -------------------------------------"

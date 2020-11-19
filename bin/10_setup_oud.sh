@@ -41,6 +41,7 @@ export FMW_PATCH_PKG=${FMW_PATCH_PKG:-""}
 export OUD_OPATCH_PKG=${OUD_OPATCH_PKG:-""}
 export OUI_PATCH_PKG=${OUI_PATCH_PKG:-""}
 export COHERENCE_PATCH_PKG=${COHERENCE_PATCH_PKG:-""}
+export OUD_ONEOFF_PKGS=${OUD_ONEOFF_PKGS:-""}
 
 export OUD_TYPE=${OUD_TYPE:-"OUD12"}
 export OUD_INSTALL_TYPE=${OUD_INSTALL_TYPE:-'Standalone Oracle Unified Directory Server (Managed independently of WebLogic server)'}
