@@ -127,11 +127,4 @@ mkdir -p ${ORADBA_RSP}
 
 # change owner of ORACLE_BASE and ORACLE_INVENTORY
 chown -R oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
-
-# add 3DES_EDE_CBC for Oracle EUS java.security.tmpl
-JAVA_SECURITY=$(find $(dirname $(dirname $(realpath $(command -v java)))) -name java.security 2>/dev/null)
-if [ ! -z ${JAVA_SECURITY} ] && [ -f ${JAVA_SECURITY} ]; then
-    echo " - Relaxe java security settings for Oracle EUS."
-    cp -v ${ORADBA_RSP}/java.security.tmpl ${JAVA_SECURITY}
-fi
 # --- EOF --------------------------------------------------------------------
