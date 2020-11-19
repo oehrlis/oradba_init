@@ -67,7 +67,7 @@ function install_patch {
                 -d ${DOWNLOAD}/                      # unpack OPatch binary package
             cd ${DOWNLOAD}/${PATCH_ID}
 
-            ${ORACLE_HOME}/OPatch/opatch apply -silent $OPATCH_RSP
+            ${ORACLE_HOME}/OPatch/opatch apply -silent
             OPATCH_ERR=$?
             if [ ${OPATCH_ERR} -ne 0 ]; then
                 echo " - WARNING: opatch apply failed with error ${OPATCH_ERR}"
