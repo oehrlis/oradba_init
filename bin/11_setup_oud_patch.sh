@@ -103,23 +103,7 @@ running_in_docker && export OPATCH_NO_FUSER=true
 # - Main --------------------------------------------------------------------
 # - Install OPatch ----------------------------------------------------------
 echo " - Step 1: Install OPatch ---------------------------------------------"
-if [ -n "${OUD_OPATCH_PKG}" ]; then
-    if get_software "${OUD_OPATCH_PKG}"; then       # Check and get binaries
-        echo " - unzip ${SOFTWARE}/${OUD_OPATCH_PKG} to ${DOWNLOAD}"
-        unzip -q -o ${SOFTWARE}/${OUD_OPATCH_PKG} \
-            -d ${DOWNLOAD}/                         # unpack OPatch binary package
-        # install the OPatch using java
-        $JAVA_HOME/bin/java -jar ${DOWNLOAD}/6880880/opatch_generic.jar \
-            -ignoreSysPrereqs -force \
-            -silent oracle_home=${ORACLE_HOME}
-        rm -rf ${DOWNLOAD}/6880880
-        running_in_docker && rm -rf ${SOFTWARE}/${OUD_OPATCH_PKG}
-    else
-        echo " - WARNING: Could not find local or remote OPatch package. Skip OPatch update."
-    fi
-else
-    echo " - No OPatch package specified. Skip OPatch update."
-fi
+install_patch ${OUD_OPATCH_PKG}
 
 # - Install OUI patch -------------------------------------------------------
 echo " - Step 2: Install OUI patch ------------------------------------------"
