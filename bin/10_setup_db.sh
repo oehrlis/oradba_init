@@ -46,6 +46,9 @@ export DB_EXAMPLE_PKG=${DB_EXAMPLE_PKG:-""}
 export DB_PATCH_PKG=${DB_PATCH_PKG:-""}
 export DB_OJVM_PKG=${DB_OJVM_PKG:-""}
 export DB_OPATCH_PKG=${DB_OPATCH_PKG:-"p6880880_190000_Linux-x86-64.zip"}
+export DB_JDKPATCH_PKG=${DB_JDKPATCH_PKG:-""}
+export DB_PERLPATCH_PKG=${DB_PERLPATCH_PKG:-""}
+export DB_ONEOFF_PKGS=${DB_ONEOFF_PKGS:-""}
 
 # get default major release based on DB_BASE_PKG
 DEFAULT_ORACLE_MAJOR_RELEASE=$(echo $DB_BASE_PKG|cut -d_ -f2|cut -c1-3)
@@ -228,7 +231,7 @@ else
 fi
 
 # install patch any of the patch variable is if defined
-if [ ! -z "${DB_PATCH_PKG}" ] || [ ! -z "${DB_OJVM_PKG}" ] || [ ! -z "${DB_OPATCH_PKG}" ] && [ "${PATCH_LATER^^}" == "FALSE" ]; then  
+if [ ! -z "${DB_PATCH_PKG}" ] || [ ! -z "${DB_OJVM_PKG}" ] || [ ! -z "${DB_OPATCH_PKG}" ] || [ ! -z "${DB_JDKPATCH_PKG}" ] || [ ! -z "${DB_PERLPATCH_PKG}" ] || [ ! -z "${DB_ONEOFF_PKGS}" ] && [ "${PATCH_LATER^^}" == "FALSE" ]; then  
     ${ORADBA_BIN}/11_setup_db_patch.sh
 elif [ "${PATCH_LATER^^}" == "TRUE" ]; then
     echo " - Patch later. PATCH_LATER=$PATCH_LATER"
