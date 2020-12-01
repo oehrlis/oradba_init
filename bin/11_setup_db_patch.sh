@@ -80,6 +80,7 @@ function install_patch {
                 return 1
             fi
 
+
             # remove files on docker builds
             running_in_docker && rm -rf ${SOFTWARE}/${PATCH_PKG}
             rm -rf ${DOWNLOAD}/${PATCH_ID}           # remove the binary packages
@@ -158,9 +159,11 @@ install_patch ${DB_PERLPATCH_PKG}
 
 echo " - Step 6: Install One-off patches ------------------------------------"
 if [ -n "${DB_ONEOFF_PKGS}" ]; then
+    j=1
     for oneoff_patch in $(echo "${DB_ONEOFF_PKGS}"|sed s/\;/\ /g); do
-        echo " - Step 6.1: Install One-off patch ${oneoff_patch} ------------"
+        echo " - Step 6.$j: Install One-off patch ${oneoff_patch} ------------"
         install_patch ${oneoff_patch}
+        ((j++))                 # increment counter
     done
 else
     echo " - No one-off packages specified. Skip one-off installation."
