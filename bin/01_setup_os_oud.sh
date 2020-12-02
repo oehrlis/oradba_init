@@ -46,11 +46,23 @@ if [ $EUID -ne 0 ]; then
 fi
 
 # create necessary groups
-groupadd --gid 1010 oinstall
+if grep -q oinstall /etc/group
+then
+    echo " - INFO: skip group oinstall"
+else
+    echo " - INFO: Create group oinstall"
+    groupadd --gid 1010 oinstall
+fi
 
 # create the oracle OS user
-useradd --create-home --gid oinstall \
+if grep -q oracle /etc/passwd
+then
+    echo " - INFO: skip user oracle"
+else
+    echo " - INFO: Create user oracle"
+    useradd --create-home --gid oinstall \
     --shell /bin/bash oracle
+fi
 
 # do some stuff on none docker environments
 if [ ! running_in_docker ]; then
@@ -59,7 +71,7 @@ if [ ! running_in_docker ]; then
 
     # copy autorized keys 
     mkdir -p /home/oracle/.ssh/
-    cp ${HOME}/.ssh/authorized_keys /home/oracle/.ssh/
+    cat ${HOME}/.ssh/authorized_keys >>/home/oracle/.ssh/authorized_keys
     chown oracle:oinstall -R /home/oracle/.ssh
     chmod 700 /home/oracle/.ssh/
 
