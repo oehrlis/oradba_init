@@ -278,4 +278,9 @@ elif [ ${OUD_PROXY} -eq 1 ]; then
         exit 1
     fi
 fi
+
+# copy config scripts
+if [ -d "${INSTANCE_INIT}/setup" ] && [ -d "${OUD_INSTANCE_ADMIN}/create" ]; then
+    cp -vr ${INSTANCE_INIT}/setup/* ${OUD_INSTANCE_ADMIN}/create
+fi
 # --- EOF -------------------------------------------------------------------

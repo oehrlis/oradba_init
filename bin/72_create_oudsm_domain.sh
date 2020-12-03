@@ -90,6 +90,7 @@ else
     echo "---------------------------------------------------------------"
 fi 
 sed -i -e "s|ADMIN_PASSWORD|$s|g" ${OUD_INSTANCE_ADMIN}/create/${CREATE_SCRIPT_PYTHON}
+echo $s > ${OUD_INSTANCE_ADMIN}/etc/${DOMAIN_NAME}_pwd.txt
 
 echo "--- Create WebLogic Server Domain (${DOMAIN_NAME}) -----------------------------"
 echo "  DOMAIN_NAME=${DOMAIN_NAME}"
