@@ -119,7 +119,7 @@ if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
 fi
 
 # install basic utilities
-${YUM} install -y libaio gzip tar zip unzip
+${YUM} install -y libaio gzip tar zip unzip pwgen
 
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then

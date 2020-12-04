@@ -54,6 +54,32 @@ export ADMIN_PASSWORD=${ADMIN_PASSWORD:-""}             # Default directory admi
 export PWD_FILE=${PWD_FILE:-${OUD_INSTANCE_ADMIN}/etc/${DOMAIN_NAME}_pwd.txt}
 # - EOF Environment Variables -----------------------------------------------
 
+function gen_password {
+# Purpose....: generate a password string
+# -----------------------------------------------------------------------
+    Length=${1:-12}
+
+    # make sure, that the password length is not shorter than 4 characters
+    if [ ${Length} -lt 4 ]; then
+        Length=4
+    fi
+
+    # generate password
+    if [ $(command -v pwgen) ]; then 
+        pwgen -s -1 ${Length}
+    else 
+        while true; do
+            # use urandom to generate a random string
+            s=$(cat /dev/urandom | tr -dc "A-Za-z0-9" | fold -w ${Length} | head -n 1)
+            # check if the password meet the requirements
+            if [[ ${#s} -ge ${Length} && "$s" == *[A-Z]* && "$s" == *[a-z]* && "$s" == *[0-9]*  ]]; then
+                echo "$s"
+                break
+            fi
+        done
+    fi
+}
+
 echo "--- Setup OUDSM environment on volume ${ORACLE_DATA} --------------------"
 
 # create instance directories on volume
@@ -66,31 +92,38 @@ mkdir -v -p ${OUD_INSTANCE_ADMIN}/create
 cp ${ORADBA_BIN}/${CREATE_SCRIPT_PYTHON} ${OUD_INSTANCE_ADMIN}/create/${CREATE_SCRIPT_PYTHON}
 # create oudtab file for OUD Base
 OUDTAB=${ORACLE_DATA}/etc/oudtab
-echo "${DOMAIN_NAME}:${PORT}:${PORT_SSL}:::OUDSM" >>${OUDTAB}
+# create oudtab file for OUD Base, comment is just for documenttion..
+OUDTAB=${ORACLE_DATA}/etc/oudtab
+if [ -f "${OUDTAB}" ]; then
+    echo "${DOMAIN_NAME}:${PORT}:${PORT_SSL}:::OUDSM" >>${OUDTAB}
+else
+    echo "# OUD Config File"                                                     >${OUDTAB}
+    echo "#  1: OUD Instance Name"                                              >>${OUDTAB}
+    echo "#  2: OUD LDAP Port"                                                  >>${OUDTAB}
+    echo "#  3: OUD LDAPS Port"                                                 >>${OUDTAB}
+    echo "#  4: OUD Admin Port"                                                 >>${OUDTAB}
+    echo "#  5: OUD Replication Port"                                           >>${OUDTAB}
+    echo "#  6: Directory type eg. OUD, OID, ODSEE or OUDSM"                    >>${OUDTAB}
+    echo "# -----------------------------------------------"                    >>${OUDTAB}
+    echo "${DOMAIN_NAME}:${PORT}:${PORT_SSL}:::OUDSM" >>${OUDTAB}
+fi
 
+# check if we have a password file
+if [ -f "${OUD_INSTANCE_ADMIN}/etc/${DOMAIN_NAME}_pwd.txt" ]; then
+    echo "    found password file ${OUD_INSTANCE_ADMIN}/etc/${DOMAIN_NAME}_pwd.txt"
+    export ADMIN_PASSWORD=$(cat ${OUD_INSTANCE_ADMIN}/etc/${DOMAIN_NAME}_pwd.txt)
+fi
+# generate password if it is still empty
 if [ -z ${ADMIN_PASSWORD} ]; then
     # Auto generate Oracle WebLogic Server admin password
-    while true; do
-        s=$(cat /dev/urandom | tr -dc "A-Za-z0-9" | fold -w 10 | head -n 1)
-        if [[ ${#s} -ge 10 && "$s" == *[A-Z]* && "$s" == *[a-z]* && "$s" == *[0-9]*  ]]; then
-            break
-        else
-            echo "Password does not Match the criteria, re-generating..."
-        fi
-    done
+    ADMIN_PASSWORD=$(gen_password 12)
     echo "---------------------------------------------------------------"
     echo "    Oracle WebLogic Server Auto Generated OUDSM Domain:"
-    echo "    ----> 'weblogic' admin password: $s"
-    echo "---------------------------------------------------------------"
-else
-    s=${ADMIN_PASSWORD}
-    echo "---------------------------------------------------------------"
-    echo "    Oracle WebLogic Server Auto Generated OUDSM Domain:"
-    echo "    ----> 'weblogic' admin password: $s"
+    echo "    ----> 'weblogic' admin password: $ADMIN_PASSWORD"
     echo "---------------------------------------------------------------"
 fi 
-sed -i -e "s|ADMIN_PASSWORD|$s|g" ${OUD_INSTANCE_ADMIN}/create/${CREATE_SCRIPT_PYTHON}
-echo $s > ${OUD_INSTANCE_ADMIN}/etc/${DOMAIN_NAME}_pwd.txt
+sed -i -e "s|ADMIN_PASSWORD|$ADMIN_PASSWORD|g" ${OUD_INSTANCE_ADMIN}/create/${CREATE_SCRIPT_PYTHON}
+echo $ADMIN_PASSWORD > ${OUD_INSTANCE_ADMIN}/etc/${DOMAIN_NAME}_pwd.txt
 
 echo "--- Create WebLogic Server Domain (${DOMAIN_NAME}) -----------------------------"
 echo "  DOMAIN_NAME=${DOMAIN_NAME}"
