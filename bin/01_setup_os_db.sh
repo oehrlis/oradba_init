@@ -50,18 +50,24 @@ if [ $EUID -ne 0 ]; then
 fi
 
 # create necessary groups
-groupadd --gid 1010 oinstall
-groupadd --gid 1020 osdba
-groupadd --gid 1030 osoper
-groupadd --gid 1040 osbackupdba
-groupadd --gid 1050 oskmdba
-groupadd --gid 1060 osdgdba
-groupadd --gid 1070 osracdba
+getent group oinstall || groupadd --gid 1010 oinstall
+getent group osdba || groupadd --gid 1020 osdba
+getent group osoper || groupadd --gid 1030 osoper
+getent group osbackupdba || groupadd --gid 1040 osbackupdba
+getent group oskmdba || groupadd --gid 1050 oskmdba
+getent group osdgdba || groupadd --gid 1060 osdgdba
+getent group osracdba || groupadd --gid 1070 osracdba
 
-# create the oracle OS user
-useradd --create-home --gid oinstall \
-    --groups oinstall,osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
-    --shell /bin/bash oracle
+# create/modify the oracle OS user
+if id "oracle" &>/dev/null; then
+    usermod --gid oinstall \
+        --groups oinstall,osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
+        --shell /bin/bash oracle
+else
+    useradd --create-home --gid oinstall \
+        --groups oinstall,osdba,osoper,osbackupdba,oskmdba,osdgdba,osracdba \
+        --shell /bin/bash oracle
+fi
 
 # add oracle to sudo
 if [ -f "/etc/sudoers.d/90-cloud-init-users" ]; then
