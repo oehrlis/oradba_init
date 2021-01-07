@@ -129,7 +129,7 @@ fi
 running_in_docker && yum-config-manager --disable ol7_ociyum_config
 
 # install basic utilities
-${YUM} install -y zip unzip gzip tar which
+${YUM} install -y zip unzip gzip tar which pwgen
 
 # install the oracle preinstall stuff
 ${YUM} install -y make passwd \
@@ -142,8 +142,7 @@ ${YUM} install -y make passwd \
 
 # remove the groups created by oracle
 for i in dba oper backupdba dgdba kmdba racdba; do
-    echo " - removing group $i"
-    groupdel $i
+    getent group $i && echo " - removing group $i" && groupdel $i
 done
 
 # clean up yum repository
@@ -157,17 +156,17 @@ fi
 
 # - add PDB OS user ---------------------------------------------------------
 # add an restricted group
-groupadd restricted
+getent group restricted || groupadd restricted
 
 # add a users
-useradd --create-home --gid restricted --shell /bin/bash oracdb
-useradd --create-home --gid restricted --shell /bin/bash orapdb
-useradd --create-home --gid restricted --shell /bin/bash orasec
+for i in oracdb orapdb orasec; do
+    if ! id "$i" &>/dev/null; then
+        useradd --create-home --gid restricted --shell /bin/bash $i
+        # set the password
+        echo ${DEFAULT_PASSWORD} | passwd $i --stdin
+    fi
+done
 
-# set the password
-echo ${DEFAULT_PASSWORD} | passwd oracdb --stdin
-echo ${DEFAULT_PASSWORD} | passwd orapdb --stdin
-echo ${DEFAULT_PASSWORD} | passwd orasec --stdin
 # - EOF add PDB OS user -----------------------------------------------------
 
 # create a bunch of other directories

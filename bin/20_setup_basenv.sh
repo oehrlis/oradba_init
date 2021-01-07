@@ -94,7 +94,7 @@ if [ -n "${BASENV_PKG}" ]; then
     fi
 
     # check if we have a basenv package and start installing
-    if [ -f ${SOFTWARE}/${BASENV_ORADBA} ]; then
+    if [ -f ${SOFTWARE}/${BASENV_PKG} ]; then
         mkdir -p ${ORACLE_LOCAL}
         echo " - unzip ${SOFTWARE}/${BASENV_PKG} to ${ORACLE_LOCAL}"
         unzip -q -o ${SOFTWARE}/${BASENV_PKG} -d ${ORACLE_LOCAL}
