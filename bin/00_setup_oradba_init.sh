@@ -24,12 +24,29 @@
 # - Customization -----------------------------------------------------------
 # - just add/update any kind of customized environment variable here
 export OPT_DIR="/opt"
-export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}   # root folder for ORACLE_BASE and binaries
-export ORACLE_DATA=${ORACLE_DATA:-"/u01"}   # Oracle data folder eg volume for docker
-export ORACLE_ARCH=${ORACLE_ARCH:-"/u02"}   # Oracle arch folder eg volume for docker
-export ORACLE_BASE=${ORACLE_BASE:-${ORACLE_ROOT}/app/oracle}
-export ORACLE_INVENTORY=${ORACLE_INVENTORY:-${ORACLE_ROOT}/app/oraInventory}
+export DEFAULT_DOMAIN="trivadislabs.com"
+export DEFAULT_ORACLE_ROOT="/u00"
+export DEFAULT_ORACLE_DATA="/u01"
+export DEFAULT_ORACLE_ARCH="/u02"
+export DEFAULT_ORACLE_HOME_NAME="19.0.0.0"
 # - End of Customization ----------------------------------------------------
+
+# - Default Values ------------------------------------------------------------
+export DOMAIN=${DOMAIN:-${DEFAULT_DOMAIN}} 
+export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}                    # Default SID for Oracle database
+export ORACLE_DBNAME=${ORACLE_DBNAME:-${ORACLE_SID}}                    # Default name for Oracle database
+export ORACLE_DB_UNIQUE_NAME=${ORACLE_DB_UNIQUE_NAME:-${ORACLE_DBNAME}} # Default name for Oracle database
+
+# Default Values for folders
+export ORACLE_ROOT=${ORACLE_ROOT:-${DEFAULT_ORACLE_ROOT}}                   # default location for the Oracle root / software mountpoint
+export ORACLE_DATA=${ORACLE_DATA:-${DEFAULT_ORACLE_DATA}}                   # default location for the Oracle data mountpoint
+export ORACLE_ARCH=${ORACLE_ARCH:-${DEFAULT_ORACLE_ARCH}}                   # default location for the second Oracle data mountpoint 
+export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-${DEFAULT_ORACLE_HOME_NAME}}    # default name for the oracle home name
+export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}              # default location for the Oracle base directory
+export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product/ -name sqlplus -type f|sort|tail -1)))}
+export ORACLE_INVENTORY=${ORACLE_INVENTORY:-${ORACLE_ROOT}/app/oraInventory}
+# - EOF Default Values --------------------------------------------------------
+
 
 # - Environment Variables ---------------------------------------------------
 # define the oradba url and package name
@@ -49,6 +66,28 @@ export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 # - EOF Default Values --------------------------------------------------------
 
 # - Functions ---------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Purpose....: Clean up before exit
+# ---------------------------------------------------------------------------
+function CleanAndQuit()
+{
+    echo
+    ERROR_CODE=${1:-0}
+    ERROR_VALUE=${2:-"n/a"}
+    case ${1} in
+        0)  echo "END  : of ${SCRIPT_NAME}";;
+        1)  echo "ERR  : Exit Code ${ERROR_CODE}. Wrong amount of arguments. See usage for correct one.";;
+        20) echo "ERR  : New SID is unset or set to the empty string!";;
+        21) echo "ERR  : Invalid SID provided! SID ${ERROR_VALUE} not in $ORATAB!";;
+        30) echo "ERR  : \$ORACLE_BASE ${ORACLE_BASE} is unset, set to the an empty string or directory not found!";;
+        31) echo "ERR  : \$ORACLE_HOME ${ORACLE_HOME} is unset, set to the an empty string or directory not found!";;
+        32) echo "ERR  : \$ORACLE_SID ${ORACLE_SID} is unset or set to the empty string!";;
+        99) echo "INFO : Just wanna say hallo.";;
+        ?)  echo "ERR  : Exit Code ${ERROR_CODE}. Unknown Error.";;
+    esac
+    exit ${1}
+}
+
 function get_software {
 # ---------------------------------------------------------------------------
 # Purpose....: Verify if the software package is available if not try to 

@@ -15,7 +15,7 @@
 #              at http://www.apache.org/licenses/
 # -----------------------------------------------------------------------------
 # - Customization -------------------------------------------------------------
-LOCAL_ORACLE_SID=${1:-"TDB183C"}                                        # Default name for Oracle database
+LOCAL_ORACLE_SID=${1:-"SDBM"}                                           # Default name for Oracle database
 LOCAL_ORACLE_PDB=${2:-"PDB1"}                                           # Check whether ORACLE_PDB is passed on
 LOCAL_CONTAINER=${3:-"false"}                                           # Check whether CONTAINER is passed on
 # - End of Customization ------------------------------------------------------
@@ -36,20 +36,6 @@ export SCRIPT_NAME=$(basename ${BASH_SOURCE[0]})
 export SCRIPT_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 export SCRIPT_BASE=$(dirname ${SCRIPT_BIN_DIR})
 
-# Default Values for DB
-export DOMAIN=${DOMAIN:-"trivadislabs.com"} 
-export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}                    # Default SID for Oracle database
-export ORACLE_DBNAME=${ORACLE_DBNAME:-${ORACLE_SID}}                    # Default name for Oracle database
-export ORACLE_DB_UNIQUE_NAME=${ORACLE_DB_UNIQUE_NAME:-${ORACLE_DBNAME}} # Default name for Oracle database
-
-# Default Values for folders
-export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}                               # default location for the Oracle root / software mountpoint
-export ORACLE_DATA=${ORACLE_DATA:-"/u01"}                               # default location for the Oracle data mountpoint
-export ORACLE_ARCH=${ORACLE_ARCH:-"/u02"}                               # default location for the second Oracle data mountpoint 
-export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"19.0.0.0"}                 # default name for the oracle home name
-export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}          # default location for the Oracle base directory
-export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product/ -name sqlplus -type f|sort|tail -1)))}
- 
 # define logfile and logging
 export LOG_BASE=${LOG_BASE:-"/tmp"}                          # Use script directory as default logbase
 TIMESTAMP=$(date "+%Y.%m.%d_%H%M%S")
@@ -78,30 +64,6 @@ function Usage()
     fi
 }
 
-# -----------------------------------------------------------------------
-# Purpose....: Clean up before exit
-# -----------------------------------------------------------------------
-function CleanAndQuit()
-{
-    echo
-    ERROR_CODE=${1:-0}
-    ERROR_VALUE=${2:-"n/a"}
-    case ${1} in
-        0)  echo "END  : of ${SCRIPT_NAME}";;
-        1)  echo "ERR  : Exit Code ${ERROR_CODE}. Wrong amount of arguments. See usage for correct one.";;
-        20) echo "ERR  : New SID is unset or set to the empty string!";;
-        21) echo "ERR  : Invalid SID provided! SID ${ERROR_VALUE} not in $ORATAB!";;
-        30) echo "ERR  : \$ORACLE_BASE ${ORACLE_BASE} is unset, set to the an empty string or directory not found!";;
-        31) echo "ERR  : \$ORACLE_HOME ${ORACLE_HOME} is unset, set to the an empty string or directory not found!";;
-        32) echo "ERR  : \$ORACLE_SID ${ORACLE_SID} is unset or set to the empty string!";;
-        99) echo "INFO : Just wanna say hallo.";;
-        ?)  echo "ERR  : Exit Code ${ERROR_CODE}. Unknown Error.";;
-    esac
-    exit ${1}
-}
-
-# - EOF Functions -------------------------------------------------------
-
 # - Initialization ------------------------------------------------------------
 # Define a bunch of bash option see 
 # https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
@@ -119,7 +81,7 @@ if [ -z "${newSID}" ] ; then
     CleanAndQuit 20
 # Check for a valid SID
 elif [ $(cat $ORATAB | grep "^${newSID}" | wc -l) -ne 1 ] ; then
-    CleanAndQuit 21
+    echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >>$ORATAB
 fi
 
 # - Main ----------------------------------------------------------------------
