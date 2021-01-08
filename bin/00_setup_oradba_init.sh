@@ -45,6 +45,9 @@ export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 # - EOF Environment Variables -----------------------------------------------
 
+# - Default Values ------------------------------------------------------------
+# - EOF Default Values --------------------------------------------------------
+
 # - Functions ---------------------------------------------------------------
 function get_software {
 # ---------------------------------------------------------------------------

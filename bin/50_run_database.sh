@@ -295,7 +295,7 @@ fi
 
 # check if we have an oratab entry
 if [ $(grep -ic ${ORACLE_SID} /etc/oratab) -eq 0 ]; then
-    echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >${ORACLE_BASE}/etc/oratab
+    echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >/etc/oratab
 fi
 
 # Check whether database is up and running

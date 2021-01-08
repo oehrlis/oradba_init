@@ -34,7 +34,7 @@ export ORACLE_DBNAME=${ORACLE_DBNAME:-${ORACLE_SID}}                    # Defaul
 export ORACLE_DB_UNIQUE_NAME=${ORACLE_DB_UNIQUE_NAME:-${ORACLE_DBNAME}} # Default name for Oracle database
 export ORACLE_PDB=${ORACLE_PDB:-${LOCAL_ORACLE_PDB}}                    # Check whether ORACLE_PDB is passed on
 export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}                       # Check whether CONTAINER is passed on
-
+export DB_MASTER=""
 # 
 export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}                               # default location for the Oracle root / software mountpoint
 export ORACLE_DATA=${ORACLE_DATA:-"/u01"}                               # default location for the Oracle data mountpoint
@@ -194,13 +194,19 @@ sed -i -e "s|${ORACLE_PWD}|ORACLE_PASSWORD|g" ${ORADBA_RESPONSE}
 
 # adjust basenv
 MY_ORACLE_SID=${ORACLE_SID}
-. "$HOME/.BE_HOME"                                          # load BE_HOME
-. "$HOME/.TVDPERL_HOME"                                     # load TVDPERL_HOME
-. ${BE_HOME}/bin/basenv.sh                                  # source basenv
-. ${ORACLE_BASE}/local/dba/bin/oraenv.ksh ${MY_ORACLE_SID} # source SID environment
+# source basenv if it does exists
+if [ -f "$HOME/.BE_HOME" ]; then
+    echo " - source TVD-BasEnv"
+    . "$HOME/.BE_HOME"                              # load BE_HOME
+    . "$HOME/.TVDPERL_HOME"                         # load TVDPERL_HOME
+    . ${BE_HOME}/bin/basenv.sh                      # source basenv
+    . ${BE_HOME}/bin/oraenv.ksh ${MY_ORACLE_SID}    # source SID environment
+    # sed -i "/$MY_ORACLE_SID/{s/;[0-9][0-9];/;10;/}" $ETC_BASE/sidtab
+    # echo "[${MY_ORACLE_SID}]">$ETC_BASE/sid.${MY_ORACLE_SID}.conf
+else   
+    echo " - skip TVD-BasEnv"
+fi
 
-sed -i "/$MY_ORACLE_SID/{s/;[0-9][0-9];/;10;/}" $ETC_BASE/sidtab
-echo "[${MY_ORACLE_SID}]">$ETC_BASE/sid.${MY_ORACLE_SID}.conf
 # update oratab
 if [ $(grep -c "^${ORACLE_SID}" ${ORACLE_BASE}/etc/oratab) -gt 0 ]; then
     sed -i "s|^${ORACLE_SID}.*|${ORACLE_SID}:${ORACLE_HOME}:Y|" ${ORACLE_BASE}/etc/oratab
