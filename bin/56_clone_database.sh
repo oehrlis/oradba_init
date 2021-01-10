@@ -57,9 +57,6 @@ exec 2>&1
 # Check if parameter is not empty
 if [ -z "${LOCAL_ORACLE_SID}" ] ; then
     CleanAndQuit 20
-# Check for a valid SID
-elif [ $(cat $ORATAB | grep "^${LOCAL_ORACLE_SID}" | wc -l) -ne 1 ] ; then
-    CleanAndQuit 21
 fi
 
 # - Main ----------------------------------------------------------------------
