@@ -22,12 +22,14 @@ LOCAL_DB_MASTER=${2:-"SDBM_master.tgz"}     # DB Master file
 # - Default Values ------------------------------------------------------------
 # source generic environment variables and functions
 ORADBA_INIT="$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
+
 if [ -f "${ORADBA_INIT}" ]; then
     source "${ORADBA_INIT}"
 else
     echo "ERR  : could not source ${ORADBA_INIT}"
     exit 127
 fi
+echo "ORADBA_BIN $ORADBA_BIN"
 
 # default Values for Script
 export SCRIPT_BIN=$(dirname ${BASH_SOURCE[0]})
