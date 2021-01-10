@@ -66,7 +66,7 @@ export ORACLE_PORT=${ORACLE_PORT:-$DEFAULT_ORACLE_PORT}
 export INSTANCE_INIT=${INSTANCE_INIT:-"${ORACLE_SID_ADMIN}/scripts"}
 
 # define oradba specific variables
-export ORADBA_BIN=${ORADBA_INIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)}
+export ORADBA_BIN=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export ORADBA_RSP=${ORADBA_RSP:-"${ORADBA_BASE}/rsp"}                   # oradba init response file folder
 export ORADBA_RSP=${CUSTOM_RSP:-"${ORADBA_RSP}"}                        # custom response file folder
