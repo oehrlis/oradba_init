@@ -76,6 +76,7 @@ EOF
 fi
 
 # set some variables
+ORACLE_SID=$LOCAL_ORACLE_SID
 typeset -l ORACLE_SID_lowercase=${ORACLE_SID}
 BE_ORA_ADMIN_SID=${BE_ORA_ADMIN_SID:-${ORACLE_BASE}/admin/${ORACLE_SID}}
 # cleanup/remove the admin files
