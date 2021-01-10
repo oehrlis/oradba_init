@@ -175,7 +175,7 @@ echo "target=/"                  >  ${BE_ORA_ADMIN_SID}/etc/rman.conf
 echo "catalog=rman/rman@catalog" >> ${BE_ORA_ADMIN_SID}/etc/rman.conf
     
 # Execute custom provided setup scripts
-${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
+${ORADBA_BIN}/${DB_CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
 
 echo "INFO: Finish creating the DB environment on $(hostname) at $(date)"
 # --- EOF ---------------------------------------------------------------------
