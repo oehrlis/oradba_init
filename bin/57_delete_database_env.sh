@@ -61,6 +61,8 @@ if [ $(cat $ORATAB | grep "^${LOCAL_ORACLE_SID}" | wc -l) -ne 0 ] ; then
 
     # set database environment 
     if [ -f "$HOME/.BE_HOME" ]; then
+        . $HOME/.BE_HOME
+        . ${BE_HOME}/bin/basenv.ksh
         . ${BE_HOME}/bin/oraenv.ksh ${LOCAL_ORACLE_SID}           # source SID environment
     else 
         ORACLE_SID=${LOCAL_ORACLE_SID}

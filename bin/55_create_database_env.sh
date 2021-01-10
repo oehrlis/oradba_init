@@ -71,6 +71,8 @@ fi
 # set environment BasEnv and database
 if [ -f "$HOME/.BE_HOME" ]; then
     echo "INFO: source TVD-BasEnv"
+    . $HOME/.BE_HOME
+    . ${BE_HOME}/bin/basenv.ksh
     . ${BE_HOME}/bin/oraenv.ksh ${LOCAL_ORACLE_SID}           # source SID environment
 else   
     echo "INFO: skip TVD-BasEnv"
