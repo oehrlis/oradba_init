@@ -46,7 +46,7 @@ readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_$TIMESTAMP.log"
 # Define a bunch of bash option see 
 # https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
 set -o nounset                              # stop script after 1st cmd failed
-set -o errexit                              # exit when 1st unset variable found
+#set -o errexit                              # exit when 1st unset variable found
 set -o pipefail                             # pipefail exit after 1st piped commands failed
 
 # initialize logfile
@@ -71,9 +71,7 @@ if [ $(cat $ORATAB | grep "^${LOCAL_ORACLE_SID}" | wc -l) -ne 0 ] ; then
 
     # set database environment 
     if [ -f "$HOME/.BE_HOME" ]; then
-        set +o errexit
         . ${BE_HOME}/bin/oraenv.ksh ${LOCAL_ORACLE_SID}           # source SID environment
-        set -o errexit
     else 
         ORACLE_SID=${LOCAL_ORACLE_SID}
     fi
@@ -110,9 +108,7 @@ ${ORADBA_BIN}/${DB_ENV_SCRIPT} ${LOCAL_ORACLE_SID}
 BE_ORA_ADMIN_SID=${BE_ORA_ADMIN_SID:-${ORACLE_BASE}/admin/${ORACLE_SID}}
 # set database environment 
 if [ -f "$HOME/.BE_HOME" ]; then
-    set +o errexit
     . ${BE_HOME}/bin/oraenv.ksh ${LOCAL_ORACLE_SID}           # source SID environment
-    set -o errexit
 else 
     ORACLE_SID=${LOCAL_ORACLE_SID}
 fi
