@@ -225,7 +225,7 @@ if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
         find ${OPT_DIR} -type f -name *.sh -exec chmod 755 {} \;
     fi
 
-    if [ -d ${OPT_DIR}/oradba ]; then
+    if [ -d "${OPT_DIR}/oradba" ]; then
         echo " - update existing ----------------------------------------------------"
         \cp -rf ${OPT_DIR}/oradba_init-master/* ${OPT_DIR}/oradba/
         rm -rf ${OPT_DIR}/oradba_init-master
@@ -235,7 +235,7 @@ if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
     fi
     [ -f ${OPT_DIR}/oradba/README.md ] && mv ${OPT_DIR}/oradba/README.md ${OPT_DIR}/oradba/doc    # move documentation
     [ -f ${OPT_DIR}/oradba/.gitignore ] && rm ${OPT_DIR}/oradba/.gitignore                         # remove gitignore
-    rm -rf ${DOWNLOAD}                                      # clean up
+    rm -rf ${DOWNLOAD} 
 else
     echo " - Set common functions and variables ---------------------------------"
     return
