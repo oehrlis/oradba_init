@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 # ---------------------------------------------------------------------------
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
@@ -38,7 +39,7 @@ export DB_ENV_SCRIPT="55_create_database_env.sh"
 
 # - Default Values ------------------------------------------------------------
 # Default Values for DB naming
-export DOMAIN=${DOMAIN:-${DEFAULT_DOMAIN}} 
+export DOMAIN=${DOMAIN:-${DEFAULT_DOMAIN}}
 export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}                    # Default SID for Oracle database
 export ORACLE_DBNAME=${ORACLE_DBNAME:-${ORACLE_SID}}                    # Default name for Oracle database
 export ORACLE_DB_UNIQUE_NAME=${ORACLE_DB_UNIQUE_NAME:-${ORACLE_DBNAME}} # Default name for Oracle database
