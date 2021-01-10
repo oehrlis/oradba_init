@@ -3,7 +3,7 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # -----------------------------------------------------------------------------
-# Name.......: 55_create_database_env.sh
+# Name.......: 57_delete_database_env.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2021.01.07
@@ -15,9 +15,7 @@
 #              at http://www.apache.org/licenses/
 # -----------------------------------------------------------------------------
 # - Customization -------------------------------------------------------------
-LOCAL_ORACLE_SID=${1:-"SDBM"}               # Default name for Oracle database
-LOCAL_ORACLE_PDB=${2:-"PDB1"}               # Check whether ORACLE_PDB is passed on
-LOCAL_CONTAINER=${3:-"false"}               # Check whether CONTAINER is passed on
+LOCAL_ORACLE_SID=${1:-""}               # Default name for Oracle database
 # - End of Customization ------------------------------------------------------
 
 # - Default Values ------------------------------------------------------------
@@ -55,66 +53,46 @@ exec &> >(tee -a "$LOGFILE")                # Open standard out at `$LOG_FILE` f
 exec 2>&1  
 
 # - Main ----------------------------------------------------------------------
-echo "INFO: Start to create DB environment for SID on $(hostname) at $(date)"
+echo "INFO: Start to delete DB environment for SID ${LOCAL_ORACLE_SID} on ${HOST} at $(date)"
 
-# Check if parameter is not empty
-if [ -z "${LOCAL_ORACLE_SID}" ] ; then
-    CleanAndQuit 20
-# Check for a valid SID
-elif [ $(cat $ORATAB | grep "^${LOCAL_ORACLE_SID}" | wc -l) -ne 1 ] ; then
-    echo "INFO: Add ${LOCAL_ORACLE_SID} to oratab $ORATAB"
-    echo "${LOCAL_ORACLE_SID}:${ORACLE_HOME}:Y" >>$ORATAB
-else
-    echo "INFO: ${LOCAL_ORACLE_SID} already exists in oratab $ORATAB"
+# Check if DB environment exits
+if [ $(cat $ORATAB | grep "^${LOCAL_ORACLE_SID}" | wc -l) -ne 0 ] ; then
+    echo "INFO: ${LOCAL_ORACLE_SID} does exists in oratab $ORATAB"
+
+    # set database environment 
+    if [ -f "$HOME/.BE_HOME" ]; then
+        set +o errexit
+        . ${BE_HOME}/bin/oraenv.ksh ${LOCAL_ORACLE_SID}           # source SID environment
+        set -o errexit
+    else 
+        ORACLE_SID=${LOCAL_ORACLE_SID}
+    fi
+
+    # Shutdown database
+    $ORACLE_HOME/bin/sqlplus / as sysdba << EOF
+        SHUTDOWN ABORT;
+        exit;
+EOF
 fi
 
-# set environment BasEnv and database
-if [ -f "$HOME/.BE_HOME" ]; then
-    set +o errexit 
-    echo "INFO: source TVD-BasEnv"
-    . ${BE_HOME}/bin/oraenv.ksh ${LOCAL_ORACLE_SID}           # source SID environment
-    set -o errexit 
-else   
-    echo "INFO: skip TVD-BasEnv"
-fi
+# set some variables
+typeset -l ORACLE_SID_lowercase=${ORACLE_SID}
+BE_ORA_ADMIN_SID=${BE_ORA_ADMIN_SID:-${ORACLE_BASE}/admin/${ORACLE_SID}}
+# cleanup/remove the admin files
+rm -rf ${BE_ORA_ADMIN_SID}
 
-# check default environment variables
-if [ -z "${ORACLE_BASE}" ] || [ ! -d ${ORACLE_BASE} ] ; then
-    CleanAndQuit 30
-fi
+# cleanup/remove the files - diag, fast_recovery_area and startup init${SID}.ora
+rm -rf ${ORACLE_BASE}/diag/rdbms/${ORACLE_SID_lowercase}/${ORACLE_SID}
+rm -rf ${ORACLE_BASE}/audit/${ORACLE_SID}
+rm -rf ${ORACLE_HOME}/dbs/*${ORACLE_SID}*
+rm -rf /u??/fast_recovery_area/${ORACLE_SID}
 
-if [ -z "${ORACLE_HOME}" ] || [ ! -d ${ORACLE_HOME} ] ; then
-    CleanAndQuit 31
-fi
+# cleanup/remove the data files
+rm -rf /u??/oradata/${ORACLE_SID}
 
-if [ -z "${ORACLE_SID}" ] ; then
-    CleanAndQuit 32
-fi
+# remove TNS Names entry
+sed -i -e "/^${ORACLE_SID}/d" ${TNS_ADMIN}/tnsnames.ora
+sed -i -e "/^${ORACLE_SID}/d" ${ORATAB}
 
-# Create admin directories
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/adhoc
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/arch
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/backup
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/dpdump
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/adump
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/pfile
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/etc
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/log
-
-# Create data file folders
-for i in $(ls -d /u0?/oradata); do
-    mkdir -pv $i/${ORACLE_SID}
-done
-
-mkdir -pv $(ls -d /u0?/fast_recovery_area |tail -1)/${ORACLE_SID}
-
-# Create TNS Names entry
-if [ $( grep -ic $ORACLE_SID ${TNS_ADMIN}/tnsnames.ora) -eq 0 ]; then
-    echo "INFO: Add $ORACLE_SID to ${TNS_ADMIN}/tnsnames.ora."
-    echo "${ORACLE_SID}.${DOMAIN}=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=${ORACLE_SID}.${DOMAIN}))(UR=A))">>${TNS_ADMIN}/tnsnames.ora
-else
-    echo "INFO: TNS name entry ${ORACLE_SID} does exists."
-fi
-
-echo "INFO: Finish creating the DB environment on $(hostname) at $(date)"
+echo "INFO: Finish deleting the DB environment ${ORACLE_SID} on ${HOST} at $(date)"
 # --- EOF ---------------------------------------------------------------------

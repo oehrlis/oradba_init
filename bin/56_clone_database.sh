@@ -174,7 +174,7 @@ EOF
 
 echo "target=/"                  >  ${BE_ORA_ADMIN_SID}/etc/rman.conf
 echo "catalog=rman/rman@catalog" >> ${BE_ORA_ADMIN_SID}/etc/rman.conf
-
+    
 # Execute custom provided setup scripts
 ${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
 
