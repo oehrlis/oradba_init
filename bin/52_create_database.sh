@@ -18,88 +18,51 @@
 # Modified...: 
 # see git revision history for more information on changes/updates
 # ---------------------------------------------------------------------------
-
-# - Environment Variables ---------------------------------------------------
-# - Set default values for environment variables if not yet defined. 
-# ---------------------------------------------------------------------------
-# source genric environment variables and functions
-source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
-
-LOCAL_ORACLE_SID=${1:-"TDB183C"}                                        # Default name for Oracle database
+# - Customization -------------------------------------------------------------
+LOCAL_ORACLE_SID=${1:-"SDBM"}                                           # Default name for Oracle database
 LOCAL_ORACLE_PDB=${2:-"PDB1"}                                           # Check whether ORACLE_PDB is passed on
 LOCAL_CONTAINER=${3:-"false"}                                           # Check whether CONTAINER is passed on
+# - End of Customization ------------------------------------------------------
 
-export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}                    # Default SID for Oracle database
-export ORACLE_DBNAME=${ORACLE_DBNAME:-${ORACLE_SID}}                    # Default name for Oracle database
-export ORACLE_DB_UNIQUE_NAME=${ORACLE_DB_UNIQUE_NAME:-${ORACLE_DBNAME}} # Default name for Oracle database
-export ORACLE_PDB=${ORACLE_PDB:-${LOCAL_ORACLE_PDB}}                    # Check whether ORACLE_PDB is passed on
-export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}                       # Check whether CONTAINER is passed on
-export DB_MASTER=""
-# 
-export ORACLE_ROOT=${ORACLE_ROOT:-"/u00"}                               # default location for the Oracle root / software mountpoint
-export ORACLE_DATA=${ORACLE_DATA:-"/u01"}                               # default location for the Oracle data mountpoint
-export ORACLE_ARCH=${ORACLE_ARCH:-"/u02"}                               # default location for the second Oracle data mountpoint 
-export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-"19.0.0.0"}                 # default name for the oracle home name
-export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}          # default location for the Oracle base directory
-export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product/ -name sqlplus -type f|sort|tail -1)))}
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-"${ORACLE_HOME}/lib:/usr/lib"}
-    
-export ORACLE_VERSION="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release\|Version'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
-export ORACLE_RELEASE="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
+# - Default Values ------------------------------------------------------------
+# source generic environment variables and functions
+ORADBA_INIT="$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
+if [ -f "${ORADBA_INIT}" ]; then
+    source "${ORADBA_INIT}"
+else
+    echo "ERR  : could not source ${ORADBA_INIT}"
+    exit 127
+fi
 
-# define oradba specific variables
-export ORADBA_BIN=${ORADBA_INIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)}
-export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-export ORADBA_RSP=${ORADBA_RSP:-"${ORADBA_BASE}/rsp"}                   # oradba init response file folder
-export ORADBA_RSP=${CUSTOM_RSP:-"${ORADBA_RSP}"}                        # custom response file folder
-export CONFIG_SCRIPT=${CONFIG_SCRIPT:-"53_config_database.sh"}
-export ORADBA_TEMPLATE_PREFIX=${ORADBA_TEMPLATE_PREFIX:-""}
-export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca${ORACLE_RELEASE}.rsp.tmpl"} # oradba init response file
-export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"${ORADBA_TEMPLATE_PREFIX}dbca${ORACLE_RELEASE}.dbc.tmpl"}
-export ORACLE_SID_ADMIN_ETC="${ORACLE_BASE}/admin/${ORACLE_SID}/etc"
-export ORADBA_TEMPLATE=${ORADBA_TEMPLATE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.dbc"}
-export ORADBA_RESPONSE=${ORADBA_RESPONSE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.rsp"}
-export ORACLE_PWD=${ORACLE_PWD:-""}                                     # Default admin password
+# default Values for Script
+export SCRIPT_BIN=$(dirname ${BASH_SOURCE[0]})
+export SCRIPT_NAME=$(basename ${BASH_SOURCE[0]})
+export SCRIPT_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+export SCRIPT_BASE=$(dirname ${SCRIPT_BIN_DIR})
 
-HOSTNAME_BIN=$(command -v hostname)                                     # get the binary for hostname
-HOSTNAME_BIN=${HOSTNAME_BIN:-"cat /proc/sys/kernel/hostname"}           # fallback to /proc/sys/kernel/hostname
-export HOST=$(${HOSTNAME_BIN})
-export DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-$(hostname -d 2>/dev/null ||cat /etc/domainname ||echo "postgasse.org")}
+# define logfile and logging
+export LOG_BASE=${LOG_BASE:-"/tmp"}                          # Use script directory as default logbase
+TIMESTAMP=$(date "+%Y.%m.%d_%H%M%S")
+readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_$TIMESTAMP.log"
 
-export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
+# - EOF Default Values --------------------------------------------------------
 
-# default folder for DB instance init scripts
-export INSTANCE_INIT=${INSTANCE_INIT:-"${ORACLE_BASE}/admin/${ORACLE_SID}/scripts"}
 # - EOF Environment Variables -------------------------------------------
 
-# generate a password
+# generate password if it is still empty
 if [ -z ${ORACLE_PWD} ]; then
     # Auto generate Oracle WebLogic Server admin password
-    while true; do
-        s=$(cat /dev/urandom | tr -dc "A-Za-z0-9" | fold -w 10 | head -n 1)
-        if [[ ${#s} -ge 10 && "$s" == *[A-Z]* && "$s" == *[a-z]* && "$s" == *[0-9]*  ]]; then
-            break
-        else
-            echo " - Password does not Match the criteria, re-generating..."
-        fi
-    done
+    ORACLE_PWD=$(gen_password 12)
     echo " ------------------------------------------------------------------------"
     echo " -  Oracle Database Server auto generated password:"
     echo " -  ----> User        : SYS, SYSTEM AND PDBADMIN"
-    echo " -  ----> Password    : $s"
+    echo " -  ----> Password    : ${ORACLE_PWD}"
     echo " ------------------------------------------------------------------------"
-else
-    s=${ORACLE_PWD}
-    echo " ------------------------------------------------------------------------"
-    echo " -  Oracle Database Server use pre defined password:"
-    echo " -  ----> User        : SYS, SYSTEM AND PDBADMIN"
-    echo " -  ----> Password    : $s"
-    echo " ------------------------------------------------------------------------"
-fi
+fi 
 
 # set instant init location create folder if it does exists
 if [ ! -d "${INSTANCE_INIT}/setup" ]; then
-    INSTANCE_INIT="${ORACLE_BASE}/admin/${ORACLE_SID}/scripts"
+    INSTANCE_INIT="${ORACLE_SID_ADMIN}/scripts"
 fi
 
 # inform what's done next...
@@ -123,94 +86,98 @@ echo " - ORADBA_TEMPLATE_PREFIX: ${ORADBA_TEMPLATE_PREFIX}"
 echo " - DB RESPONSE           : ${ORADBA_RESPONSE}"
 echo " - DB TEMPLATE           : ${ORADBA_TEMPLATE}"
 echo " - ORACLE_CHARACTERSET   : ${ORACLE_CHARACTERSET}"
+echo " - DB_MASTER             : ${DB_MASTER}"
 
-# write password file
-mkdir -p ${ORACLE_SID_ADMIN_ETC}
-export ORACLE_PWD=$s
-echo "${ORACLE_PWD}" > "${ORACLE_BASE}/admin/${ORACLE_SID}/etc/${ORACLE_SID}_password.txt"
-echo " - ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ${ORACLE_PWD}";
+# run create DB with dbca if DB_MASTER is undefined
+if [ -z "$DB_MASTER" ]; then
+    echo "INFO: Create ${ORACLE_SID} using dbca"
+    # write password file
+    mkdir -p ${ORACLE_SID_ADMIN_ETC}
+    echo "${ORACLE_PWD}" > "${ORACLE_BASE}/admin/${ORACLE_SID}/etc/${ORACLE_SID}_password.txt"
+    echo " - ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ${ORACLE_PWD}";
 
-# Replace place holders in response file
-cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_TEMPLATE}
-sed -i -e "s|###DEFAULT_DOMAIN###|$DEFAULT_DOMAIN|g"                ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_TEMPLATE}
+    # Replace place holders in response file
+    cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}
+    sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_TEMPLATE}
+    sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_TEMPLATE}
+    sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_TEMPLATE}
+    sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_TEMPLATE}
+    sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_TEMPLATE}
+    sed -i -e "s|###DEFAULT_DOMAIN###|$DOMAIN|g"                        ${ORADBA_TEMPLATE}
+    sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_TEMPLATE}
 
-# Replace place holders in response file
-cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                      ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                      ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_TEMPLATE}
-sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                        ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                        ${ORADBA_RESPONSE}
-sed -i -e "s|###CONTAINER###|$CONTAINER|g"                          ${ORADBA_RESPONSE}
-sed -i -e "s|###TEMPLATE###|${ORADBA_TEMPLATE}|g"                   ${ORADBA_RESPONSE}
-sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_RESPONSE}
+    # Replace place holders in response file
+    cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORADBA_RESPONSE}
+    sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                      ${ORADBA_RESPONSE}
+    sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_RESPONSE}
+    sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_RESPONSE}
+    sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                      ${ORADBA_RESPONSE}
+    sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_RESPONSE}
+    sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_TEMPLATE}
+    sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_RESPONSE}
+    sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                        ${ORADBA_RESPONSE}
+    sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                        ${ORADBA_RESPONSE}
+    sed -i -e "s|###CONTAINER###|$CONTAINER|g"                          ${ORADBA_RESPONSE}
+    sed -i -e "s|###TEMPLATE###|${ORADBA_TEMPLATE}|g"                   ${ORADBA_RESPONSE}
+    sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_RESPONSE}
 
-# If there is greater than 8 CPUs default back to dbca memory calculations
-# dbca will automatically pick 40% of available memory for Oracle DB
-# The minimum of 2G is for small environments to guarantee that Oracle has enough memory to function
-# However, bigger environment can and should use more of the available memory
-# This is due to Github Issue #307
-if [ `nproc` -gt 8 ]; then
-   sed -i -e "s|totalMemory=2048||g" ${ORADBA_RESPONSE}
-fi;
+    # If there is greater than 8 CPUs default back to dbca memory calculations
+    # dbca will automatically pick 40% of available memory for Oracle DB
+    # The minimum of 2G is for small environments to guarantee that Oracle has enough memory to function
+    # However, bigger environment can and should use more of the available memory
+    # This is due to Github Issue #307
+    if [ `nproc` -gt 8 ]; then
+    sed -i -e "s|totalMemory=2048||g" ${ORADBA_RESPONSE}
+    fi;
 
-# update listener.ora in general just for the Docker listener.ora
-sed -i -e "s|<HOSTNAME>|${HOST}|g" ${TNS_ADMIN}/listener.ora
+    # update listener.ora in general just for the Docker listener.ora
+    sed -i -e "s|<HOSTNAME>|${HOST}|g" ${TNS_ADMIN}/listener.ora
 
-# Start LISTENER and run DBCA
-$ORACLE_HOME/bin/lsnrctl status > /dev/null 2>&1 || $ORACLE_HOME/bin/lsnrctl start
-$ORACLE_HOME/bin/dbca -silent -createDatabase -responseFile ${ORADBA_RESPONSE} 
+    # Start LISTENER and run DBCA
+    $ORACLE_HOME/bin/lsnrctl status > /dev/null 2>&1 || $ORACLE_HOME/bin/lsnrctl start
+    $ORACLE_HOME/bin/dbca -silent -createDatabase -responseFile ${ORADBA_RESPONSE} 
 
-echo "$ORACLE_SID= 
-    (DESCRIPTION = 
-        (ADDRESS = (PROTOCOL = TCP)(HOST=${HOST})(PORT = 1521))
-            (CONNECT_DATA =
-                (SERVER = DEDICATED)
-            (SERVICE_NAME = $ORACLE_SID)
-        )
-    )" >> ${TNS_ADMIN}/tnsnames.ora
+    # remove passwords from response file
+    sed -i -e "s|${ORACLE_PWD}|ORACLE_PASSWORD|g" ${ORADBA_RESPONSE}
 
-# Remove second control file, fix local_listener, make PDB auto open
-$ORACLE_HOME/bin/sqlplus / as sysdba << EOF
-    ALTER SYSTEM SET local_listener='';
-    exit;
+    # Create TNS Names entry
+    if [ $( grep -ic $ORACLE_SID ${TNS_ADMIN}/tnsnames.ora) -eq 0 ]; then
+        echo "INFO: Add $ORACLE_SID to ${TNS_ADMIN}/tnsnames.ora."
+        echo "${ORACLE_SID}.${DOMAIN}=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=${ORACLE_SID}.${DOMAIN}))(UR=A))">>${TNS_ADMIN}/tnsnames.ora
+    else
+        echo "INFO: TNS name entry ${ORACLE_SID} does exists."
+    fi
+
+    # Remove second control file, fix local_listener, make PDB auto open
+    $ORACLE_HOME/bin/sqlplus / as sysdba << EOF
+        ALTER SYSTEM SET local_listener='';
+        exit;
 EOF
 
-# Execute custom provided setup scripts
-${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
+    # Execute custom provided setup scripts
+    ${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
 
-# remove passwords from response file
-sed -i -e "s|${ORACLE_PWD}|ORACLE_PASSWORD|g" ${ORADBA_RESPONSE}
+    # update oratab
+    if [ $(grep -c "^${ORACLE_SID}" $ORATAB) -gt 0 ]; then
+        echo "INFO: Update ${ORACLE_SID} in oratab $ORATAB"
+        sed -i "s|^${ORACLE_SID}.*|${ORACLE_SID}:${ORACLE_HOME}:Y|" $ORATAB
+    else
+        echo "INFO: Add ${ORACLE_SID} to oratab $ORATAB"
+        echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >>$ORATAB
+    fi
+else
+    echo "INFO: Create ${ORACLE_SID} using DB Master ${DB_MASTER}"
+    # create DB using rman duplicate
+    ${ORADBA_BIN}/${DB_CLONE_SCRIPT} ${ORACLE_SID} ${DB_MASTER}
+fi
 
 # adjust basenv
 MY_ORACLE_SID=${ORACLE_SID}
-# source basenv if it does exists
+# set environment BasEnv and database
 if [ -f "$HOME/.BE_HOME" ]; then
-    echo " - source TVD-BasEnv"
-    . "$HOME/.BE_HOME"                              # load BE_HOME
-    . "$HOME/.TVDPERL_HOME"                         # load TVDPERL_HOME
-    . ${BE_HOME}/bin/basenv.sh                      # source basenv
+    echo "INFO: source TVD-BasEnv"
     . ${BE_HOME}/bin/oraenv.ksh ${MY_ORACLE_SID}    # source SID environment
-    # sed -i "/$MY_ORACLE_SID/{s/;[0-9][0-9];/;10;/}" $ETC_BASE/sidtab
-    # echo "[${MY_ORACLE_SID}]">$ETC_BASE/sid.${MY_ORACLE_SID}.conf
 else   
-    echo " - skip TVD-BasEnv"
-fi
-
-# update oratab
-if [ $(grep -c "^${ORACLE_SID}" ${ORACLE_BASE}/etc/oratab) -gt 0 ]; then
-    sed -i "s|^${ORACLE_SID}.*|${ORACLE_SID}:${ORACLE_HOME}:Y|" ${ORACLE_BASE}/etc/oratab
-else
-    echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >>${ORACLE_BASE}/etc/oratab
+    echo "INFO: skip TVD-BasEnv"
 fi
 # --- EOF -------------------------------------------------------------------

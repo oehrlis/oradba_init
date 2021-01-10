@@ -29,14 +29,19 @@ export DEFAULT_ORACLE_ROOT="/u00"
 export DEFAULT_ORACLE_DATA="/u01"
 export DEFAULT_ORACLE_ARCH="/u02"
 export DEFAULT_ORACLE_HOME_NAME="19.0.0.0"
+export DEFAULT_ORACLE_PORT="1521"
+export DB_CONFIG_SCRIPT="53_config_database.sh"}
+export DB_CLONE_SCRIPT="56_clone_database.sh"}
+export DB_ENV_SCRIPT="55_create_database_env.sh"}
 # - End of Customization ----------------------------------------------------
 
 # - Default Values ------------------------------------------------------------
+# Default Values for DB naming
 export DOMAIN=${DOMAIN:-${DEFAULT_DOMAIN}} 
 export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}                    # Default SID for Oracle database
 export ORACLE_DBNAME=${ORACLE_DBNAME:-${ORACLE_SID}}                    # Default name for Oracle database
 export ORACLE_DB_UNIQUE_NAME=${ORACLE_DB_UNIQUE_NAME:-${ORACLE_DBNAME}} # Default name for Oracle database
-
+export ORACLE_PDB=${ORACLE_PDB:-${LOCAL_ORACLE_PDB}}                    # Check whether ORACLE_PDB is passed on
 # Default Values for folders
 export ORACLE_ROOT=${ORACLE_ROOT:-${DEFAULT_ORACLE_ROOT}}                   # default location for the Oracle root / software mountpoint
 export ORACLE_DATA=${ORACLE_DATA:-${DEFAULT_ORACLE_DATA}}                   # default location for the Oracle data mountpoint
@@ -45,8 +50,39 @@ export ORACLE_HOME_NAME=${ORACLE_HOME_NAME:-${DEFAULT_ORACLE_HOME_NAME}}    # de
 export ORACLE_BASE=${ORACLE_BASE:-"${ORACLE_ROOT}/app/oracle"}              # default location for the Oracle base directory
 export ORACLE_HOME=${ORACLE_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE}/product/ -name sqlplus -type f|sort|tail -1)))}
 export ORACLE_INVENTORY=${ORACLE_INVENTORY:-${ORACLE_ROOT}/app/oraInventory}
-# - EOF Default Values --------------------------------------------------------
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-"${ORACLE_HOME}/lib:/usr/lib"}
+export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
 
+# Default Values DB config
+export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}                       # Check whether CONTAINER is passed on
+export DB_MASTER=""
+export ORACLE_VERSION="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release\|Version'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
+export ORACLE_RELEASE="$(${ORACLE_HOME}/bin/sqlplus -V|grep -ie 'Release'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
+export ORACLE_PWD=${ORACLE_PWD:-""}                                     # Default admin password
+export ORACLE_SID_ADMIN="${ORACLE_BASE}/admin/${ORACLE_SID}"
+export ORACLE_SID_ADMIN_ETC="${ORACLE_SID_ADMIN}/etc"
+export ORACLE_PORT=${ORACLE_PORT:-$DEFAULT_ORACLE_PORT}
+# default folder for DB instance init scripts
+export INSTANCE_INIT=${INSTANCE_INIT:-"${ORACLE_SID_ADMIN}/scripts"}
+
+# define oradba specific variables
+export ORADBA_BIN=${ORADBA_INIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)}
+export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
+export ORADBA_RSP=${ORADBA_RSP:-"${ORADBA_BASE}/rsp"}                   # oradba init response file folder
+export ORADBA_RSP=${CUSTOM_RSP:-"${ORADBA_RSP}"}                        # custom response file folder
+export ORADBA_TEMPLATE_PREFIX=${ORADBA_TEMPLATE_PREFIX:-""}
+export ORADBA_RSP_FILE=${ORADBA_RSP_FILE:-"dbca${ORACLE_RELEASE}.rsp.tmpl"} # oradba init response file
+export ORADBA_DBC_FILE=${ORADBA_DBC_FILE:-"${ORADBA_TEMPLATE_PREFIX}dbca${ORACLE_RELEASE}.dbc.tmpl"}
+export ORADBA_TEMPLATE=${ORADBA_TEMPLATE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.dbc"}
+export ORADBA_RESPONSE=${ORADBA_RESPONSE:-"${ORACLE_SID_ADMIN_ETC}/dbca${ORACLE_SID}.rsp"}
+
+HOSTNAME_BIN=$(command -v hostname)                                     # get the binary for hostname
+HOSTNAME_BIN=${HOSTNAME_BIN:-"cat /proc/sys/kernel/hostname"}           # fallback to /proc/sys/kernel/hostname
+export HOST=$(${HOSTNAME_BIN})
+export DOMAIN=${DOMAIN:-$(hostname -d 2>/dev/null ||cat /etc/domainname ||echo ${DEFAULT_DOMAIN})}
+# default value for ORATAB if not defined
+ORATAB=${ORATAB:-"/etc/oratab"}
+# - EOF Default Values --------------------------------------------------------
 
 # - Environment Variables ---------------------------------------------------
 # define the oradba url and package name
@@ -124,6 +160,34 @@ function running_in_docker() {
         return 1
     fi
 }
+
+function gen_password {
+# ---------------------------------------------------------------------------
+# Purpose....: generate a password string
+# -----------------------------------------------------------------------
+    Length=${1:-12}
+
+    # make sure, that the password length is not shorter than 4 characters
+    if [ ${Length} -lt 4 ]; then
+        Length=4
+    fi
+
+    # generate password
+    if [ $(command -v pwgen) ]; then 
+        pwgen -s -1 ${Length}
+    else 
+        while true; do
+            # use urandom to generate a random string
+            s=$(cat /dev/urandom | tr -dc "A-Za-z0-9" | fold -w ${Length} | head -n 1)
+            # check if the password meet the requirements
+            if [[ ${#s} -ge ${Length} && "$s" == *[A-Z]* && "$s" == *[a-z]* && "$s" == *[0-9]*  ]]; then
+                echo "$s"
+                break
+            fi
+        done
+    fi
+}
+
 # - EOF Functions -----------------------------------------------------------
 
 # check if script is sourced and return/exit

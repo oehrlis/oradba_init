@@ -15,67 +15,32 @@
 #              at http://www.apache.org/licenses/
 # -----------------------------------------------------------------------------
 # - Customization -------------------------------------------------------------
-# provided by terraform template
-export DOMAIN=${DOMAIN:-"trivadislabs.com"} 
+LOCAL_ORACLE_SID=${1:-"SDBM"}               # Default name for Oracle database
+LOCAL_DB_MASTER=${2:-"SDBM_master.tgz"}     # DB Master file
 # - End of Customization ------------------------------------------------------
 
 # - Default Values ------------------------------------------------------------
 # source generic environment variables and functions
+ORADBA_INIT="$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
+if [ -f "${ORADBA_INIT}" ]; then
+    source "${ORADBA_INIT}"
+else
+    echo "ERR  : could not source ${ORADBA_INIT}"
+    exit 127
+fi
+
+# default Values for Script
 export SCRIPT_BIN=$(dirname ${BASH_SOURCE[0]})
 export SCRIPT_NAME=$(basename ${BASH_SOURCE[0]})
 export SCRIPT_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 export SCRIPT_BASE=$(dirname ${SCRIPT_BIN_DIR})
+
 # define logfile and logging
 export LOG_BASE=${LOG_BASE:-"/tmp"}                          # Use script directory as default logbase
 TIMESTAMP=$(date "+%Y.%m.%d_%H%M%S")
 readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_$TIMESTAMP.log"
-# default value for ORATAB if not defined
-ORATAB=${ORATAB:-"/etc/oratab"}
-# get first argument from commandline as local SID
-newSID=$1
+
 # - EOF Default Values --------------------------------------------------------
-
-# - Functions -----------------------------------------------------------
-
-# -----------------------------------------------------------------------
-# Purpose....: Display Usage
-# -----------------------------------------------------------------------
-function Usage()
-{
-    echo ""
-    echo "Usage, ${SCRIPT_NAME} <ORACLE_SID> "
-    echo ""
-
-    if [ ${1} -gt 0 ]; then
-        CleanAndQuit ${1}
-    else
-        CleanAndQuit 0
-    fi
-}
-
-# -----------------------------------------------------------------------
-# Purpose....: Clean up before exit
-# -----------------------------------------------------------------------
-function CleanAndQuit()
-{
-    echo
-    ERROR_CODE=${1:-0}
-    ERROR_VALUE=${2:-"n/a"}
-    case ${1} in
-        0)  echo "END  : of ${SCRIPT_NAME}";;
-        1)  echo "ERR  : Exit Code ${ERROR_CODE}. Wrong amount of arguments. See usage for correct one.";;
-        20) echo "ERR  : New SID is unset or set to the empty string!";;
-        21) echo "ERR  : Invalid SID provided! SID ${ERROR_VALUE} not in $ORATAB!";;
-        30) echo "ERR  : \$ORACLE_BASE ${ORACLE_BASE} is unset, set to the an empty string or directory not found!";;
-        31) echo "ERR  : \$ORACLE_HOME ${ORACLE_HOME} is unset, set to the an empty string or directory not found!";;
-        32) echo "ERR  : \$ORACLE_SID ${ORACLE_SID} is unset or set to the empty string!";;
-        99) echo "INFO : Just wanna say hallo.";;
-        ?)  echo "ERR  : Exit Code ${ERROR_CODE}. Unknown Error.";;
-    esac
-    exit ${1}
-}
-
-# - EOF Functions -------------------------------------------------------
 
 # - Initialization ------------------------------------------------------------
 # Define a bunch of bash option see 
@@ -90,57 +55,128 @@ exec &> >(tee -a "$LOGFILE")                # Open standard out at `$LOG_FILE` f
 exec 2>&1  
 
 # Check if parameter is not empty
-if [ -z "${newSID}" ] ; then
+if [ -z "${LOCAL_ORACLE_SID}" ] ; then
     CleanAndQuit 20
 # Check for a valid SID
-elif [ $(cat $ORATAB | grep "^${newSID}" | wc -l) -ne 1 ] ; then
+elif [ $(cat $ORATAB | grep "^${LOCAL_ORACLE_SID}" | wc -l) -ne 1 ] ; then
     CleanAndQuit 21
 fi
 
 # - Main ----------------------------------------------------------------------
-echo "INFO: Start to create DB environment for SID on $(hostname) at $(date)"
+echo "INFO: Start to clone DB environment for SID ${LOCAL_ORACLE_SID} on ${HOST} at $(date)"
 
-# set environment BasEnv and database
-. ~/.BE_HOME
-. ${BE_HOME}/bin/basenv.ksh
-. ${BE_HOME}/bin/oraenv.ksh ${newSID}
+# Check if DB environment exits
+if [ $(cat $ORATAB | grep "^${LOCAL_ORACLE_SID}" | wc -l) -ne 0 ] ; then
+    echo "INFO: ${LOCAL_ORACLE_SID} does exists in oratab $ORATAB"
 
-# check default environment variables
-if [ -z "${ORACLE_BASE}" ] || [ ! -d ${ORACLE_BASE} ] ; then
-    CleanAndQuit 30
+    # set database environment 
+    if [ -f "$HOME/.BE_HOME" ]; then
+        set +o errexit
+        . ${BE_HOME}/bin/oraenv.ksh ${LOCAL_ORACLE_SID}           # source SID environment
+        set -o errexit
+    else 
+        ORACLE_SID=${LOCAL_ORACLE_SID}
+    fi
+
+    # Shutdown database
+    $ORACLE_HOME/bin/sqlplus / as sysdba << EOF
+        SHUTDOWN ABORT;
+        exit;
+EOF
+    # set some variables
+    typeset -l ORACLE_SID_lowercase=${ORACLE_SID}
+    BE_ORA_ADMIN_SID=${BE_ORA_ADMIN_SID:-${ORACLE_BASE}/admin/${ORACLE_SID}}
+    # cleanup/remove the admin files
+    rm -rf ${BE_ORA_ADMIN_SID}/arch/*
+    rm -rf ${BE_ORA_ADMIN_SID}/backup/*
+    rm -rf ${BE_ORA_ADMIN_SID}/dpdump/*
+    rm -rf ${BE_ORA_ADMIN_SID}/adump/*
+    rm -rf ${BE_ORA_ADMIN_SID}/pfile/*
+    rm -rf ${BE_ORA_ADMIN_SID}/etc/*
+    rm -rf ${BE_ORA_ADMIN_SID}/log/*
+
+    # cleanup/remove the files - diag, fast_recovery_area and startup init${SID}.ora
+    rm -rf ${ORACLE_BASE}/diag/rdbms/${ORACLE_SID_lowercase}/${ORACLE_SID}
+    rm -rf ${ORACLE_BASE}/audit/${ORACLE_SID}
+    rm -rf ${ORACLE_HOME}/dbs/*${ORACLE_SID}*
+    rm -rf /u??/fast_recovery_area/${ORACLE_SID}/*
+
+    # cleanup/remove the data files
+    rm -rf /u??/oradata/${ORACLE_SID}/*
 fi
 
-if [ -z "${ORACLE_HOME}" ] || [ ! -d ${ORACLE_HOME} ] ; then
-    CleanAndQuit 31
+# Create New DB Environment
+${ORADBA_BIN}/${DB_ENV_SCRIPT} ${LOCAL_ORACLE_SID}
+BE_ORA_ADMIN_SID=${BE_ORA_ADMIN_SID:-${ORACLE_BASE}/admin/${ORACLE_SID}}
+# set database environment 
+if [ -f "$HOME/.BE_HOME" ]; then
+    set +o errexit
+    . ${BE_HOME}/bin/oraenv.ksh ${LOCAL_ORACLE_SID}           # source SID environment
+    set -o errexit
+else 
+    ORACLE_SID=${LOCAL_ORACLE_SID}
 fi
 
-if [ -z "${ORACLE_SID}" ] ; then
-    CleanAndQuit 32
-fi
+# get DB master
+case $LOCAL_DB_MASTER in
+  /*) DB_MASTER=${LOCAL_DB_MASTER} ;;
+  *)  DB_MASTER=${SOFTWARE}/${LOCAL_DB_MASTER} ;;
+esac
 
-# Create admin directories
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/adhoc
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/arch
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/backup
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/dpdump
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/adump
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/pfile
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/etc
-mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/log
+DB_MASTER_NAME=$(basename $LOCAL_DB_MASTER|sed 's/_master.*//')
 
-# Create data file folders
-for i in $(ls -d /u0?/oradata); do
-    mkdir -pv $i/${ORACLE_SID}
-done
+# unpack DB master
+tar zxvf ${DB_MASTER} -C ${ORACLE_ARCH}/backup/
 
-mkdir -pv $(ls -d /u0?/fast_recovery_area |tail -1)/${ORACLE_SID}
-
-if [ $( grep -ic $ORACLE_SID ${TNS_ADMIN}/tnsnames.ora) -eq 0 ]; then
-    echo "Add $ORACLE_SID to ${TNS_ADMIN}/tnsnames.ora."
-    echo "${ORACLE_SID}.${DOMAIN}=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=$(hostname))(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=${ORACLE_SID}.${DOMAIN})))">>${TNS_ADMIN}/tnsnames.ora
+# Prepare password file
+if [ -f "${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME}" ]; then
+    cp ${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME} ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID}
+    ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/dbs/orapw${ORACLE_SID}
 else
-    echo "TNS name entry ${ORACLE_SID} does exists."
+    # generate password if it is still empty
+    if [ -z ${ORACLE_PWD} ]; then
+        ORACLE_PWD=$(gen_password 12)
+    fi 
+    mkdir -p "${BE_ORA_ADMIN_SID}/etc"
+    echo "${ORACLE_PWD}" > "${BE_ORA_ADMIN_SID}/etc/${ORACLE_SID}_password.txt"
+    orapwd force=y password=${ORACLE_PWD} file=${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID}
+    ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/dbs/orapw${ORACLE_SID}
 fi
-# Create TNS Names entry
+
+# Perpare init.ora file
+sed -e "s/${DB_MASTER_NAME}/$ORACLE_SID/g" \
+    ${ORACLE_ARCH}/backup/${DB_MASTER_NAME}/init_${DB_MASTER_NAME}.ora \
+    >${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora
+
+# adjust init.ora file
+sed -i -n -E -e '/^\*\.(control_files=|db_recovery_file_dest=|.*_file_name_convert=)/!p' \
+    -e "\$a\*\.control_files='$ORACLE_DATA/oradata/$ORACLE_SID/control01$ORACLE_SID.dbf','$ORACLE_ARCH/oradata/$ORACLE_SID/control02$ORACLE_SID.dbf'" \
+    -e "\$a\*\.db_recovery_file_dest='$ORACLE_ARCH/fast_recovery_area'" \
+    -e "\$a\*\.db_file_name_convert='SDBM','$ORACLE_SID'" \
+    -e "\$a\*\.log_file_name_convert='SDBM','$ORACLE_SID'" ${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora
+
+# create spfile
+sqlplus / as sysdba <<EOF
+create spfile='$BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora' from pfile='$BE_ORA_ADMIN_SID/pfile/init$ORACLE_SID.ora';
+host echo spfile=$BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora >$ORACLE_HOME/dbs/init$ORACLE_SID.ora
+startup nomount;
+exit;
+EOF
+
+# clone database
+rman <<EOF
+connect auxiliary /
+run {
+duplicate database '$DB_MASTER_NAME' to '$ORACLE_SID'
+backup location '${ORACLE_ARCH}/backup/$DB_MASTER_NAME';
+}
+EOF
+
+echo "target=/"                  >  ${BE_ORA_ADMIN_SID}/etc/rman.conf
+echo "catalog=rman/rman@catalog" >> ${BE_ORA_ADMIN_SID}/etc/rman.conf
+
+# Execute custom provided setup scripts
+${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
+
 echo "INFO: Finish creating the DB environment on $(hostname) at $(date)"
 # --- EOF ---------------------------------------------------------------------
