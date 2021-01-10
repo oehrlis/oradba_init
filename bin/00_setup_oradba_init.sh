@@ -31,9 +31,9 @@ export DEFAULT_ORACLE_DATA="/u01"
 export DEFAULT_ORACLE_ARCH="/u02"
 export DEFAULT_ORACLE_HOME_NAME="19.0.0.0"
 export DEFAULT_ORACLE_PORT="1521"
-export DB_CONFIG_SCRIPT="53_config_database.sh"}
-export DB_CLONE_SCRIPT="56_clone_database.sh"}
-export DB_ENV_SCRIPT="55_create_database_env.sh"}
+export DB_CONFIG_SCRIPT="53_config_database.sh"
+export DB_CLONE_SCRIPT="56_clone_database.sh"
+export DB_ENV_SCRIPT="55_create_database_env.sh"
 # - End of Customization ----------------------------------------------------
 
 # - Default Values ------------------------------------------------------------
