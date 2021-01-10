@@ -93,8 +93,8 @@ rm -rf /u??/oradata/${ORACLE_SID}
 # remove TNS Names entry
 sed -i -e "/^${ORACLE_SID}/d" ${TNS_ADMIN}/tnsnames.ora
 sed -i -e "/^${ORACLE_SID}/d" ${ORATAB}
-sed -i -e "/^${ORACLE_SID}/d" ${ORACLE_BASE}//sidtab
-rm ${ETC}/sid.${ORACLE_SID}.conf
+sed -i -e "/^${ORACLE_SID}/d" ${ORACLE_BASE}/local/dba/etc/sidtab
+rm ${ORACLE_BASE}/local/dba/etc/sid.${ORACLE_SID}.conf
 
 echo "INFO: Finish deleting the DB environment ${ORACLE_SID} on ${HOST} at $(date)"
 # --- EOF ---------------------------------------------------------------------
