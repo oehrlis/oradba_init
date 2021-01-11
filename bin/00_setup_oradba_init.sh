@@ -113,6 +113,9 @@ function CleanAndQuit()
     case ${1} in
         0)  echo "END  : of ${SCRIPT_NAME}";;
         1)  echo "ERR  : Exit Code ${ERROR_CODE}. Wrong amount of arguments. See usage for correct one.";;
+        12) echo "ERR  : Exit Code ${1}. Can not create directory ${2}";;
+        13) echo "ERR  : Exit Code ${1}. Directory ${2} is not writeable";;
+        14) echo "ERR  : Exit Code ${1}. Directory ${2} already exists";;
         20) echo "ERR  : New SID is unset or set to the empty string!";;
         21) echo "ERR  : Invalid SID provided! SID ${ERROR_VALUE} not in $ORATAB!";;
         30) echo "ERR  : \$ORACLE_BASE ${ORACLE_BASE} is unset, set to the an empty string or directory not found!";;
