@@ -16,8 +16,6 @@
 # -----------------------------------------------------------------------------
 # - Customization -------------------------------------------------------------
 LOCAL_ORACLE_SID=${1:-"SDBM"}               # Default name for Oracle database
-LOCAL_ORACLE_PDB=${2:-"PDB1"}               # Check whether ORACLE_PDB is passed on
-LOCAL_CONTAINER=${3:-"false"}               # Check whether CONTAINER is passed on
 # - End of Customization ------------------------------------------------------
 
 # - Default Values ------------------------------------------------------------
@@ -39,7 +37,7 @@ export SCRIPT_BASE=$(dirname ${SCRIPT_BIN_DIR})
 # define logfile and logging
 export LOG_BASE=${LOG_BASE:-"/tmp"}                          # Use script directory as default logbase
 TIMESTAMP=$(date "+%Y.%m.%d_%H%M%S")
-readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_$TIMESTAMP.log"
+readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_${LOCAL_ORACLE_SID}_$TIMESTAMP.log"
 # - EOF Default Values --------------------------------------------------------
 
 # - Initialization ------------------------------------------------------------

@@ -37,7 +37,7 @@ export SCRIPT_BASE=$(dirname ${SCRIPT_BIN_DIR})
 # define logfile and logging
 export LOG_BASE=${LOG_BASE:-"/tmp"}                          # Use script directory as default logbase
 TIMESTAMP=$(date "+%Y.%m.%d_%H%M%S")
-readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_$TIMESTAMP.log"
+readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_${LOCAL_ORACLE_SID}_$TIMESTAMP.log"
 # - EOF Default Values --------------------------------------------------------
 
 # - Initialization ------------------------------------------------------------
