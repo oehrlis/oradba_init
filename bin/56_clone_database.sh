@@ -40,7 +40,7 @@ export SCRIPT_BASE=$(dirname ${SCRIPT_BIN_DIR})
 # define logfile and logging
 export LOG_BASE=${LOG_BASE:-"/tmp"}                          # Use script directory as default logbase
 TIMESTAMP=$(date "+%Y.%m.%d_%H%M%S")
-readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_$TIMESTAMP.log"
+readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_${LOCAL_ORACLE_SID}_$TIMESTAMP.log"
 
 # - EOF Default Values --------------------------------------------------------
 
@@ -124,6 +124,13 @@ esac
 
 DB_MASTER_NAME=$(basename $LOCAL_DB_MASTER|sed 's/_master.*//')
 
+# check and create directory
+if [ ! -d "${ORACLE_ARCH}/backup/" ]; then
+    mkdir -p ${ORACLE_ARCH}/backup/ >/dev/null 2>&1 || CleanAndQuit 12 ${ORACLE_ARCH}/backup/
+elif [ ! -w "${ORACLE_ARCH}/backup/" ]; then
+    CleanAndQuit 13 ${ORACLE_ARCH}/backup/
+fi
+
 # unpack DB master
 tar zxvf ${DB_MASTER} -C ${ORACLE_ARCH}/backup/
 
@@ -134,7 +141,7 @@ if [ -f "${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME}" ]; then
 else
     # generate password if it is still empty
     if [ -z ${ORACLE_PWD} ]; then
-        ORACLE_PWD=$(gen_password 12)
+        ORACLE_PWD=$(gen_password 12| sed 's/./&-/4')
     fi 
     mkdir -p "${BE_ORA_ADMIN_SID}/etc"
     echo "${ORACLE_PWD}" > "${BE_ORA_ADMIN_SID}/etc/${ORACLE_SID}_password.txt"
