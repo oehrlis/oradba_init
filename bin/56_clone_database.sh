@@ -105,6 +105,7 @@ EOF
 fi
 
 # Create New DB Environment
+echo "INFO: Create DB environment for ${LOCAL_ORACLE_SID} ---------------------"
 ${ORADBA_BIN}/${DB_ENV_SCRIPT} ${LOCAL_ORACLE_SID}
 BE_ORA_ADMIN_SID=${BE_ORA_ADMIN_SID:-${ORACLE_BASE}/admin/${ORACLE_SID}}
 # set database environment 
@@ -116,6 +117,7 @@ else
     ORACLE_SID=${LOCAL_ORACLE_SID}
 fi
 
+echo "INFO: Prepare DB master $LOCAL_DB_MASTER --------------------------------"
 # get DB master
 case $LOCAL_DB_MASTER in
   /*) DB_MASTER=${LOCAL_DB_MASTER} ;;
@@ -134,6 +136,7 @@ fi
 # unpack DB master
 tar zxvf ${DB_MASTER} -C ${ORACLE_ARCH}/backup/
 
+echo "INFO: Prepare password file ---------------------------------------------"
 # Prepare password file
 if [ -f "${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME}" ]; then
     cp ${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME} ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID}
@@ -149,6 +152,7 @@ else
     ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/dbs/orapw${ORACLE_SID}
 fi
 
+echo "INFO: Perpare init.ora file (${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora) "
 # Perpare init.ora file
 sed -e "s/${DB_MASTER_NAME}/$ORACLE_SID/g" \
     ${ORACLE_ARCH}/backup/${DB_MASTER_NAME}/init_${DB_MASTER_NAME}.ora \
@@ -161,6 +165,7 @@ sed -i -n -E -e '/^\*\.(control_files=|db_recovery_file_dest=|.*_file_name_conve
     -e "\$a\*\.db_file_name_convert='SDBM','$ORACLE_SID'" \
     -e "\$a\*\.log_file_name_convert='SDBM','$ORACLE_SID'" ${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora
 
+echo "INFO: Create spfile ($BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora) -----"
 # create spfile
 sqlplus / as sysdba <<EOF
 create spfile='$BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora' from pfile='$BE_ORA_ADMIN_SID/pfile/init$ORACLE_SID.ora';
@@ -169,6 +174,7 @@ startup nomount;
 exit;
 EOF
 
+echo "INFO: Clone Database from $DB_MASTER_NAME to $ORACLE_SID ----------------"
 # clone database
 rman <<EOF
 connect auxiliary /
@@ -178,9 +184,11 @@ backup location '${ORACLE_ARCH}/backup/$DB_MASTER_NAME';
 }
 EOF
 
+# config rman.conf file
 echo "target=/"                  >  ${BE_ORA_ADMIN_SID}/etc/rman.conf
 echo "catalog=rman/rman@catalog" >> ${BE_ORA_ADMIN_SID}/etc/rman.conf
-    
+
+echo "INFO: Configure $ORACLE_SID ---------------------------------------------"
 # Execute custom provided setup scripts
 ${ORADBA_BIN}/${DB_CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
 
