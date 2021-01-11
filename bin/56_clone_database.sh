@@ -162,12 +162,13 @@ sed -e "s/${DB_MASTER_NAME}/$ORACLE_SID/g" \
 sed -i -n -E -e '/^\*\.(control_files=|db_recovery_file_dest=|.*_file_name_convert=)/!p' \
     -e "\$a\*\.control_files='$ORACLE_DATA/oradata/$ORACLE_SID/control01$ORACLE_SID.dbf','$ORACLE_ARCH/oradata/$ORACLE_SID/control02$ORACLE_SID.dbf'" \
     -e "\$a\*\.db_recovery_file_dest='$ORACLE_ARCH/fast_recovery_area'" \
-    -e "\$a\*\.db_file_name_convert='SDBM','$ORACLE_SID'" \
-    -e "\$a\*\.log_file_name_convert='SDBM','$ORACLE_SID'" ${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora
+    -e "\$a\*\.db_file_name_convert='$DB_MASTER_NAME','$ORACLE_SID'" \
+    -e "\$a\*\.pdb_file_name_convert='$DB_MASTER_NAME','$ORACLE_SID'" \
+    -e "\$a\*\.log_file_name_convert='$DB_MASTER_NAME','$ORACLE_SID'" ${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora
 
 echo "INFO: Create spfile ($BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora) -----"
 # create spfile
-sqlplus / as sysdba <<EOF
+$ORACLE_HOME/bin/sqlplus / as sysdba <<EOF
 create spfile='$BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora' from pfile='$BE_ORA_ADMIN_SID/pfile/init$ORACLE_SID.ora';
 host echo spfile=$BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora >$ORACLE_HOME/dbs/init$ORACLE_SID.ora
 startup nomount;
@@ -176,7 +177,7 @@ EOF
 
 echo "INFO: Clone Database from $DB_MASTER_NAME to $ORACLE_SID ----------------"
 # clone database
-rman <<EOF
+$ORACLE_HOME/bin/rman <<EOF
 connect auxiliary /
 run {
 duplicate database '$DB_MASTER_NAME' to '$ORACLE_SID'

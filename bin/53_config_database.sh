@@ -49,7 +49,7 @@ if [ -d "$SCRIPTS_ROOT" ] && [ -n "$(ls -A $SCRIPTS_ROOT)" ]; then
       echo "";
   done
   
-  echo " - DONE: Executing user defined scripts"
+  echo "INFO: Finish executing user defined scripts"
   echo "";
 
 fi
