@@ -188,6 +188,16 @@ EOF
 echo "target=/"                  >  ${BE_ORA_ADMIN_SID}/etc/rman.conf
 echo "catalog=rman/rman@catalog" >> ${BE_ORA_ADMIN_SID}/etc/rman.conf
 
+cat << EOF >${BE_ORA_ADMIN_SID}/etc/rman.conf
+target=/
+catalog=catalog=rman/rman@catalog
+CF_ChannelType="disk"
+CF_ChannelNo=2
+CF_Compress=1
+CF_BckPathParm="${ORACLE_ARCH}/backup/$ORACLE_SID"
+CF_MailIfOk=2
+EOF
+
 echo "INFO: Configure $ORACLE_SID ---------------------------------------------"
 # Execute custom provided setup scripts
 ${ORADBA_BIN}/${DB_CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
