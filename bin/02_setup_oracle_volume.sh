@@ -84,7 +84,6 @@ EOF
         echo "INFO: Move existing stuff to ${i}"
         mv -v /u99/${i}/* ${i}/
         rm -rvf /u99/${i}
-        chown -R oracle:oinstall ${i}
     done
     echo "INFO: remove /u99"
     rm -rf /u99
