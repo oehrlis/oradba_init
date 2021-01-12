@@ -6,7 +6,7 @@
 # Name.......: 02_setup_oracle_volume.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2020.03.11
+# Date.......: 2021.01.11
 # Revision...: 
 # Purpose....: Script to configure a volume group and lvs for oracle .
 # Notes......: Script would like to be executed as root :-).
