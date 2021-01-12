@@ -45,48 +45,50 @@ fi
 UNIQUE_MOUNT_POINTS=$(echo "${MOUNT_POINTS}" | tr ' ' '\n' | sort -u | tr '\n' ' ')
 
 # create partition
-echo " - Check for additional disk device -----------------------------------"
+echo "INFO: Check for additional disk device -----------------------------------"
 DISK_DEV=$(lsblk -o NAME,FSTYPE -pdsn | awk '$2 == "" {print $1}')
 if [ ! -z ${DISK_DEV} ]; then
-    echo " - Found additional disk device ${DISK_DEV}"
+    echo "INFO: Found additional disk device ${DISK_DEV}"
     mkdir -vp /u99
-    echo " - Create partition"
+    echo "INFO: Create partition"
     sfdisk ${DISK_DEV} <<EOF
 ,,8e
 EOF
-    echo " - List partitions for ${DISK_DEV}"
+    echo "INFO: List partitions for ${DISK_DEV}"
     fdisk -l ${DISK_DEV}
-    echo " - List block devices"
+    echo "INFO: List block devices"
     lsblk
 
     DISK_DEV_PARTITION="${DISK_DEV}1"
-    echo " - Create a physical volume on ${DISK_DEV_PARTITION}."
+    echo "INFO: Create a physical volume on ${DISK_DEV_PARTITION}."
     pvcreate ${DISK_DEV_PARTITION}
     pvs
     pvdisplay ${DISK_DEV_PARTITION}
 
-    echo " - Create volume group vgora"
+    echo "INFO: Create volume group vgora"
     vgcreate ${VOLUME_GROUP} ${DISK_DEV_PARTITION}
     vgdisplay ${VOLUME_GROUP}
 
     for i in ${UNIQUE_MOUNT_POINTS}; do
-        echo " - move existing ${i} folder to /u99"
+        echo "INFO: move existing ${i} folder to /u99"
         vol_name="vol_$(echo ${i}|sed 's/^\///')"
         mv -v ${i} /u99
-        echo " - Create logical volume ${vol_name} in ${VOLUME_GROUP}"
+        echo "INFO: Create logical volume ${vol_name} in ${VOLUME_GROUP}"
         lvcreate -n ${vol_name} -l 30%VG ${VOLUME_GROUP}  
-        echo " - Create filesystem for ${vol_name}"
+        echo "INFO: Create filesystem for ${vol_name}"
         mkfs.ext4 /dev/${VOLUME_GROUP}/${vol_name}
         mkdir -vp ${i}
-        echo " - Update fstab for mountpoint ${i}"
+        echo "INFO: Update fstab for mountpoint ${i}"
         echo "$(blkid /dev/${VOLUME_GROUP}/${vol_name}|cut -d' ' -f2|tr -d '"')   ${i}    ext4   defaults,noatime,_netdev     0   0" >>/etc/fstab
         mount ${i}
-        echo " - Move existing stuff to ${i}"
-        mv -v /u99${i}/* ${i}/
-        rm -rvf /u99${i}
+        echo "INFO: Move existing stuff to ${i}"
+        mv -v /u99/${i}/* ${i}/
+        rm -rvf /u99/${i}
         chown -R oracle:oinstall ${i}
     done
+    echo "INFO: remove /u99"
+    rm -rf /u99
 else
-    echo " - No additional disk device found"
+    echo "INFO: No additional disk device found"
 fi
 # --- EOF --------------------------------------------------------------------
