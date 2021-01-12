@@ -47,7 +47,8 @@ UNIQUE_MOUNT_POINTS=$(echo "${MOUNT_POINTS}" | tr ' ' '\n' | sort -u | tr '\n' '
 # create partition
 echo "INFO: Check for additional disk device -----------------------------------"
 DISK_DEV=$(lsblk -o NAME,FSTYPE -pdsn | awk '$2 == "" {print $1}')
-if [ ! -z ${DISK_DEV} ]; then
+VG_ORA=$(lsblk -o NAME,FSTYPE -pdsn|cut -d' ' -f 1| grep -i vgora)
+if [ ! -z ${DISK_DEV} ] && [ -z "${VG_ORA}" ] ; then
     echo "INFO: Found additional disk device ${DISK_DEV}"
     mkdir -vp /u99
     echo "INFO: Create partition"
@@ -87,7 +88,21 @@ EOF
     done
     echo "INFO: remove /u99"
     rm -rf /u99
+elif [ ! -z "${VG_ORA}" ]; then
+    echo "INFO: Found vgora"
+    for i in ${VG_ORA}; do
+        MOUNT_POINT="/$(echo ${i}|cut -d_ -f2)"
+        echo "INFO: move existing ${i} folder to /u99"
+        mv -v ${i} /u99
+        mkdir -vp ${i}
+        echo "INFO: Update fstab for mountpoint ${i}"
+        echo "$(blkid  ${i} |cut -d' ' -f2|tr -d '"')   ${MOUNT_POINT}    ext4   defaults,noatime,_netdev     0   0" >>/etc/fstab
+        mount ${MOUNT_POINT}
+        echo "INFO: Move existing stuff to ${MOUNT_POINT}"
+        mv -v /u99/${MOUNT_POINT}/* ${MOUNT_POINT}/
+        rm -rvf /u99/${MOUNT_POINT}
+    done
 else
-    echo "INFO: No additional disk device found"
+    echo "INFO: No additional disk device nor vgora found"
 fi
 # --- EOF --------------------------------------------------------------------
