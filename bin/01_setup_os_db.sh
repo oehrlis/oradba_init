@@ -82,7 +82,7 @@ if [ ! running_in_docker ]; then
     # copy autorized keys 
     mkdir -p /home/oracle/.ssh/
     cp ${HOME}/.ssh/authorized_keys /home/oracle/.ssh/
-    chown oracle:oinstall -R /home/oracle/.ssh
+    chown oracle:oinstall -vR /home/oracle/.ssh
     chmod 700 /home/oracle/.ssh/
     # workaround for issue #131 https://github.com/oracle/vagrant-boxes/issues/131
     export YUM="yum --disablerepo=ol7_developer"
@@ -170,17 +170,17 @@ done
 # - EOF add PDB OS user -----------------------------------------------------
 
 # create a bunch of other directories
-mkdir -p ${ORACLE_BASE}/archive
-mkdir -p ${ORACLE_BASE}/etc
-mkdir -p ${ORACLE_BASE}/tmp
-mkdir -p ${ORACLE_DATA}/scripts
-mkdir -p ${ORADBA_BIN}
-mkdir -p ${ORADBA_RSP}
+mkdir -vp ${ORACLE_BASE}/archive
+mkdir -vp ${ORACLE_BASE}/etc
+mkdir -vp ${ORACLE_BASE}/tmp
+mkdir -vp ${ORACLE_DATA}/scripts
+mkdir -vp ${ORADBA_BIN}
+mkdir -vp ${ORADBA_RSP}
 
 # create a softlink for oratab
 touch ${ORACLE_BASE}/etc/oratab
 ln -sf ${ORACLE_BASE}/etc/oratab /etc/oratab
 
 # change owner of ORACLE_BASE and ORACLE_INVENTORY
-chown -R oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
+chown -vR oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
 # --- EOF --------------------------------------------------------------------
