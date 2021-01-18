@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 # -----------------------------------------------------------------------------
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
@@ -140,11 +139,14 @@ tar zxvf ${DB_MASTER} -C ${ORACLE_ARCH}/backup/
 echo "INFO: Prepare password file ---------------------------------------------"
 # Prepare password file
 if [ -f "${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME}" ]; then
+    echo "INFO: use existing password file ${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME}"
     cp ${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME} ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID}
     ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/dbs/orapw${ORACLE_SID}
 else
+    echo "INFO: generate new password file ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID}"
     # generate password if it is still empty
     if [ -z ${ORACLE_PWD} ]; then
+        echo "INFO: generate password"
         ORACLE_PWD=$(gen_password 12| sed 's/./&-/4')
     fi 
     mkdir -p "${BE_ORA_ADMIN_SID}/etc"
