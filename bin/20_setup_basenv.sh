@@ -85,8 +85,13 @@ sed -i -e "s|###ETC_BASE###|${ETC_BASE}|g"              /tmp/base_install.rsp
 
 # enable tvd Perl in response file
 if [ -n "$TVDPERL_PKG" ]; then 
-    sed -i -e 's/Use_Tvdperl=.*/Use_Tvdperl="YES"/'    /tmp/base_install.rsp
-    sed -i -e 's/Use_Oracleperl=.*//'    /tmp/base_install.rsp
+    sed -i -e 's/Use_Tvdperl=.*/Use_Tvdperl="YES"/'     /tmp/base_install.rsp
+    sed -i -e 's/Use_Oracleperl=.*//'                   /tmp/base_install.rsp
+
+    if [ -f ${SOFTWARE}/${TVDPERL_PKG} ]; then
+        mkdir -p ${ORACLE_LOCAL}
+        cp -v ${SOFTWARE}/${TVDPERL_PKG} ${ORACLE_LOCAL}
+    fi
 fi
 
 # - EOF Initialization ------------------------------------------------------
