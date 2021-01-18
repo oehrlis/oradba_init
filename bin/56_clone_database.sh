@@ -17,6 +17,7 @@
 # - Customization -------------------------------------------------------------
 LOCAL_ORACLE_SID=${1:-"SDBM"}               # Default name for Oracle database
 LOCAL_DB_MASTER=${2:-"SDBM_master.tgz"}     # DB Master file
+LOCAL_DB_MASTER_NAME=${3:-$(basename $LOCAL_DB_MASTER .tgz|cut -d_ -f 2)}
 # - End of Customization ------------------------------------------------------
 
 # - Default Values ------------------------------------------------------------
@@ -124,7 +125,8 @@ case $LOCAL_DB_MASTER in
   *)  DB_MASTER=${SOFTWARE}/${LOCAL_DB_MASTER} ;;
 esac
 
-DB_MASTER_NAME=$(basename $LOCAL_DB_MASTER|sed 's/_master.*//')
+# extract DB_MASTER_NAME from Master file
+DB_MASTER_NAME=${LOCAL_DB_MASTER_NAME:-$(basename $LOCAL_DB_MASTER .tgz|cut -d_ -f 2)}
 
 # check and create directory
 if [ ! -d "${ORACLE_ARCH}/backup/" ]; then
