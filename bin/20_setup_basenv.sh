@@ -26,9 +26,10 @@
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
-export BASENV_PKG=${BASENV_PKG:-basenv-20.05.final.b.zip}
-export BASENV_ORADBA=${BASENV_ORADBA:-basenv-20.05.final.b.zip}
-export BACKUP_PKG=${BACKUP_PKG:-tvdbackup-le-19.11.final.a.tar.gz}
+export BASENV_PKG=${BASENV_PKG:-"basenv-20.05.final.b.zip"}
+export BASENV_ORADBA=${BASENV_ORADBA:-"basenv-20.05.final.b.zip"}
+export BACKUP_PKG=${BACKUP_PKG:-"tvdbackup-le-19.11.final.a.tar.gz"}
+export TVDPERL_PKG=${TVDPERL_PKG:-""}
 
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
@@ -81,6 +82,12 @@ sed -i -e "s|###TNS_ADMIN###|${TNS_ADMIN}|g"            /tmp/base_install.rsp
 sed -i -e "s|###ORACLE_LOCAL###|${ORACLE_LOCAL}|g"      /tmp/base_install.rsp
 sed -i -e "s|###DEFAULT_DOMAIN###|${DEFAULT_DOMAIN}|g"  /tmp/base_install.rsp
 sed -i -e "s|###ETC_BASE###|${ETC_BASE}|g"              /tmp/base_install.rsp
+
+# enable tvd Perl in response file
+if [ -n "$TVDPERL_PKG" ]; then 
+    sed -i -e 's/Use_Tvdperl=.*/Use_Tvdperl="YES"/'    /tmp/base_install.rsp
+    sed -i -e 's/Use_Oracleperl=.*//'    /tmp/base_install.rsp
+fi
 
 # - EOF Initialization ------------------------------------------------------
 
