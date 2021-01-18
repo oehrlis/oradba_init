@@ -186,7 +186,7 @@ $ORACLE_HOME/bin/rman <<EOF
 connect auxiliary /
 run {
 duplicate database '$DB_MASTER_NAME' to '$ORACLE_SID'
-backup location '${ORACLE_ARCH}/backup/$DB_MASTER_NAME';
+backup location '${ORACLE_ARCH}/backup/$DB_MASTER_NAME' NOFILENAMECHECK;
 }
 EOF
 
