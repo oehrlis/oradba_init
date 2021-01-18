@@ -67,24 +67,25 @@ chmod 755 ${DOWNLOAD}/${OUDBASE_PKG}
 # install OUD base use commandline parameter if environment variables are defined
 
 # show what we will create later on...
-echo " - Prepare Oracle DB binaries installation ----------------------------"
+echo " - Prepare Oracle OUDBase installation ----------------------------------"
 echo " - OUDBASE_PKG       = ${OUDBASE_PKG}" 
 echo " - ORACLE_BASE       = ${ORACLE_BASE}" 
 echo " - ORACLE_HOME       = ${ORACLE_HOME}" 
 echo " - ORACLE_FMW_HOME   = ${ORACLE_FMW_HOME}" 
 echo " - JAVA_HOME         = ${JAVA_HOME}" 
+echo " - LOG_BASE          = ${LOG_BASE}" 
 echo " - ORACLE_DATA       = ${ORACLE_DATA}"
+echo " - DOWNLOAD          = ${DOWNLOAD}"
 
 ${DOWNLOAD}/${OUDBASE_PKG} -va -b ${ORACLE_BASE} -j ${JAVA_HOME} -d ${ORACLE_DATA}
 
 # clean up
-rm -rf ${DOWNLOAD}/${OUDBASE_PKG}
-
 if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
     echo " - \$ORADBA_DEBUG set to TRUE, keep temp and log files"
 else
     echo " - \$ORADBA_DEBUG not set, remove temp and log files"
     echo " - remove log files"
+    rm -rf ${DOWNLOAD}/${OUDBASE_PKG}
     rm -rf  ${DOWNLOAD}/oudbase_install.log
 fi
 # --- EOF --------------------------------------------------------------------
