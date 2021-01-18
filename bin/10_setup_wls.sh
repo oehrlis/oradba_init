@@ -100,7 +100,8 @@ echo "inst_group=oinstall"                 >>/tmp/oraInst.loc
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
-mkdir -p ${ORACLE_BASE}/product
+mkdir -pv ${ORACLE_BASE}/product
+mkdir -pv ${DOWNLOAD}
 # - Install FWM Binaries ----------------------------------------------------
 # - just required if you setup WLS
 if [ "${WLS_TYPE}" == "WLS14" ]; then
