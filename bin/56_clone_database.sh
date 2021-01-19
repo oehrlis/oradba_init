@@ -64,6 +64,14 @@ fi
 
 # - Main ----------------------------------------------------------------------
 echo "INFO: Start to clone DB environment for SID ${LOCAL_ORACLE_SID} on ${HOST} at $(date)"
+echo "INFO: Check for read only home ------------------------------------------"
+if [ $($ORACLE_HOME/bin/orabasehome) == "$ORACLE_HOME" ]; then 
+    echo "INFO: Regular Oracle home -----------------------------------------------"
+    ORACLE_DBS=$ORACLE_HOME/dbs; 
+else
+    echo "INFO: read only Oracle home ---------------------------------------------"
+    ORACLE_DBS=$ORACLE_BASE/dbs;
+fi
 
 # Check if DB environment exits
 if [ $(cat $ORATAB | grep "^${LOCAL_ORACLE_SID}" | wc -l) -ne 0 ] ; then
@@ -98,7 +106,7 @@ EOF
     # cleanup/remove the files - diag, fast_recovery_area and startup init${SID}.ora
     rm -rf ${ORACLE_BASE}/diag/rdbms/${ORACLE_SID_lowercase}/${ORACLE_SID}
     rm -rf ${ORACLE_BASE}/audit/${ORACLE_SID}
-    rm -rf ${ORACLE_HOME}/dbs/*${ORACLE_SID}*
+    rm -rf ${ORACLE_DBS}/*${ORACLE_SID}*
     rm -rf /u??/fast_recovery_area/${ORACLE_SID}/*
 
     # cleanup/remove the data files
@@ -143,7 +151,7 @@ echo "INFO: Prepare password file ---------------------------------------------"
 if [ -f "${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME}" ]; then
     echo "INFO: use existing password file ${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME}"
     cp ${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME} ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID}
-    ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/dbs/orapw${ORACLE_SID}
+    ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_DBS}/orapw${ORACLE_SID}
 else
     echo "INFO: generate new password file ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID}"
     # generate password if it is still empty
@@ -153,8 +161,8 @@ else
     fi 
     mkdir -p "${BE_ORA_ADMIN_SID}/etc"
     echo "${ORACLE_PWD}" > "${BE_ORA_ADMIN_SID}/etc/${ORACLE_SID}_password.txt"
-    orapwd force=y password=${ORACLE_PWD} file=${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID}
-    ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/dbs/orapw${ORACLE_SID}
+    orapwd force=y password=${ORACLE_PWD} file=${ORACLE_DBS}/pfile/orapw${ORACLE_SID}
+    ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/orapw${ORACLE_SID}
 fi
 
 echo "INFO: Perpare init.ora file (${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora) "
@@ -175,7 +183,7 @@ echo "INFO: Create spfile ($BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora) -----"
 # create spfile
 $ORACLE_HOME/bin/sqlplus / as sysdba <<EOF
 create spfile='$BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora' from pfile='$BE_ORA_ADMIN_SID/pfile/init$ORACLE_SID.ora';
-host echo spfile=$BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora >$ORACLE_HOME/dbs/init$ORACLE_SID.ora
+host echo spfile=$BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora >$ORACLE_DBS/init$ORACLE_SID.ora
 startup nomount;
 exit;
 EOF
