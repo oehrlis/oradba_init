@@ -204,6 +204,9 @@ CF_BckPathParm="${ORACLE_ARCH}/backup/$ORACLE_SID"
 CF_MailIfOk=2
 EOF
 
+# remove backup files after restore
+rm -rf ${ORACLE_ARCH}/backup/$DB_MASTER_NAME
+
 echo "INFO: Configure $ORACLE_SID ---------------------------------------------"
 # Execute custom provided setup scripts
 ${ORADBA_BIN}/${DB_CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
