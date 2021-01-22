@@ -161,8 +161,8 @@ else
     fi 
     mkdir -p "${BE_ORA_ADMIN_SID}/etc"
     echo "${ORACLE_PWD}" > "${BE_ORA_ADMIN_SID}/etc/${ORACLE_SID}_password.txt"
-    orapwd force=y password=${ORACLE_PWD} file=${ORACLE_DBS}/pfile/orapw${ORACLE_SID}
-    ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_HOME}/orapw${ORACLE_SID}
+    orapwd force=y password=${ORACLE_PWD} file=${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID}
+    ln -s ${BE_ORA_ADMIN_SID}/pfile/orapw${ORACLE_SID} ${ORACLE_DBS}/orapw${ORACLE_SID}
 fi
 
 echo "INFO: Perpare init.ora file (${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora) "

@@ -104,33 +104,31 @@ mkdir -pv ${ORACLE_BASE}/product
 mkdir -pv ${DOWNLOAD}
 # - Install FWM Binaries ----------------------------------------------------
 # - just required if you setup WLS
-if [ "${WLS_TYPE}" == "WLS14" ]; then
-    echo " - Install Oracle FMW binaries ----------------------------------------"
-    if [ -n "${FMW_BASE_PKG}" ]; then
-        if get_software "${FMW_BASE_PKG}"; then          # Check and get binaries
-            cd ${DOWNLOAD}
-            # unpack WLS binary package
-            FMW_BASE_LOG=$(basename ${FMW_BASE_PKG} .zip).log
-            $JAVA_HOME/bin/jar xvf ${SOFTWARE}/${FMW_BASE_PKG} >${FMW_BASE_LOG}
+ echo " - Install Oracle FMW binaries ----------------------------------------"
+if [ -n "${FMW_BASE_PKG}" ]; then
+    if get_software "${FMW_BASE_PKG}"; then          # Check and get binaries
+        cd ${DOWNLOAD}
+        # unpack WLS binary package
+        FMW_BASE_LOG=$(basename ${FMW_BASE_PKG} .zip).log
+        $JAVA_HOME/bin/jar xvf ${SOFTWARE}/${FMW_BASE_PKG} >${FMW_BASE_LOG}
 
-            # get the jar file name from the logfile
-            FMW_BASE_JAR=$(grep -i jar ${FMW_BASE_LOG} |cut -d' ' -f3| tr -d " ")
+        # get the jar file name from the logfile
+        FMW_BASE_JAR=$(grep -i jar ${FMW_BASE_LOG} |cut -d' ' -f3| tr -d " ")
 
-            # Install WLS binaries
-            $JAVA_HOME/bin/java -jar ${DOWNLOAD}/$FMW_BASE_JAR -silent \
-            -responseFile /tmp/wls_install.rsp \
-            -invPtrLoc /tmp/oraInst.loc \
-            -ignoreSysPrereqs -force \
-            -novalidation ORACLE_HOME=${ORACLE_HOME} \
-            INSTALL_TYPE="WebLogic Server"
+        # Install WLS binaries
+        $JAVA_HOME/bin/java -jar ${DOWNLOAD}/$FMW_BASE_JAR -silent \
+        -responseFile /tmp/wls_install.rsp \
+        -invPtrLoc /tmp/oraInst.loc \
+        -ignoreSysPrereqs -force \
+        -novalidation ORACLE_HOME=${ORACLE_HOME} \
+        INSTALL_TYPE="WebLogic Server"
 
-            # remove files on docker builds
-            rm -rf ${DOWNLOAD}/$FMW_BASE_JAR
-            running_in_docker && rm -rf ${SOFTWARE}/${FMW_BASE_PKG}
-        else
-            echo " - ERROR: No base software package specified. Abort installation."
-            exit 1
-        fi
+        # remove files on docker builds
+        rm -rf ${DOWNLOAD}/$FMW_BASE_JAR
+        running_in_docker && rm -rf ${SOFTWARE}/${FMW_BASE_PKG}
+    else
+        echo " - ERROR: No base software package specified. Abort installation."
+        exit 1
     fi
 fi
 
