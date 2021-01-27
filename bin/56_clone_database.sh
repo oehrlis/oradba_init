@@ -172,13 +172,15 @@ sed -e "s/${DB_MASTER_NAME}/$ORACLE_SID/g" \
     >${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora
 
 # adjust init.ora file
-sed -i -n -E -e '/^\*\.(control_files=|db_recovery_file_dest=|.*_file_name_convert=)/!p' \
+sed -i -n -E -e '/^\*\.(control_files=|db_recovery_file_dest=|.*_file_name_convert=|.*audit_file_dest=|.*diagnostic_dest=)/!p' \
     -e "\$a\*\.control_files='$ORACLE_DATA/oradata/$ORACLE_SID/control01$ORACLE_SID.dbf','$ORACLE_ARCH/oradata/$ORACLE_SID/control02$ORACLE_SID.dbf'" \
     -e "\$a\*\.db_recovery_file_dest='$ORACLE_ARCH/fast_recovery_area'" \
+    -e "\$a\*\.audit_file_dest='$BE_ORA_ADMIN_SID/adump'" \
+    -e "\$a\*\.diagnostic_dest='$ORACLE_BASE'" \
     -e "\$a\*\.db_file_name_convert='$DB_MASTER_NAME','$ORACLE_SID'" \
     -e "\$a\*\.pdb_file_name_convert='$DB_MASTER_NAME','$ORACLE_SID'" \
     -e "\$a\*\.log_file_name_convert='$DB_MASTER_NAME','$ORACLE_SID'" ${BE_ORA_ADMIN_SID}/pfile/init$ORACLE_SID.ora
-
+    
 echo "INFO: Create spfile ($BE_ORA_ADMIN_SID/pfile/spfile$ORACLE_SID.ora) -----"
 # create spfile
 $ORACLE_HOME/bin/sqlplus / as sysdba <<EOF
