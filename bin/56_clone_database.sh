@@ -146,6 +146,9 @@ fi
 # unpack DB master
 tar zxvf ${DB_MASTER} -C ${ORACLE_ARCH}/backup/
 
+# define MASTER ORACLE_ROOT
+export MASTER_ORACLE_ROOT=$(grep -i ${ORACLE_ARCH}/backup/${DB_MASTER_NAME}/init_${DB_MASTER_NAME}.ora|sed "s/.*'\(\/u..\)\/.*'.*/\1/")
+
 echo "INFO: Prepare password file ---------------------------------------------"
 # Prepare password file
 if [ -f "${ORACLE_ARCH}/backup/orapw${DB_MASTER_NAME}" ]; then
@@ -191,14 +194,32 @@ exit;
 EOF
 
 echo "INFO: Clone Database from $DB_MASTER_NAME to $ORACLE_SID ----------------"
-# clone database
-$ORACLE_HOME/bin/rman <<EOF
+if [ "${ORACLE_ROOT}" == "${MASTER_ORACLE_ROOT}" ]; then
+    # clone database
+    $ORACLE_HOME/bin/rman <<EOF
 connect auxiliary /
 run {
 duplicate database '$DB_MASTER_NAME' to '$ORACLE_SID'
 backup location '${ORACLE_ARCH}/backup/$DB_MASTER_NAME' NOFILENAMECHECK;
 }
 EOF
+else
+    # clone database
+    $ORACLE_HOME/bin/rman <<EOF
+connect auxiliary /
+run {
+duplicate database '$DB_MASTER_NAME' to '$ORACLE_SID'
+backup location '${ORACLE_ARCH}/backup/$DB_MASTER_NAME' NOFILENAMECHECK
+    LOGFILE
+      GROUP 1 ('$ORACLE_ROOT/oradata/$ORACLE_SID/redog1m1$ORACLE_SID.dbf', 
+               '$ORACLE_DATA/oradata/$ORACLE_SID/redog1m2$ORACLE_SID.dbf') SIZE 200M REUSE, 
+      GROUP 2 ('$ORACLE_ROOT/oradata/$ORACLE_SID/redog2m1$ORACLE_SID.dbf', 
+               '$ORACLE_DATA/oradata/$ORACLE_SID/redog2m2$ORACLE_SID.dbf') SIZE 200M REUSE, 
+      GROUP 3 ('$ORACLE_ROOT/oradata/$ORACLE_SID/redog3m1$ORACLE_SID.dbf', 
+               '$ORACLE_DATA/oradata/$ORACLE_SID/redog3m2$ORACLE_SID.dbf') SIZE 200M REUSE;
+}
+EOF
+fi
 
 # config rman.conf file
 echo "target=/"                  >  ${BE_ORA_ADMIN_SID}/etc/rman.conf
