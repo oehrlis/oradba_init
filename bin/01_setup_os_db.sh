@@ -130,15 +130,9 @@ running_in_docker && yum-config-manager --disable ol7_ociyum_config
 
 # install basic utilities
 ${YUM} install -y zip unzip gzip tar which pwgen
-
+${YUM} install -y make passwd elfutils-libelf-devel
 # install the oracle preinstall stuff
-${YUM} install -y make passwd \
-    oracle-rdbms-server-11gR2-preinstall \
-    oracle-rdbms-server-12cR1-preinstall \
-    oracle-database-server-12cR2-preinstall \
-    oracle-database-preinstall-18c \
-    oracle-database-preinstall-19c \
-    elfutils-libelf-devel
+${YUM} install -y oracle-database-preinstall-19c
 
 # remove the groups created by oracle
 for i in dba oper backupdba dgdba kmdba racdba; do
