@@ -46,7 +46,7 @@ UNIQUE_MOUNT_POINTS=$(echo "${MOUNT_POINTS}" | tr ' ' '\n' | sort -u | tr '\n' '
 
 # create partition
 echo "INFO: Check for additional disk device -----------------------------------"
-DISK_DEV=$(lsblk -o NAME,FSTYPE -pdsn | awk '$2 == "" {print $1}')
+DISK_DEV=$(lsblk -o NAME,FSTYPE -pdsn | awk '$2 == "" {print $1}'|head -1)
 VG_ORA=$(lsblk -o NAME,FSTYPE -pdsn|cut -d' ' -f 1| grep -i vgora)
 if [ ! -z ${DISK_DEV} ] && [ -z "${VG_ORA}" ] ; then
     echo "INFO: Found additional disk device ${DISK_DEV}"
