@@ -28,7 +28,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 # define the software packages
 export BASENV_PKG=${BASENV_PKG:-"basenv-21.05.final.b.zip"}
 export BASENV_ORADBA=${BASENV_ORADBA:-"basenv-20.05.final.b.zip"}
-export BACKUP_PKG=${BACKUP_PKG:-"tvdbackup-se-20.05.final.b.tar.gz"}
+export BACKUP_PKG=${BACKUP_PKG:-"tvdbackup-se-21.05.final.a.tar.gz"}
 export TVDPERL_PKG=${TVDPERL_PKG:-""}
 
 # define oradba specific variables
