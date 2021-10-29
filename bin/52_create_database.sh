@@ -154,6 +154,9 @@ if [ -z "$DB_MASTER" ]; then
         exit;
 EOF
 
+    echo "INFO: Create DB environment for ${ORACLE_SID} ---------------------"
+    ${ORADBA_BIN}/${DB_ENV_SCRIPT} ${ORACLE_SID}
+
     # Execute custom provided setup scripts
     ${ORADBA_BIN}/${DB_CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
 
@@ -182,4 +185,6 @@ if [ -f "$HOME/.BE_HOME" ]; then
 else   
     echo "INFO: skip TVD-BasEnv"
 fi
+
+
 # --- EOF -------------------------------------------------------------------

@@ -105,6 +105,17 @@ for i in $(ls -d /u0?/oradata); do
 done
 
 mkdir -pv $(ls -d /u0?/fast_recovery_area |tail -1)/${ORACLE_SID}
+mkdir -pv "$(dirname $(find /u0? -name fast_recovery_area 2>/dev/null|tail -1))/backup/${ORACLE_SID}"
+
+cat << EOF >$BE_ORA_ADMIN/${ORACLE_SID}/etc/rman.conf
+target=/
+catalog=nocatalog
+CF_ChannelType="disk"
+CF_ChannelNo=2
+CF_Compress=1
+CF_BckPathParm="${ORACLE_ARCH}/backup/$MY_ORACLE_SID"
+CF_MailIfOk=2
+EOF
 
 # Create TNS Names entry
 if [ $( grep -ic $ORACLE_SID ${TNS_ADMIN}/tnsnames.ora) -eq 0 ]; then

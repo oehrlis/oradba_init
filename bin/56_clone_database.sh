@@ -227,7 +227,7 @@ echo "catalog=rman/rman@catalog" >> ${BE_ORA_ADMIN_SID}/etc/rman.conf
 
 cat << EOF >${BE_ORA_ADMIN_SID}/etc/rman.conf
 target=/
-catalog=catalog=rman/rman@catalog
+catalog=rman/rman@catalog
 CF_ChannelType="disk"
 CF_ChannelNo=2
 CF_Compress=1
