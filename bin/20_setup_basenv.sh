@@ -1,6 +1,6 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
-# Trivadis AG, Infrastructure Managed Services
+# Trivadis - Part of Accenture, Platform Factory - Transactional Data Platform
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
 # Name.......: 20_setup_basenv.sh 
@@ -15,8 +15,8 @@
 #                ${SOFTWARE_REPO} In this case, the environment variable must 
 #                point to a corresponding URL.
 # Reference..: --
-# License....: Licensed under the Universal Permissive License v 1.0 as 
-#              shown at http://oss.oracle.com/licenses/upl.
+# License....: Apache License Version 2.0, January 2004 as shown
+#              at http://www.apache.org/licenses/
 # ---------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
@@ -26,9 +26,9 @@
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
 # define the software packages
-export BASENV_PKG=${BASENV_PKG:-"basenv-20.11.final.a.zip"}
+export BASENV_PKG=${BASENV_PKG:-"basenv-21.05.final.b.zip"}
 export BASENV_ORADBA=${BASENV_ORADBA:-"basenv-20.05.final.b.zip"}
-export BACKUP_PKG=${BACKUP_PKG:-"tvdbackup-le-19.11.final.a.tar.gz"}
+export BACKUP_PKG=${BACKUP_PKG:-"tvdbackup-se-20.05.final.b.tar.gz"}
 export TVDPERL_PKG=${TVDPERL_PKG:-""}
 
 # define oradba specific variables
