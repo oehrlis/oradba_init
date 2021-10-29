@@ -155,7 +155,7 @@ if [ -z "$DB_MASTER" ]; then
 EOF
 
     # Execute custom provided setup scripts
-    ${ORADBA_BIN}/${CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
+    ${ORADBA_BIN}/${DB_CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
 
     # update oratab
     if [ $(grep -c "^${ORACLE_SID}" $ORATAB) -gt 0 ]; then
