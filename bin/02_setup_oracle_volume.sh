@@ -72,7 +72,7 @@ EOF
 
     for i in ${UNIQUE_MOUNT_POINTS}; do
         echo "INFO: move existing ${i} folder to /u99"
-        vol_name="vol_$(echo ${i}|sed 's/^\///')"
+        vol_name="vol_$(echo $(basename ${i})|sed 's/^\///')"
         mv -v ${i} /u99
         echo "INFO: Create logical volume ${vol_name} in ${VOLUME_GROUP}"
         lvcreate -n ${vol_name} -l 30%VG ${VOLUME_GROUP}  
