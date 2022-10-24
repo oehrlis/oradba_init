@@ -101,9 +101,23 @@ running_in_docker && export OPATCH_NO_FUSER=true
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
+echo " - Step 0: Initialization ---------------------------------------------"
+if [ -x "$ORACLE_HOME/oui/bin/viewInventory.sh" ]; then
+    inventory=$($ORACLE_HOME/oui/bin/viewInventory.sh|grep 'FeatureSet' |grep -w 'opatch\|oud\|wls4fmw\|coherence'| sort --unique| cut -d: -f2|cut -d' ' -f2)
+    [[ "$inventory" == *"opatch"* ]]    && export OPATCH_INSTALLED="TRUE"
+    [[ "$inventory" == *"oud"* ]]       && export OUD_INSTALLED="TRUE"
+    [[ "$inventory" == *"wls4fmw"* ]]   && export WLS_INSTALLED="TRUE"
+    [[ "$inventory" == *"coherence"* ]] && export COHERENCE_INSTALLED="TRUE"
+else
+    export OPATCH_INSTALLED=""
+    export OUD_INSTALLED=""
+    export WLS_INSTALLED=""
+    export COHERENCE_INSTALLED=""
+fi
+
 # - Install OPatch ----------------------------------------------------------
 echo " - Step 1: Install OPatch ---------------------------------------------"
-if [ -n "${OUD_OPATCH_PKG}" ]; then
+if [ -n "${OUD_OPATCH_PKG}" ] && [ "${OPATCH_INSTALLED^^}" == "TRUE" ]; then
     if get_software "${OUD_OPATCH_PKG}"; then       # Check and get binaries
         echo " - unzip ${SOFTWARE}/${OUD_OPATCH_PKG} to ${DOWNLOAD}"
         unzip -q -o ${SOFTWARE}/${OUD_OPATCH_PKG} \
@@ -123,15 +137,23 @@ fi
 
 # - Install OUI patch -------------------------------------------------------
 echo " - Step 2: Install OUI patch ------------------------------------------"
-install_patch ${OUI_PATCH_PKG}
+if [ -n "${OUI_PATCH_PKG}" ]; then
+    install_patch ${OUI_PATCH_PKG}
+else
+    echo " - No OUI patch package specified/found. Skip OUI patch installation."
+fi
 
 # - Install FMW patch -------------------------------------------------------
 echo " - Step 3: Install FMW patch (RU/PSU) ---------------------------------"
-install_patch ${FMW_PATCH_PKG}
+if [ -n "${FMW_PATCH_PKG}" ] && [ "${WLS_INSTALLED^^}" == "TRUE" ]; then
+    install_patch ${FMW_PATCH_PKG}
+else
+    echo " - No WLS patch package specified/found. Skip WLS patch installation."
+fi
 
 # - Install Coherence patch -------------------------------------------------
 echo " - Step 4: Install Coherence patch ------------------------------------"
-if [ -n "${COHERENCE_PATCH_PKG}" ]; then
+if [ -n "${COHERENCE_PATCH_PKG}" ] && [ "${COHERENCE_INSTALLED^^}" == "TRUE" ]; then
     if get_software "${COHERENCE_PATCH_PKG}"; then        # Check and get binaries
         COHERENCE_PATCH_ID=$(unzip -qql ${SOFTWARE}/${COHERENCE_PATCH_PKG}| sed -r '1 {s/([ ]+[^ ]+){3}\s+//;q}')
         echo " - unzip ${SOFTWARE}/${COHERENCE_PATCH_PKG} to ${DOWNLOAD}"
@@ -147,12 +169,16 @@ if [ -n "${COHERENCE_PATCH_PKG}" ]; then
         echo " - WARNING: Could not find local or remote coherence patch package. Skip coherence patch installation."
     fi
 else
-    echo " - No coherence patch package specified. Skip coherence patch installation."
+    echo " - No coherence patch package specified/found. Skip coherence patch installation."
 fi
 
 # - Install OUD patch -------------------------------------------------------
 echo " - Step 5: Install OUD patch (RU/PSU) ---------------------------------"
-install_patch ${OUD_PATCH_PKG}
+if [ -n "${OUD_PATCH_PKG}" ] && [ "${OUD_INSTALLED^^}" == "TRUE" ]; then
+    install_patch ${OUD_PATCH_PKG}
+else
+    echo " - No OUD patch package specified/found. Skip OUD patch installation."
+fi
 
 echo " - Step 6: Install One-off patches ------------------------------------"
 if [ -n "${OUD_ONEOFF_PKGS}" ]; then
