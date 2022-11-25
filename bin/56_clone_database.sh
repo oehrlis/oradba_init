@@ -147,7 +147,8 @@ fi
 tar zxvf ${DB_MASTER} -C ${ORACLE_ARCH}/backup/
 
 # define MASTER ORACLE_ROOT
-export MASTER_ORACLE_ROOT=$(grep -i ${ORACLE_ARCH}/backup/${DB_MASTER_NAME}/init_${DB_MASTER_NAME}.ora|sed "s/.*'\(\/u..\)\/.*'.*/\1/")
+export MASTER_ORACLE_ROOT=$(grep -i oracle_base ${ORACLE_ARCH}/backup/${DB_MASTER_NAME}/init_${DB_MASTER_NAME}.ora|sed "s/.*'\(\/u..\)\/.*'.*/\1/")
+export MASTER_ORACLE_ROOT=${export MASTER_ORACLE_ROOT:-"/u00"}
 
 echo "INFO: Prepare password file ---------------------------------------------"
 # Prepare password file
