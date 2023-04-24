@@ -132,7 +132,15 @@ running_in_docker && yum-config-manager --disable ol7_ociyum_config
 ${YUM} install -y zip unzip gzip tar which pwgen
 ${YUM} install -y make passwd elfutils-libelf-devel
 # install the oracle preinstall stuff
-${YUM} install -y oracle-database-preinstall-19c oracle-database-preinstall-21c
+${YUM} install -y oracle-database-preinstall-19c oracle-database-preinstall-21c oracle-database-preinstall-23c
+
+if [ $(grep -ic "7\." /etc/redhat-release) -eq 1 ]; then 
+    echo "INFO: Install Oracle Database PreInstall RPM 19c, 21c --------------------"
+    ${YUM} install -y oracle-database-preinstall-19c oracle-database-preinstall-21c
+elif [ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]; then
+    echo "INFO: Install Oracle Database PreInstall RPM 19c, 21c --------------------"
+    ${YUM} install -y oracle-database-preinstall-19c oracle-database-preinstall-23c
+fi
 
 # remove the groups created by oracle
 for i in dba oper backupdba dgdba kmdba racdba; do
