@@ -8,6 +8,7 @@
       <option name="ORACLE_TEXT" value="false" includeInPDBs="false">
          <tablespace id="SYSAUX"/>
       </option>
+      <option name="SAMPLE_SCHEMA" value="false" includeInPDBs="false"/>
       <option name="CWMLITE" value="false" includeInPDBs="false">
          <tablespace id="SYSAUX"/>
       </option>
@@ -16,6 +17,9 @@
    </CommonAttributes>
    <Variables/>
    <CustomScripts Execute="false"/>
+   <PluggableDatabases>
+      <PluggableDatabase pdb_name="PDB$SEED" con_id="2" pdb_dbid="1775040230"/>
+   </PluggableDatabases>
    <InitParamAttributes>
       <InitParams>
          <initParam name="db_name" value="###ORACLE_DBNAME###"/>
@@ -52,7 +56,18 @@
       </MiscParams>
       <SPfile useSPFile="true">{ORACLE_HOME}/dbs/spfile{SID}.ora</SPfile>
    </InitParamAttributes>
-    <StorageAttributes>
+   <StorageAttributes>
+      <DataFiles>
+         <Location>{ORACLE_HOME}/assistants/dbca/templates/Seed_Database.dfb</Location>
+         <SourceDBName cdb="true">seeddata</SourceDBName>
+         <Name id="3" Tablespace="SYSAUX" Contents="PERMANENT" Size="400" autoextend="true" blocksize="8192" con_id="1">###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/sysaux01{DB_UNIQUE_NAME}.dbf</Name>
+         <Name id="1" Tablespace="SYSTEM" Contents="PERMANENT" Size="830" autoextend="true" blocksize="8192" con_id="1">###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/system01{DB_UNIQUE_NAME}.dbf</Name>
+         <Name id="4" Tablespace="UNDOTBS1" Contents="UNDO" Size="25" autoextend="true" blocksize="8192" con_id="1">###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/undotbs01{DB_UNIQUE_NAME}.dbf</Name>
+         <Name id="7" Tablespace="USERS" Contents="PERMANENT" Size="5" autoextend="true" blocksize="8192" con_id="1">###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/users01{DB_UNIQUE_NAME}.dbf</Name>
+      </DataFiles>
+      <TempFiles>
+         <Name id="1" Tablespace="TEMP" Contents="TEMPORARY" Size="20" con_id="1">###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/temp01{DB_UNIQUE_NAME}.dbf</Name>
+      </TempFiles>
       <ControlfileAttributes id="Controlfile">
          <maxDatafiles>100</maxDatafiles>
          <maxLogfiles>16</maxLogfiles>

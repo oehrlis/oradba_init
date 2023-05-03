@@ -1,5 +1,5 @@
 <?xml version = '1.0'?>
-<DatabaseTemplate name="###ORACLE_SID###" description="This is a template created from an existing template - General Purpose." version="23.0.0.0.0">
+<DatabaseTemplate name="###ORACLE_SID###" description=" " version="23.0.0.0.0">
    <CommonAttributes>
       <option name="OMS" value="true" includeInPDBs="true"/>
       <option name="JSERVER" value="true" includeInPDBs="true"/>
@@ -8,6 +8,7 @@
       <option name="ORACLE_TEXT" value="true" includeInPDBs="true">
          <tablespace id="SYSAUX"/>
       </option>
+      <option name="SAMPLE_SCHEMA" value="false" includeInPDBs="false"/>
       <option name="CWMLITE" value="true" includeInPDBs="true">
          <tablespace id="SYSAUX"/>
       </option>
@@ -16,6 +17,9 @@
    </CommonAttributes>
    <Variables/>
    <CustomScripts Execute="false"/>
+   <PluggableDatabases>
+      <PluggableDatabase pdb_name="PDB$SEED" con_id="2" pdb_dbid="1775040230"/>
+   </PluggableDatabases>
    <InitParamAttributes>
       <InitParams>
          <initParam name="db_name" value="###ORACLE_DBNAME###"/>
