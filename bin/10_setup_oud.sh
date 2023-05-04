@@ -189,10 +189,18 @@ fi
 if [ ! -z "${OUD_PATCH_PKG}" ] || [ ! -z "${FMW_PATCH_PKG}" ] || [ ! -z "${OUD_OPATCH_PKG}" ] || [ ! -z "${OUI_PATCH_PKG}" ] && [ "${PATCH_LATER^^}" == "FALSE" ]; then  
     if [ "${OUD_TYPE}" == "OUD12" ]; then
         DONT_FMW_PATCH_PKG=${FMW_PATCH_PKG}
-        unset ${FMW_PATCH_PKG}
+        DONT_COHERENCE_PATCH_PKG=${COHERENCE_PATCH_PKG}
+        DONT_CPU_WLS_ONEOFF_PKGS=${CPU_WLS_ONEOFF_PKGS}
+        unset FMW_PATCH_PKG
+        unset COHERENCE_PATCH_PKG
+        unset CPU_WLS_ONEOFF_PKGS
         ${ORADBA_BIN}/11_setup_oud_patch.sh
         FMW_PATCH_PKG=${DONT_FMW_PATCH_PKG}
-        unset ${DONT_FMW_PATCH_PKG}
+        COHERENCE_PATCH_PKG=${DONT_COHERENCE_PATCH_PKG}
+        CPU_WLS_ONEOFF_PKGS=${DONT_CPU_WLS_ONEOFF_PKGS}
+        unset DONT_FMW_PATCH_PKG
+        unset DONT_COHERENCE_PATCH_PKG
+        unset DONT_FMW_PATCH_PKG
     else
         ${ORADBA_BIN}/11_setup_oud_patch.sh
     fi
