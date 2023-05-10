@@ -21,6 +21,10 @@
 # Modified...:
 # see git revision history for more information on changes/updates
 # ---------------------------------------------------------------------------
+# - Customization -------------------------------------------------------------
+ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
+# - End of Customization ------------------------------------------------------
+
 # - Environment Variables ---------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"

@@ -18,6 +18,7 @@
 LOCAL_ORACLE_SID=${1:-"SDBM"}               # Default name for Oracle database
 LOCAL_DB_MASTER=${2:-"SDBM_master.tgz"}     # DB Master file
 LOCAL_DB_MASTER_NAME=${3:-$(basename $LOCAL_DB_MASTER .tgz|cut -d_ -f 2)}
+ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
 # - End of Customization ------------------------------------------------------
 
 # - Default Values ------------------------------------------------------------

@@ -27,6 +27,7 @@
 # COHERENCE_PATCH_PKG="p30729380_122140_Generic.zip"  # Coherence 12.2.1.4.3 Cumulative Patch using OPatch (Patch) 
 # ORACLE_HOME_NAME="oud12.2.1.4.0"                    # Name of the Oracle Home directory
 # ORACLE_HOME="${ORACLE_BASE}/product/${ORACLE_HOME_NAME}"
+ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
 # - End of Customization ----------------------------------------------------
 
 # - Default Values ----------------------------------------------------------

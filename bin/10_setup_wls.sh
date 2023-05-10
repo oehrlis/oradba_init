@@ -26,6 +26,7 @@
 # WLS_ONEOFF_PKGS=""
 # ORACLE_HOME_NAME="fmw14.1.1.0.0"                    # Name of the Oracle Home directory
 # ORACLE_HOME="${ORACLE_BASE}/product/${ORACLE_HOME_NAME}"
+ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
 # - End of Customization ----------------------------------------------------
 
 # - Default Values ----------------------------------------------------------

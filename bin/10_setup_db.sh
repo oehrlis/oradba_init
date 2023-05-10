@@ -34,6 +34,7 @@
 # ORACLE_MAJOR_RELEASE="190"                          # Oracle Major Release
 # ORACLE_EDITION="EE"                                 # Oracle edition EE or SE2
 # RESPONSE_FILE_VERSION="oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v19.0.0"
+ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
 # - End of Customization ----------------------------------------------------
 
 # - Default Values ----------------------------------------------------------

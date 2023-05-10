@@ -23,8 +23,8 @@
 # ---------------------------------------------------------------------------
 # - Customization -----------------------------------------------------------
 # - just add/update any kind of customized environment variable here
-export OPT_DIR="/opt"
-export ORADBA_BIN="/opt/oradba/bin"
+export OPT_DIR=${OPT_DIR:-"/opt"}
+export ORADBA_BIN=${ORADBA_BIN:-"/opt/oradba/bin"}
 export DEFAULT_DOMAIN="trivadislabs.com"
 export DEFAULT_ORACLE_ROOT="/u00"
 export DEFAULT_ORACLE_DATA="/u01"

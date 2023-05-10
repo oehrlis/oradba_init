@@ -22,6 +22,7 @@
 LOCAL_ORACLE_SID=${1:-"SDBM"}                                           # Default name for Oracle database
 LOCAL_ORACLE_PDB=${2:-"PDB1"}                                           # Check whether ORACLE_PDB is passed on
 LOCAL_CONTAINER=${3:-"false"}                                           # Check whether CONTAINER is passed on
+ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
 # - End of Customization ------------------------------------------------------
 
 # - Default Values ------------------------------------------------------------

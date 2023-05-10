@@ -22,6 +22,9 @@
 # ---------------------------------------------------------------------------
 # Environment variables required for this build (do NOT change)
 # -------------------------------------------------------------
+# - Customization -------------------------------------------------------------
+ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
+# - End of Customization ------------------------------------------------------
 
 # - Environment Variables ---------------------------------------------------
 # - Set default values for environment variables if not yet defined. 

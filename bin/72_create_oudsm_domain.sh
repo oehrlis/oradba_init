@@ -18,6 +18,9 @@
 # see git revision history for more information on changes/updates
 # TODO.......:
 # ---------------------------------------------------------------------------
+# - Customization -------------------------------------------------------------
+ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
+# - End of Customization ------------------------------------------------------
 
 # - Script Variables --------------------------------------------------------
 # - Set script names for miscellaneous start, check and config scripts.
