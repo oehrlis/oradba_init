@@ -136,7 +136,7 @@ if [ $(grep -ic "7\." /etc/redhat-release) -eq 1 ]; then
     echo "INFO: Install Oracle Database PreInstall RPM 19c, 21c --------------------"
     ${YUM} install -y oracle-database-preinstall-19c oracle-database-preinstall-21c
 elif [ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]; then
-    if [ $(uname -m) -eq "aarch64" ]; then
+    if [ $(uname -m) == "aarch64" ]; then
         echo "INFO: Install Oracle Database PreInstall RPM 19c --------------------"
         ${YUM} install -y oracle-database-preinstall-19c
     else
