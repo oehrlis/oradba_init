@@ -126,6 +126,13 @@ if [ $AVAILABLE_SPACE_GB -lt $REQUIRED_SPACE_GB ]; then
     echo " -        but only $AVAILABLE_SPACE_GB GB are available."
     exit 1;
 fi;
+
+if [[ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]] && [[ ${ORACLE_MAJOR_RELEASE} -eq 190 ]]; then
+    echo "INFO: Oracle 19c on REL8 set CV_ASSUME_DISTID"
+    export CV_ASSUME_DISTID=OEL7.9
+else
+    echo "INFO: Oracle 19c on REL7"
+fi
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
