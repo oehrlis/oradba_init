@@ -176,7 +176,7 @@ fi
 
 echo " - Step 7: CleanUp DB patch installation ------------------------------"
 # Remove not needed components
-if running_in_docker || [[ "${SIM,,}" == "true" ]]; then
+if running_in_docker || [[ "${SLIMMING^^}" == "TRUE" ]]; then
     echo " - remove Docker specific stuff"
     rm -rf ${ORACLE_HOME}/.patch_storage        # remove patch storage
     rm -rf ${ORACLE_HOME}/.opatchauto_storage   # remove patch storage

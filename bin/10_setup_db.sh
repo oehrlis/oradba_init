@@ -242,7 +242,7 @@ else
 fi
 
 echo " - CleanUp DB installation --------------------------------------------"
-if { running_in_docker || [[ "${SLIMMING,,}" == "true" ]]; } && [[ "${PATCH_LATER^^}" == "FALSE" ]]; then
+if { running_in_docker || [[ "${SLIMMING^^}" == "TRUE" ]]; } && [[ "${PATCH_LATER^^}" == "FALSE" ]]; then
     echo " - remove Docker specific stuff"
     rm -rf ${ORACLE_HOME}/apex                  # APEX
     rm -rf ${ORACLE_HOME}/ords                  # ORDS
