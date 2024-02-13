@@ -36,7 +36,7 @@ export DB_OPATCH_PKG=${DB_OPATCH_PKG:-""}
 export DB_JDKPATCH_PKG=${DB_JDKPATCH_PKG:-""}
 export DB_PERLPATCH_PKG=${DB_PERLPATCH_PKG:-""}
 export DB_ONEOFF_PKGS=${DB_ONEOFF_PKGS:-""}
-
+export SLIMMING=${SLIMMING:-"false"}
 # get default major release based on DB_BASE_PKG
 DEFAULT_ORACLE_MAJOR_RELEASE=$(echo $DB_BASE_PKG|cut -d_ -f2|cut -c1-3)
 if [ $DEFAULT_ORACLE_MAJOR_RELEASE -gt 122 ]; then
@@ -60,7 +60,7 @@ export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallback
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
-export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
+export SLIMMING=${SLIMMING:-"false"}            # flag to enable SLIMMING setup
 # - EOF Environment Variables -----------------------------------------------
 
 # - Functions ---------------------------------------------------------------
@@ -175,9 +175,10 @@ fi
 
 echo " - Step 7: CleanUp DB patch installation ------------------------------"
 # Remove not needed components
-if running_in_docker; then
+if running_in_docker || [[ "${SIM,,}" == "true" ]]; then
     echo " - remove Docker specific stuff"
     rm -rf ${ORACLE_HOME}/.patch_storage        # remove patch storage
+    rm -rf ${ORACLE_HOME}/.opatchauto_storage   # remove patch storage
     rm -rf ${ORACLE_HOME}/apex                  # APEX
     rm -rf ${ORACLE_HOME}/ords                  # ORDS
     rm -rf ${ORACLE_HOME}/bin/oracle_*          # Oracle Binaries

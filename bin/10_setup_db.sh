@@ -85,7 +85,7 @@ export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallback
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
-export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
+export SLIMMING=${SLIMMING:-"false"}            # flag to enable SLIMMING setup
 # - End of Default Values ---------------------------------------------------
 
 # - Initialization ----------------------------------------------------------
@@ -241,8 +241,7 @@ else
 fi
 
 echo " - CleanUp DB installation --------------------------------------------"
-# Remove not needed components
-if running_in_docker && [ "${PATCH_LATER^^}" == "FALSE" ]; then
+if { running_in_docker || [[ "${SLIMMING,,}" == "true" ]]; } && [[ "${PATCH_LATER^^}" == "FALSE" ]]; then
     echo " - remove Docker specific stuff"
     rm -rf ${ORACLE_HOME}/apex                  # APEX
     rm -rf ${ORACLE_HOME}/ords                  # ORDS
@@ -277,8 +276,8 @@ else
     find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
 fi
 
-if [ "${SLIM^^}" == "TRUE" ] && [ "${PATCH_LATER^^}" == "FALSE" ]; then
-    echo " - \$SLIM set to TRUE, remove other stuff..."
+if [ "${SLIMMING^^}" == "TRUE" ] && [ "${PATCH_LATER^^}" == "FALSE" ]; then
+    echo " - \$SLIMMING set to TRUE, remove other stuff..."
     rm -rf ${ORACLE_HOME}/inventory             # remove inventory
     rm -rf ${ORACLE_HOME}/oui                   # remove oui
     rm -rf ${ORACLE_HOME}/OPatch                # remove OPatch
