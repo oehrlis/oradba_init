@@ -191,6 +191,8 @@ if running_in_docker || [[ "${SIM,,}" == "true" ]]; then
     rm -rf ${ORACLE_HOME}/suptools              # Support tools
     rm -rf ${ORACLE_HOME}/ucp                   # UCP connection pool
     rm -rf ${ORACLE_HOME}/lib/*.zip             # All installer files
+else
+    echo " - no slimming of the Oracle Home"
 fi
 
 if [ "${ORADBA_DEBUG^^}" == "TRUE" ]; then
