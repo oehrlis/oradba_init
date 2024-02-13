@@ -141,7 +141,7 @@ ${YUM} install -y make passwd elfutils-libelf-devel
 for ORA_PACKAGES in "${ORA_PACKAGES[@]}"; do
     if ${YUM} list available | grep -q "^$ORA_PACKAGES"; then
         echo "$ORA_PACKAGES is available for installation."
-        sudo ${YUM} install -y "$ORA_PACKAGES"
+        ${YUM} install -y "$ORA_PACKAGES"
     else
         echo "$ORA_PACKAGES is not available."
     fi
