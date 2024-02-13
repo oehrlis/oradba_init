@@ -157,8 +157,8 @@ function running_in_docker() {
 # Purpose....:  Function for checking whether the process is running in a 
 #               container. It return 0 if YES or 1 if NOT.
 # ---------------------------------------------------------------------------
-    if [ -e /proc/self/cgroup ]; then
-        awk -F/ '$2 == "docker"' /proc/self/cgroup | read
+    if [ -f /.dockerenv ]; then
+        return 0
     else
         return 1
     fi
