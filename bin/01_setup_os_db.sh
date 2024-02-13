@@ -41,6 +41,9 @@ export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 export YUM="yum"
 export DEFAULT_PASSWORD=${default_password:-"LAB01schulung"}
+
+# Define array of package oracle preinstall names
+ORA_PACKAGES=("oracle-database-preinstall-19c" "oracle-database-preinstall-21c" "oracle-database-preinstall-23c")
 # - EOF Environment Variables -----------------------------------------------
 
 # Make sure only root can run our script
@@ -125,25 +128,24 @@ if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
     ${YUM} upgrade -y
 fi
 
-# Disable the oci repo
-running_in_docker && yum-config-manager --disable ol7_ociyum_config
+if [ $(grep -ic "7\." /etc/redhat-release) -eq 1 ]; then 
+    # Disable the oci repo
+    running_in_docker && yum-config-manager --disable ol7_ociyum_config
+fi
 
 # install basic utilities
 ${YUM} install -y zip unzip gzip tar which pwgen
 ${YUM} install -y make passwd elfutils-libelf-devel
 # install the oracle preinstall stuff
-if [ $(grep -ic "7\." /etc/redhat-release) -eq 1 ]; then 
-    echo "INFO: Install Oracle Database PreInstall RPM 19c, 21c --------------------"
-    ${YUM} install -y oracle-database-preinstall-19c oracle-database-preinstall-21c
-elif [ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]; then
-    if [ $(uname -m) == "aarch64" ]; then
-        echo "INFO: Install Oracle Database PreInstall RPM 19c --------------------"
-        ${YUM} install -y oracle-database-preinstall-19c
+# Loop through the array of oracle preinstall packages
+for ORA_PACKAGES in "${ORA_PACKAGES[@]}"; do
+    if ${YUM} list available | grep -q "^$ORA_PACKAGES"; then
+        echo "$ORA_PACKAGES is available for installation."
+        sudo ${YUM} install -y "$ORA_PACKAGES"
     else
-        echo "INFO: Install Oracle Database PreInstall RPM 19c, 23c --------------------"
-        ${YUM} install -y oracle-database-preinstall-19c oracle-database-preinstall-23c
+        echo "$ORA_PACKAGES is not available."
     fi
-fi
+done
 
 # remove the groups created by oracle
 for i in dba oper backupdba dgdba kmdba racdba; do
