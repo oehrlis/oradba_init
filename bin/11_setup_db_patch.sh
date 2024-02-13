@@ -121,14 +121,15 @@ fi
 
 # - EOF Initialization ------------------------------------------------------
 echo " - database patch task overview ---------------------------------------"
-echo "DB_OPATCH_PKG         = ${DB_OPATCH_PKG}"
-echo "DB_PATCH_PKG          = ${DB_PATCH_PKG}"
-echo "DB_OJVM_PKG           = ${DB_OJVM_PKG}"
-echo "DB_JDKPATCH_PKG       = ${DB_JDKPATCH_PKG}"
-echo "DB_PERLPATCH_PKG      = ${DB_PERLPATCH_PKG}"
-echo "DB_ONEOFF_PKGS        = ${DB_ONEOFF_PKGS}"
-echo "ORACLE_MAJOR_RELEASE  = ${ORACLE_MAJOR_RELEASE}"
-echo "ORACLE_HOME           = ${ORACLE_HOME}"
+echo " - DB_OPATCH_PKG         = ${DB_OPATCH_PKG}"
+echo " - DB_PATCH_PKG          = ${DB_PATCH_PKG}"
+echo " - DB_OJVM_PKG           = ${DB_OJVM_PKG}"
+echo " - DB_JDKPATCH_PKG       = ${DB_JDKPATCH_PKG}"
+echo " - DB_PERLPATCH_PKG      = ${DB_PERLPATCH_PKG}"
+echo " - DB_ONEOFF_PKGS        = ${DB_ONEOFF_PKGS}"
+echo " - ORACLE_MAJOR_RELEASE  = ${ORACLE_MAJOR_RELEASE}"
+echo " - ORACLE_HOME           = ${ORACLE_HOME}"
+echo " - SLIMMING              = ${SLIMMING}"
 
 # - Main --------------------------------------------------------------------
 # - Install OPatch ----------------------------------------------------------
