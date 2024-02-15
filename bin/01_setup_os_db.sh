@@ -39,11 +39,8 @@ export OPT_DIR=${OPT_DIR:-"/opt"}
 export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
-export YUM="yum"
 export DEFAULT_PASSWORD=${default_password:-"LAB01schulung"}
 
-# Define array of package oracle preinstall names
-ORA_PACKAGES=("oracle-database-preinstall-19c" "oracle-database-preinstall-21c" "oracle-database-preinstall-23c")
 # - EOF Environment Variables -----------------------------------------------
 
 # Make sure only root can run our script
@@ -115,6 +112,15 @@ install --owner oracle --group oinstall --mode=775 --verbose --directory \
 # create a softlink for init script usually just used for docker init
 running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 
+# check if we do have yum installed. If not we assume that we do have to install it using microdnf
+if [ -z $(command -v yum) ]; then  
+    echo " - yum not found. try to install it using microdnf"
+    microdnf install -y yum
+    yum install -y yum-utils
+else 
+    echo " - yum is here"
+fi
+
 # limit installation language / locals to EN
 echo "%_install_langs   en" >>/etc/rpm/macros.lang
 
@@ -122,32 +128,31 @@ if [ $(grep -ic "7\." /etc/redhat-release) -eq 1 ]; then
     # Disable the oci repo
     running_in_docker && yum-config-manager --disable ol7_ociyum_config
 elif [ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]; then
-    running_in_docker && yum-config-manager --enable ol8_addons
+    yum install -y oracle-epel-release-el8
+    yum-config-manager --enable ol8_addons
 fi
 
+# set nodocs in docker
+running_in_docker &&  echo "tsflags=nodocs" >>/etc/yum.conf
+
 # update and upgrade the installation
-${YUM} update -y
-${YUM} upgrade -y
+yum update -y
+yum upgrade -y
 
 # check for legacy yum upgrade
 if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
     echo " - found /usr/bin/ol_yum_configure.sh "
     /usr/bin/ol_yum_configure.sh
-    ${YUM} upgrade -y
+    yum upgrade -y
 fi
 
 # install basic utilities
-${YUM} install -y zip unzip gzip tar which pwgen
-${YUM} install -y make passwd elfutils-libelf-devel
+yum install -y zip unzip gzip tar which pwgen
+yum install -y make passwd elfutils-libelf-devel
 # install the oracle preinstall stuff
-# Loop through the array of oracle preinstall packages
-for ORA_PACKAGES in "${ORA_PACKAGES[@]}"; do
-    if ${YUM} list available | grep -q "^$ORA_PACKAGES"; then
-        echo "$ORA_PACKAGES is available for installation."
-        ${YUM} install -y "$ORA_PACKAGES"
-    else
-        echo "$ORA_PACKAGES is not available."
-    fi
+for i in $(yum list available oracle-database-preinstall*|grep -i $(uname -p)|cut -d' ' -f1); do
+    echo " - install $i";
+    yum install -y $i;
 done
 
 # remove the groups created by oracle
@@ -158,7 +163,7 @@ done
 # clean up yum repository
 if [ "${CLEANUP^^}" == "TRUE" ]; then
     echo " - clean up yum cache"
-    ${YUM} clean all
+    yum clean all
     rm -rf /var/cache/yum
 else
     echo " - yum cache is not cleaned up"
