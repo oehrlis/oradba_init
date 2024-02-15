@@ -116,6 +116,7 @@ running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 if [ -z $(command -v yum) ]; then  
     echo " - yum not found. try to install it using microdnf"
     microdnf install -y yum
+    microdnf install -y dnf
     yum install -y yum-utils
 else 
     echo " - yum is here"
