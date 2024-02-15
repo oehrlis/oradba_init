@@ -118,7 +118,15 @@ running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 # limit installation language / locals to EN
 echo "%_install_langs   en" >>/etc/rpm/macros.lang
 
-# upgrade the installation
+if [ $(grep -ic "7\." /etc/redhat-release) -eq 1 ]; then 
+    # Disable the oci repo
+    running_in_docker && yum-config-manager --disable ol7_ociyum_config
+elif [ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]; then
+    running_in_docker && yum-config-manager --enable ol8_addons
+fi
+
+# update and upgrade the installation
+${YUM} update -y
 ${YUM} upgrade -y
 
 # check for legacy yum upgrade
@@ -126,11 +134,6 @@ if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
     echo " - found /usr/bin/ol_yum_configure.sh "
     /usr/bin/ol_yum_configure.sh
     ${YUM} upgrade -y
-fi
-
-if [ $(grep -ic "7\." /etc/redhat-release) -eq 1 ]; then 
-    # Disable the oci repo
-    running_in_docker && yum-config-manager --disable ol7_ociyum_config
 fi
 
 # install basic utilities
