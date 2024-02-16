@@ -130,6 +130,9 @@ if [ $(grep -ic "7\." /etc/redhat-release) -eq 1 ]; then
 elif [ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]; then
     yum install -y oracle-epel-release-el8
     yum-config-manager --enable ol8_addons
+elif [ $(grep -ic "9\." /etc/redhat-release) -eq 1 ]; then
+    yum install -y oracle-epel-release-el9
+    yum-config-manager --enable ol9_addons
 fi
 
 # set nodocs in docker
