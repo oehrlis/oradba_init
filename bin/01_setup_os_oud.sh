@@ -101,6 +101,15 @@ install --owner oracle --group oinstall --mode=775 --verbose --directory \
 # create a softlink for init script usually just used for docker init
 running_in_docker && ln -s ${ORACLE_DATA}/scripts /docker-entrypoint-initdb.d
 
+# check if we do have yum installed. If not we assume that we do have to install it using microdnf
+if [ -z $(command -v yum) ]; then  
+    echo " - yum not found. try to install it using microdnf"
+    microdnf install -y yum
+    yum install -y yum-utils
+else 
+    echo " - yum is here"
+fi
+
 # limit installation language / locals to EN
 echo "%_install_langs   en" >>/etc/rpm/macros.lang
 #YUM="yum --disablerepo=ol7_developer"
