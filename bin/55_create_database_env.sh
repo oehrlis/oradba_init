@@ -54,7 +54,7 @@ exec &> >(tee -a "$LOGFILE")                # Open standard out at `$LOG_FILE` f
 exec 2>&1  
 
 # - Main ----------------------------------------------------------------------
-echo "INFO: Start to create DB environment for SID on $(hostname) at $(date)"
+echo "INFO: Start to create DB environment for SID at $(date)"
 
 # Check if parameter is not empty
 if [ -z "${LOCAL_ORACLE_SID}" ] ; then
@@ -126,5 +126,5 @@ else
     echo "INFO: TNS name entry ${ORACLE_SID} does exists."
 fi
 
-echo "INFO: Finish creating the DB environment on $(hostname) at $(date)"
+echo "INFO: Finish creating the DB environment ${LOCAL_ORACLE_SID} at $(date)"
 # --- EOF ---------------------------------------------------------------------
