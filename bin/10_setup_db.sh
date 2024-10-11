@@ -97,6 +97,8 @@ fi
 
 # show what we will create later on...
 echo " - Prepare Oracle DB binaries installation ----------------------------"
+echo " - OS Release            = $(cat /etc/redhat-release)"
+echo " - System Info           = $(uname -a)"
 echo " - ORACLE_ROOT           = ${ORACLE_ROOT}"
 echo " - ORACLE_DATA           = ${ORACLE_DATA}"
 echo " - ORACLE_ARCH           = ${ORACLE_ARCH}"
@@ -127,6 +129,8 @@ if [ $AVAILABLE_SPACE_GB -lt $REQUIRED_SPACE_GB ]; then
     exit 1;
 fi;
 
+echo "INFO: $(cat /etc/redhat-release)"
+echo "INFO: $(uname -a)"
 if [[ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]] && [[ ${ORACLE_MAJOR_RELEASE} -eq 190 ]]; then
     echo "INFO: Oracle 19c on REL8 set CV_ASSUME_DISTID"
     export CV_ASSUME_DISTID=OEL7.9
