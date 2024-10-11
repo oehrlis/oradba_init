@@ -133,10 +133,12 @@ echo "INFO: $(cat /etc/redhat-release)"
 echo "INFO: $(uname -a)"
 if [[ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]] && [[ ${ORACLE_MAJOR_RELEASE} -eq 190 ]]; then
     echo "INFO: Oracle 19c on REL8 set CV_ASSUME_DISTID"
-    export CV_ASSUME_DISTID=OEL7.9
+    export CV_ASSUME_DISTID=OEL7.6
 else
     echo "INFO: Oracle 19c on REL7"
 fi
+
+
 # - EOF Initialization ------------------------------------------------------
 
 # - Main --------------------------------------------------------------------
@@ -198,6 +200,8 @@ if [ -n "${DB_BASE_PKG}" ]; then
             PREREQ="-ignoreSysPrereqs -ignoreprereq"
         fi
         
+        echo "CV_ASSUME_DISTID=OEL7.6" >> $ORACLE_HOME/cv/admin/cvu_config
+        echo "INFO: CV_ASSUME_DISTID => $CV_ASSUME_DISTID"
         ${SETUP_PATH}/runInstaller -silent -force \
             -waitforcompletion \
             -responsefile /tmp/db_install.rsp \
