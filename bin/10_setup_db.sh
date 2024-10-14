@@ -199,9 +199,7 @@ if [ -n "${DB_BASE_PKG}" ]; then
         if [ ${ORACLE_MAJOR_RELEASE} -le 122 ]; then
             PREREQ="-ignoreSysPrereqs -ignoreprereq"
         fi
-        
-        echo "CV_ASSUME_DISTID=OEL7.6" >> $ORACLE_HOME/cv/admin/cvu_config
-        echo "INFO: CV_ASSUME_DISTID => $CV_ASSUME_DISTID"
+
         ${SETUP_PATH}/runInstaller -silent -force \
             -waitforcompletion \
             -responsefile /tmp/db_install.rsp \
