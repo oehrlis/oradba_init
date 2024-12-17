@@ -216,6 +216,16 @@ if [ -n "${DB_BASE_PKG}" ]; then
     fi
 fi
 
+# - Relink binaries to enable unified audit ------------------------------------
+if [ ${ORACLE_MAJOR_RELEASE} -ge 122 ]; then
+    echo " - Relink binaries to enable unified audit ------------------------------------"
+    echo "Relink Oracle Home $ORACLE_HOME to enable unified audit:"
+    cd $ORACLE_HOME/rdbms/lib
+    make -f ins_rdbms.mk uniaud_on ioracle
+else
+    echo "Relink of Oracle Home for unified audit"
+fi
+
 # - Install database examples -----------------------------------------------
 echo " - Install Oracle DB examples -----------------------------------------"
 if [ -n "${DB_EXAMPLE_PKG}" ]; then
