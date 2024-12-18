@@ -213,6 +213,7 @@ fi
 if running_in_docker; then
     if [ -f $HOME/.bash_profile ]; then
         sed -i.bck -n '/BE_INITIALSID/{N;s/.*//;x;d;};x;p;${x;p;}' $HOME/.bash_profile
+        sed -i '/if \[ "`id -un`" = "grid" \]; then/,/export BE_INITIALSID/d' "$HOME/.bash_profile"
     fi
 fi
 # --- EOF --------------------------------------------------------------------

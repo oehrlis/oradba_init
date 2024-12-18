@@ -99,6 +99,7 @@ mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/adump
 mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/pfile
 mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/etc
 mkdir -pv $BE_ORA_ADMIN/${ORACLE_SID}/log
+mkdir -pv ${ORACLE_BASE}/audit
 
 # Create data file folders
 for i in $(ls -d /u0?/oradata); do

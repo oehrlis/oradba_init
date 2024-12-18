@@ -91,6 +91,11 @@ function move_files {
         mkdir -v -p ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile
     fi
 
+    # create audit directory on volume
+    if [ ! -d ${ORACLE_DATA}/audit ]; then
+        mkdir -v -p ${ORACLE_DATA}/audit
+    fi
+
     # move init.ora, spfile and password file to volume
     for i in spfile${ORACLE_SID}.ora init${ORACLE_SID}.ora orapw${ORACLE_SID}; do
         if [ -f ${ORACLE_HOME}/dbs/${i} ]  && [ ! -f ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i} ]; then

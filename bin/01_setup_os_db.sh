@@ -188,6 +188,7 @@ done
 
 # create a bunch of other directories
 mkdir -vp ${ORACLE_BASE}/archive
+mkdir -vp ${ORACLE_BASE}/audit
 mkdir -vp ${ORACLE_BASE}/etc
 mkdir -vp ${ORACLE_BASE}/tmp
 mkdir -vp ${ORACLE_DATA}/scripts
