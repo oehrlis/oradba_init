@@ -62,7 +62,7 @@ function move_directories {
 
     # remove homes from the list
     # for i in dbs audit homes admin diag etc network; do
-    for i in dbs audit admin diag etc network; do
+    for i in dbs audit admin diag etc network cfgtoollogs archive; do
         # check if directory is a softlink if not move it and create one
         if [ ! -L ${ORACLE_BASE}/${i} ] && [ -d ${ORACLE_BASE}/${i} ] && [ ! -d ${ORACLE_DATA}/${i} ]; then
             echo " - move ${ORACLE_BASE}/${i} to ${ORACLE_BASE}/${i}"
@@ -94,6 +94,11 @@ function move_files {
     # create audit directory on volume
     if [ ! -d ${ORACLE_DATA}/audit ]; then
         mkdir -v -p ${ORACLE_DATA}/audit
+    fi
+
+    # create cfgtoollogs directory on volume
+    if [ ! -d ${ORACLE_DATA}/cfgtoollogs ]; then
+        mkdir -v -p ${ORACLE_DATA}/cfgtoollogs
     fi
     
     # move init.ora, spfile and password file to volume
