@@ -95,7 +95,7 @@ function move_files {
     if [ ! -d ${ORACLE_DATA}/audit ]; then
         mkdir -v -p ${ORACLE_DATA}/audit
     fi
-
+    
     # move init.ora, spfile and password file to volume
     for i in spfile${ORACLE_SID}.ora init${ORACLE_SID}.ora orapw${ORACLE_SID}; do
         if [ -f ${ORACLE_HOME}/dbs/${i} ]  && [ ! -f ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i} ]; then
@@ -275,6 +275,7 @@ if [ -d ${ORACLE_DATA}/oradata/${ORACLE_SID} ]; then
     # Make sure audit file destination exists
     if [ ! -d ${ORACLE_BASE}/admin/${ORACLE_SID}/adump ]; then
         mkdir -p ${ORACLE_BASE}/admin/${ORACLE_SID}/adump
+        mkdir -p ${ORACLE_BASE}/audit/${ORACLE_SID}
     fi
    
     # Start database 
