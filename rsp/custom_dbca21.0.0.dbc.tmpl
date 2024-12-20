@@ -22,14 +22,14 @@
          <initParam name="db_unique_name" value="###ORACLE_DB_UNIQUE_NAME###"/>
          <initParam name="db_domain" value="###DEFAULT_DOMAIN###"/>
          <initParam name="dispatchers" value="(PROTOCOL=TCP) (SERVICE={SID}XDB)"/>
-         <initParam name="audit_file_dest" value="{ORACLE_BASE}/admin/{DB_UNIQUE_NAME}/adump"/>
+         <initParam name="audit_file_dest" value="{ORACLE_BASE}/admin/###ORACLE_DB_UNIQUE_NAME###/adump"/>
          <initParam name="compatible" value="21.0.0"/>
          <initParam name="remote_login_passwordfile" value="EXCLUSIVE"/>
          <initParam name="processes" value="300"/>
          <initParam name="undo_tablespace" value="UNDOTBS1"/>
-         <initParam name="control_files" value="(&quot;###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf&quot;, &quot;###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf&quot;)"/>
+         <initParam name="control_files" value="(&quot;###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/control01###ORACLE_DB_UNIQUE_NAME###.dbf&quot;, &quot;###ORACLE_ARCH###/oradata/###ORACLE_DB_UNIQUE_NAME###/control02###ORACLE_DB_UNIQUE_NAME###.dbf&quot;)"/>
          <initParam name="diagnostic_dest" value="{ORACLE_BASE}"/>
-         <initParam name="db_recovery_file_dest" value="###ORACLE_ARCH###/fast_recovery_area/{DB_UNIQUE_NAME}"/>
+         <initParam name="db_recovery_file_dest" value="###ORACLE_ARCH###/fast_recovery_area/###ORACLE_DB_UNIQUE_NAME###"/>
          <initParam name="audit_trail" value="db, extended"/>
          <initParam name="log_archive_format" value="%t_%s_%r.dbf"/>
          <initParam name="memory_target" value="1024" unit="MB"/>
@@ -48,7 +48,7 @@
          <characterSet>###ORACLE_CHARACTERSET###</characterSet>
          <nationalCharacterSet>AL16UTF16</nationalCharacterSet>
          <archiveLogMode>true</archiveLogMode>
-         <initParamFileName>{ORACLE_BASE}/admin/{DB_UNIQUE_NAME}/pfile/init.ora</initParamFileName>
+         <initParamFileName>{ORACLE_BASE}/admin/###ORACLE_DB_UNIQUE_NAME###/pfile/init.ora</initParamFileName>
       </MiscParams>
       <SPfile useSPFile="true">{ORACLE_HOME}/dbs/spfile{SID}.ora</SPfile>
    </InitParamAttributes>
@@ -59,10 +59,10 @@
          <maxLogMembers>3</maxLogMembers>
          <maxLogHistory>1</maxLogHistory>
          <maxInstances>8</maxInstances>
-         <image name="control01{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/"/>
-         <image name="control02{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
+         <image name="control01###ORACLE_DB_UNIQUE_NAME###.dbf" filepath="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/"/>
+         <image name="control02###ORACLE_DB_UNIQUE_NAME###.dbf" filepath="###ORACLE_ARCH###/oradata/###ORACLE_DB_UNIQUE_NAME###/"/>
       </ControlfileAttributes>
-      <DatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/sysaux01{DB_UNIQUE_NAME}.dbf" con_id="1">
+      <DatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/sysaux01###ORACLE_DB_UNIQUE_NAME###.dbf" con_id="1">
          <tablespace>SYSAUX</tablespace>
          <temporary>false</temporary>
          <online>true</online>
@@ -73,7 +73,7 @@
          <increment unit="KB">10240</increment>
          <maxSize unit="MB">-1</maxSize>
       </DatafileAttributes>
-      <DatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/system01{DB_UNIQUE_NAME}.dbf" con_id="1">
+      <DatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/system01###ORACLE_DB_UNIQUE_NAME###.dbf" con_id="1">
          <tablespace>SYSTEM</tablespace>
          <temporary>false</temporary>
          <online>true</online>
@@ -84,7 +84,7 @@
          <increment unit="KB">10240</increment>
          <maxSize unit="MB">-1</maxSize>
       </DatafileAttributes>
-      <DatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/temp01{DB_UNIQUE_NAME}.dbf" con_id="1">
+      <DatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/temp01###ORACLE_DB_UNIQUE_NAME###.dbf" con_id="1">
          <tablespace>TEMP</tablespace>
          <temporary>false</temporary>
          <online>true</online>
@@ -95,7 +95,7 @@
          <increment unit="KB">640</increment>
          <maxSize unit="MB">-1</maxSize>
       </DatafileAttributes>
-      <DatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/undotbs01{DB_UNIQUE_NAME}.dbf" con_id="1">
+      <DatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/undotbs01###ORACLE_DB_UNIQUE_NAME###.dbf" con_id="1">
          <tablespace>UNDOTBS1</tablespace>
          <temporary>false</temporary>
          <online>true</online>
@@ -106,7 +106,7 @@
          <increment unit="KB">5120</increment>
          <maxSize unit="MB">-1</maxSize>
       </DatafileAttributes>
-      <DatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/users01{DB_UNIQUE_NAME}.dbf" con_id="1">
+      <DatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/users01###ORACLE_DB_UNIQUE_NAME###.dbf" con_id="1">
          <tablespace>USERS</tablespace>
          <temporary>false</temporary>
          <online>true</online>
@@ -137,7 +137,7 @@
          <autoSegmentMgmt>true</autoSegmentMgmt>
          <bigfile>true</bigfile>
          <datafilesList>
-            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/sysaux01{DB_UNIQUE_NAME}.dbf"/>
+            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/sysaux01###ORACLE_DB_UNIQUE_NAME###.dbf"/>
          </datafilesList>
       </TablespaceAttributes>
       <TablespaceAttributes id="SYSTEM" con_id="1">
@@ -160,7 +160,7 @@
          <autoSegmentMgmt>true</autoSegmentMgmt>
          <bigfile>true</bigfile>
          <datafilesList>
-            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/system01{DB_UNIQUE_NAME}.dbf"/>
+            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/system01###ORACLE_DB_UNIQUE_NAME###.dbf"/>
          </datafilesList>
       </TablespaceAttributes>
       <TablespaceAttributes id="TEMP" con_id="1">
@@ -183,7 +183,7 @@
          <autoSegmentMgmt>true</autoSegmentMgmt>
          <bigfile>true</bigfile>
          <datafilesList>
-            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/temp01{DB_UNIQUE_NAME}.dbf"/>
+            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/temp01###ORACLE_DB_UNIQUE_NAME###.dbf"/>
          </datafilesList>
       </TablespaceAttributes>
       <TablespaceAttributes id="UNDOTBS1" con_id="1">
@@ -206,7 +206,7 @@
          <autoSegmentMgmt>true</autoSegmentMgmt>
          <bigfile>true</bigfile>
          <datafilesList>
-            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/undotbs01{DB_UNIQUE_NAME}.dbf"/>
+            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/undotbs01###ORACLE_DB_UNIQUE_NAME###.dbf"/>
          </datafilesList>
       </TablespaceAttributes>
       <TablespaceAttributes id="USERS" con_id="1">
@@ -229,29 +229,29 @@
          <autoSegmentMgmt>true</autoSegmentMgmt>
          <bigfile>true</bigfile>
          <datafilesList>
-            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/users01{DB_UNIQUE_NAME}.dbf"/>
+            <TablespaceDatafileAttributes id="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/users01###ORACLE_DB_UNIQUE_NAME###.dbf"/>
          </datafilesList>
       </TablespaceAttributes>
             <RedoLogGroupAttributes id="1">
          <reuse>false</reuse>
          <fileSize unit="KB">204800</fileSize>
          <Thread>1</Thread>
-         <member ordinal="0" memberName="redog1m1{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/"/>
-         <member ordinal="0" memberName="redog1m2{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
+         <member ordinal="0" memberName="redog1m1###ORACLE_DB_UNIQUE_NAME###.dbf" filepath="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/"/>
+         <member ordinal="0" memberName="redog1m2###ORACLE_DB_UNIQUE_NAME###.dbf" filepath="###ORACLE_ARCH###/oradata/###ORACLE_DB_UNIQUE_NAME###/"/>
       </RedoLogGroupAttributes>
       <RedoLogGroupAttributes id="2">
          <reuse>false</reuse>
          <fileSize unit="KB">204800</fileSize>
          <Thread>1</Thread>
-         <member ordinal="0" memberName="redog2m1{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/"/>
-         <member ordinal="0" memberName="redog2m2{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
+         <member ordinal="0" memberName="redog2m1###ORACLE_DB_UNIQUE_NAME###.dbf" filepath="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/"/>
+         <member ordinal="0" memberName="redog2m2###ORACLE_DB_UNIQUE_NAME###.dbf" filepath="###ORACLE_ARCH###/oradata/###ORACLE_DB_UNIQUE_NAME###/"/>
       </RedoLogGroupAttributes>
       <RedoLogGroupAttributes id="3">
          <reuse>false</reuse>
          <fileSize unit="KB">204800</fileSize>
          <Thread>1</Thread>
-         <member ordinal="0" memberName="redog3m1{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/"/>
-         <member ordinal="0" memberName="redog3m2{DB_UNIQUE_NAME}.dbf" filepath="###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/"/>
+         <member ordinal="0" memberName="redog3m1###ORACLE_DB_UNIQUE_NAME###.dbf" filepath="###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/"/>
+         <member ordinal="0" memberName="redog3m2###ORACLE_DB_UNIQUE_NAME###.dbf" filepath="###ORACLE_ARCH###/oradata/###ORACLE_DB_UNIQUE_NAME###/"/>
       </RedoLogGroupAttributes>
    </StorageAttributes>
 </DatabaseTemplate>

@@ -176,7 +176,7 @@ NATIONALCHARACTERSET= AL16UTF16
 # Default value : None
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-VARIABLES = ORACLE_BASE_HOME=###ORACLE_HOME###,DB_UNIQUE_NAME=###ORACLE_SID###,ORACLE_BASE=###ORACLE_BASE###,DB_NAME=###ORACLE_SID###,ORACLE_HOME=###ORACLE_HOME###,SID=###ORACLE_SID###
+VARIABLES = ORACLE_BASE_HOME=###ORACLE_HOME###,DB_UNIQUE_NAME=###ORACLE_DB_UNIQUE_NAME###,ORACLE_BASE=###ORACLE_BASE###,DB_NAME=###ORACLE_SID###,ORACLE_HOME=###ORACLE_HOME###,SID=###ORACLE_SID###
 
 #-----------------------------------------------------------------------------
 # Name          : INITPARAMS
@@ -185,7 +185,7 @@ VARIABLES = ORACLE_BASE_HOME=###ORACLE_HOME###,DB_UNIQUE_NAME=###ORACLE_SID###,O
 # Default value : None
 # Mandatory     : NO
 #-----------------------------------------------------------------------------
-#INITPARAMS=control_files=("###ORACLE_DATA###/oradata/{DB_UNIQUE_NAME}/control01{DB_UNIQUE_NAME}.dbf", "###ORACLE_ARCH###/oradata/{DB_UNIQUE_NAME}/control02{DB_UNIQUE_NAME}.dbf")
+#INITPARAMS=control_files=("###ORACLE_DATA###/oradata/###ORACLE_DB_UNIQUE_NAME###/control01###ORACLE_DB_UNIQUE_NAME###.dbf", "###ORACLE_ARCH###/oradata/###ORACLE_DB_UNIQUE_NAME###/control02###ORACLE_DB_UNIQUE_NAME###.dbf")
 
 #-----------------------------------------------------------------------------
 # Name          : SAMPLESCHEMA
