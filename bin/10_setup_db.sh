@@ -132,8 +132,11 @@ fi;
 echo "INFO: $(cat /etc/redhat-release)"
 echo "INFO: $(uname -a)"
 if [[ $(grep -ic "8\." /etc/redhat-release) -eq 1 ]] && [[ ${ORACLE_MAJOR_RELEASE} -eq 190 ]]; then
-    echo "INFO: Oracle 19c on REL8 set CV_ASSUME_DISTID"
     export CV_ASSUME_DISTID=OEL7.6
+    echo "INFO: Oracle 19c on OEL8/REL8 set CV_ASSUME_DISTID=${CV_ASSUME_DISTID}"
+elif [[ $(grep -ic "9\." /etc/redhat-release) -eq 1 ]] && [[ ${ORACLE_MAJOR_RELEASE} -eq 190 ]]; then
+    export CV_ASSUME_DISTID=OL8
+    echo "INFO: Oracle 19c on OEL9/REL9 set CV_ASSUME_DISTID=${CV_ASSUME_DISTID}"
 else
     echo "INFO: Oracle 19c on REL7"
 fi
