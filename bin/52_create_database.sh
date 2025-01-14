@@ -152,6 +152,8 @@ if [ -z "$DB_MASTER" ]; then
     # Remove second control file, fix local_listener, make PDB auto open
     $ORACLE_HOME/bin/sqlplus / as sysdba << EOF
         ALTER SYSTEM SET local_listener='';
+        ALTER SYSTEM SET db_unique_name=$ORACLE_DB_UNIQUE_NAME scope=spfile;
+        STARTUP FORCE;
         exit;
 EOF
 
