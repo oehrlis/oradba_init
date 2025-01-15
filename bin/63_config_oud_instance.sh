@@ -21,17 +21,17 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Script Variables --------------------------------------------------------
+# - Script Variables -----------------------------------------------------------
 # - Set script names for miscellaneous start, check and config scripts.
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
@@ -39,7 +39,7 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-# - EOF Script Variables ----------------------------------------------------
+# - EOF Script Variables -------------------------------------------------------
 
 # Default name for OUD instance
 export OUD_INSTANCE=${OUD_INSTANCE:-oud_docker}
@@ -59,7 +59,7 @@ export PWD_FILE=${PWD_FILE:-${OUD_INSTANCE_ADMIN}/etc/${OUD_INSTANCE}_pwd.txt}
 
 # default folder for OUD instance init scripts
 export INSTANCE_INIT=${INSTANCE_INIT:-$ORACLE_DATA/config}
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
 # use parameter 1 as script root
 SCRIPTS_ROOT="$1";
@@ -103,4 +103,4 @@ if [ -d "${SCRIPTS_ROOT}" ] && [ -n "$(ls -A ${SCRIPTS_ROOT})" ]; then
 else
     echo "--- no user defined scripts to execute ---------------------------------"
 fi
-# --- EOF -------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

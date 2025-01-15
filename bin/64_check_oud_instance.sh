@@ -14,17 +14,17 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Script Variables --------------------------------------------------------
+# - Script Variables -----------------------------------------------------------
 # - Set script names for miscellaneous start, check and config scripts.
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
@@ -32,15 +32,15 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
-# - EOF Script Variables ----------------------------------------------------
+# - EOF Script Variables -------------------------------------------------------
 
-# - Customization -----------------------------------------------------------
+# - Customization --------------------------------------------------------------
 export OPENDS_JAVA_ARGS=-Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true
-# - End of Customization ----------------------------------------------------
+# - End of Customization -------------------------------------------------------
  
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # - Set default values for environment variables if not yet defined. 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 export OUD_INSTANCE=${OUD_INSTANCE:-oud_docker}
 
@@ -56,7 +56,7 @@ export ADMIN_USER=${ADMIN_USER:-'cn=Directory Manager'} # Default directory admi
 export PWD_FILE=${PWD_FILE:-${OUD_INSTANCE_ADMIN}/etc/${OUD_INSTANCE}_pwd.txt}
 export TMP_DIRECTORY="/tmp"
 export TMP_FILE="${TMP_DIRECTORY}/$(basename $0).$$"
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
 # check if password file is available
 if [ ! -e ${PWD_FILE} ]; then
@@ -108,4 +108,4 @@ fi
 
 # if we came that far just exit with 0
 exit 0
-# --- EOF -------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

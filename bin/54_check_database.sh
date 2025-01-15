@@ -13,24 +13,24 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # - Set default values for environment variables if not yet defined. 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 export ORACLE_SID=$(grep $ORACLE_HOME /etc/oratab | grep -iv '^#' |cut -d: -f1|head -1)
 export POSITIVE_RETURN="READ WRITE"
 export STANDBY_RETURN="MOUNTED READ ONLY"
 export ORAENV_ASK=NO
 . oraenv > /dev/null 2>&1
-# - EOF Environment Variables -------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
 
-# - Check Oracle DB status --------------------------------------------------
+# - Check Oracle DB status -----------------------------------------------------
 status_and_role=`$ORACLE_HOME/bin/sqlplus -s / as sysdba << EOF
    set heading off;
    set pagesize 0;
@@ -61,4 +61,4 @@ else
    echo "SQL*Plus execution failed"
    exit 2
 fi
-# --- EOF -------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

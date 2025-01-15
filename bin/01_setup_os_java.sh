@@ -12,11 +12,11 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Environment Variables ---------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -37,9 +37,9 @@ export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallback
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
-# - Install database binaries -----------------------------------------------
+# - Install database binaries --------------------------------------------------
 echo " - Oracle Java  -----------------------------------------"
 if [ -n "${JAVA_PKG}" ]; then
     if get_software "${JAVA_PKG}"; then          # Check and get binaries
@@ -75,4 +75,4 @@ if [ ! -z "$JAVA_BIN" ];then
 else
     echo " - java security not configured."
 fi
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

@@ -13,18 +13,18 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...: 
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 LOCAL_ORACLE_SID=${1:-"SDBM"}                                           # Default name for Oracle database
 LOCAL_ORACLE_PDB=${2:-"PDB1"}                                           # Check whether ORACLE_PDB is passed on
 LOCAL_CONTAINER=${3:-"false"}                                           # Check whether CONTAINER is passed on
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Default Values ------------------------------------------------------------
+# - Default Values -------------------------------------------------------------
 # source generic environment variables and functions
 ORADBA_INIT="$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 if [ -f "${ORADBA_INIT}" ]; then
@@ -45,9 +45,9 @@ export LOG_BASE=${LOG_BASE:-"/tmp"}                          # Use script direct
 TIMESTAMP=$(date "+%Y.%m.%d_%H%M%S")
 readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_$TIMESTAMP.log"
 
-# - EOF Default Values --------------------------------------------------------
+# - EOF Default Values ---------------------------------------------------------
 
-# - EOF Environment Variables -------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
 # generate password if it is still empty
 if [ -z ${ORACLE_PWD} ]; then
@@ -189,4 +189,4 @@ else
 fi
 
 
-# --- EOF -------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

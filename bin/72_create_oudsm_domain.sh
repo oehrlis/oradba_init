@@ -12,18 +12,18 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
 # TODO.......:
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Script Variables --------------------------------------------------------
+# - Script Variables -----------------------------------------------------------
 # - Set script names for miscellaneous start, check and config scripts.
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
@@ -32,11 +32,11 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export CREATE_SCRIPT_PYTHON=${CREATE_SCRIPT_PYTHON:-"72_create_oudsm_domain.py"}
-# - EOF Script Variables ----------------------------------------------------
+# - EOF Script Variables -------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # - Set default values for environment variables if not yet defined. 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 export DOMAIN_NAME=${DOMAIN_NAME:-oudsm_domain}
 
@@ -54,11 +54,11 @@ export PORT_SSL=${PORT_SSL:-7002}                       # Default HTTPS port
 export ADMIN_USER=${ADMIN_USER:-'weblogic'} # Default directory admin user
 export ADMIN_PASSWORD=${ADMIN_PASSWORD:-""}             # Default directory admin password
 export PWD_FILE=${PWD_FILE:-${OUD_INSTANCE_ADMIN}/etc/${DOMAIN_NAME}_pwd.txt}
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
 function gen_password {
 # Purpose....: generate a password string
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
     Length=${1:-12}
 
     # make sure, that the password length is not shorter than 4 characters
@@ -144,4 +144,4 @@ else
     echo "--- ERROR creating WebLogic Server Domain (${DOMAIN_NAME}) --------------------"
 fi
 ${DOMAIN_HOME}/bin/setDomainEnv.sh
-# --- EOF -------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

@@ -12,12 +12,12 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -42,7 +42,7 @@ export YUM="yum"
 export DEFAULT_PASSWORD=${default_password:-"LAB01schulung"}
 
 export DEFAULT_DOCKER_PARTITION='/dev/sdb1'     # default docker partition
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
 # Make sure only root can run our script
 if [ $EUID -ne 0 ]; then
@@ -78,4 +78,4 @@ chmod a+x /etc/docker
 
 echo " - Docker engine is ready to use"
 echo
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

@@ -14,20 +14,20 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
 # TODO.......:
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Environment variables required for this build (do NOT change)
-# -------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # - Set default values for environment variables if not yet defined. 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 export DOMAIN_NAME=${DOMAIN_NAME:-oudsm_domain}
 
@@ -39,11 +39,11 @@ export OUDSM_DOMAIN_BASE=${OUDSM_DOMAIN_BASE:-"$ORACLE_DATA/domains"}
 
 # OUDSM domain home directory
 export DOMAIN_HOME=${OUDSM_DOMAIN_BASE}/${DOMAIN_NAME}
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
-# - Script Variables --------------------------------------------------------
+# - Script Variables -----------------------------------------------------------
 # - Set script names for miscellaneous start, check and config scripts.
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
@@ -52,11 +52,11 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export CREATE_SCRIPT=${CREATE_SCRIPT:-"72_create_oudsm_domain.sh"}
-# - EOF Script Variables ----------------------------------------------------
+# - EOF Script Variables -------------------------------------------------------
 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # SIGTERM handler
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 function int_wls() {
     echo "---------------------------------------------------------------"
     echo "SIGINT received, shutting down the WLS OUDSM Domain!"
@@ -64,9 +64,9 @@ function int_wls() {
     ${DOMAIN_HOME}/bin/stopWebLogic.sh
 }
 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # SIGTERM handler
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 function term_wls() {
     echo "---------------------------------------------------------------"
     echo "SIGTERM received, shutting down the WLS OUDSM Domain!"
@@ -74,9 +74,9 @@ function term_wls() {
     ${DOMAIN_HOME}/bin/stopWebLogic.sh
 }
 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # SIGKILL handler
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 function kill_wls() {
     echo "---------------------------------------------------------------"
     echo "SIGKILL received, shutting down the WLS OUDSM Domain!"
@@ -131,4 +131,4 @@ tail -f ${DOMAIN_HOME}/servers/AdminServer/logs/AdminServer.log &
 
 childPID=$!
 wait $childPID
-# --- EOF -------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

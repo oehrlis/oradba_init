@@ -12,11 +12,11 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Environment Variables ---------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -36,7 +36,7 @@ export OPT_DIR=${OPT_DIR:-"/opt"}
 export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
 # Make sure only root can run our script
 if [ $EUID -ne 0 ]; then
@@ -147,4 +147,4 @@ mkdir -p ${ORADBA_RSP}
 
 # change owner of ORACLE_BASE and ORACLE_INVENTORY
 chown -R oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

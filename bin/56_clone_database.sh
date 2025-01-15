@@ -1,8 +1,7 @@
 #!/bin/bash
-# -----------------------------------------------------------------------------
-# Trivadis - Part of Accenture, Platform Factory - Data Platforms
-# Saegereistrasse 29, 8152 Glattbrugg, Switzerland
-# -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# OraDBA - Oracle Database Infrastructure and Security, 5630 Muri, Switzerland
+# ------------------------------------------------------------------------------
 # Name.......: 56_clone_database.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@oradba.ch
 # Editor.....: Stefan Oehrli
@@ -13,15 +12,15 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# -----------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 LOCAL_ORACLE_SID=${1:-"SDBM"}               # Default name for Oracle database
 LOCAL_DB_MASTER=${2:-"SDBM_master.tgz"}     # DB Master file
 LOCAL_DB_MASTER_NAME=${3:-$(basename $LOCAL_DB_MASTER .tgz|cut -d_ -f 2)}
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Default Values ------------------------------------------------------------
+# - Default Values -------------------------------------------------------------
 # source generic environment variables and functions
 ORADBA_INIT="$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -44,9 +43,9 @@ export LOG_BASE=${LOG_BASE:-"/tmp"}                          # Use script direct
 TIMESTAMP=$(date "+%Y.%m.%d_%H%M%S")
 readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_${LOCAL_ORACLE_SID}_$TIMESTAMP.log"
 
-# - EOF Default Values --------------------------------------------------------
+# - EOF Default Values ---------------------------------------------------------
 
-# - Initialization ------------------------------------------------------------
+# - Initialization -------------------------------------------------------------
 # Define a bunch of bash option see 
 # https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
 set -o nounset                              # stop script after 1st cmd failed
@@ -63,7 +62,7 @@ if [ -z "${LOCAL_ORACLE_SID}" ] ; then
     CleanAndQuit 20
 fi
 
-# - Main ----------------------------------------------------------------------
+# - Main -----------------------------------------------------------------------
 echo "INFO: Start to clone DB environment for SID ${LOCAL_ORACLE_SID} on ${HOST} at $(date)"
 echo "INFO: Check for read only home ------------------------------------------"
 if [ $($ORACLE_HOME/bin/orabasehome) == "$ORACLE_HOME" ]; then 
@@ -245,4 +244,4 @@ echo "INFO: Configure $ORACLE_SID ---------------------------------------------"
 ${ORADBA_BIN}/${DB_CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
 
 echo "INFO: Finish creating the DB environment on $(hostname) at $(date)"
-# --- EOF ---------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

@@ -16,15 +16,15 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -48,17 +48,17 @@ export JAVA_HOME=${JAVA_HOME:-$(dirname $(dirname $(find ${ORACLE_BASE} /usr/jav
 
 # define generic variables for software, download etc
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
-# - Initialization ----------------------------------------------------------
+# - Initialization -------------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
    echo "This script must not be run as root" 1>&2
    exit 1
 fi
-# - EOF Initialization ------------------------------------------------------
+# - EOF Initialization ---------------------------------------------------------
 
-# - Main --------------------------------------------------------------------
+# - Main -----------------------------------------------------------------------
 # create the download directory if it does not yet exists
 mkdir -p ${DOWNLOAD}
 # get the OUD base install package
@@ -91,4 +91,4 @@ else
     rm -rf ${DOWNLOAD}/${OUDBASE_PKG}
     rm -rf  ${DOWNLOAD}/oudbase_install.log
 fi
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

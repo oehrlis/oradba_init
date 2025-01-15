@@ -16,15 +16,15 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -----------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 # - just add/update any kind of customized environment variable here
 export OPT_DIR=${OPT_DIR:-"/opt"}
 export ORADBA_BIN=${ORADBA_BIN:-"/opt/oradba/bin"}
-export DEFAULT_DOMAIN="trivadislabs.com"
+export DEFAULT_DOMAIN="oradba.ch"
 export DEFAULT_ORACLE_ROOT="/u00"
 export DEFAULT_ORACLE_DATA="/u01"
 export DEFAULT_ORACLE_ARCH="/u02"
@@ -33,9 +33,9 @@ export DEFAULT_ORACLE_PORT="1521"
 export DB_CONFIG_SCRIPT="53_config_database.sh"
 export DB_CLONE_SCRIPT="56_clone_database.sh"
 export DB_ENV_SCRIPT="55_create_database_env.sh"
-# - End of Customization ----------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Default Values ------------------------------------------------------------
+# - Default Values -------------------------------------------------------------
 # Default Values for DB naming
 export DOMAIN=${DOMAIN:-${DEFAULT_DOMAIN}}
 export ORACLE_SID=${ORACLE_SID:-${LOCAL_ORACLE_SID}}                    # Default SID for Oracle database
@@ -81,9 +81,9 @@ export HOST=$(${HOSTNAME_BIN})
 export DOMAIN=${DOMAIN:-$(hostname -d 2>/dev/null ||cat /etc/domainname ||echo ${DEFAULT_DOMAIN})}
 # default value for ORATAB if not defined
 ORATAB=${ORATAB:-"/etc/oratab"}
-# - EOF Default Values --------------------------------------------------------
+# - EOF Default Values ---------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # define the oradba url and package name
 export GITHUB_URL="https://codeload.github.com/oehrlis/oradba_init/zip/master"
 export ORADBA_PKG="oradba_init.zip"
@@ -95,15 +95,15 @@ export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallback
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
-# - Default Values ------------------------------------------------------------
-# - EOF Default Values --------------------------------------------------------
+# - Default Values -------------------------------------------------------------
+# - EOF Default Values ---------------------------------------------------------
 
-# - Functions ---------------------------------------------------------------
-# ---------------------------------------------------------------------------
+# - Functions ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Purpose....: Clean up before exit
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 function CleanAndQuit()
 {
     echo
@@ -127,10 +127,10 @@ function CleanAndQuit()
 }
 
 function get_software {
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Purpose....: Verify if the software package is available if not try to 
 #              download it from $SOFTWARE_REPO
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
     PKG=$1
     if [ ! -s "${SOFTWARE}/${PKG}" ]; then
         if [ ! -z "${SOFTWARE_REPO}" ]; then
@@ -152,10 +152,10 @@ function get_software {
 }
 
 function running_in_docker() {
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Purpose....:  Function for checking whether the process is running in a 
 #               container. It return 0 if YES or 1 if NOT.
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
     if [ -f /.dockerenv ]; then
         return 0
     else
@@ -164,9 +164,9 @@ function running_in_docker() {
 }
 
 function gen_password {
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Purpose....: generate a password string
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
     Length=${1:-12}
 
     # make sure, that the password length is not shorter than 4 characters
@@ -190,7 +190,7 @@ function gen_password {
     fi
 }
 
-# - EOF Functions -----------------------------------------------------------
+# - EOF Functions --------------------------------------------------------------
 
 # check if script is sourced and return/exit
 
@@ -205,7 +205,7 @@ if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
     mkdir -p ${SOFTWARE}
     chmod 777 ${SOFTWARE}
 
-    # - Get oradba init scripts -----------------------------------------------
+    # - Get oradba init scripts ------------------------------------------------
     echo " - Get oradba init scripts --------------------------------------------"
     mkdir -p ${DOWNLOAD}                                    # create download folder
     curl -Lf ${GITHUB_URL} -o ${DOWNLOAD}/${ORADBA_PKG}
@@ -242,4 +242,4 @@ else
     echo " - Set common functions and variables ---------------------------------"
     return
 fi
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

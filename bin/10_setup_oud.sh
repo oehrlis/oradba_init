@@ -12,11 +12,11 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -----------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 # OUD_BASE_PKG="p30188352_122140_Generic.zip"         # OUD 12.2.1.4.0
 # FMW_BASE_PKG="p30188255_122140_Generic.zip"         # ORACLE FUSION MIDDLEWARE 12C (12.2.1.4.0) INFRASTRUCTURE (Patchset)
 # OUD_PATCH_PKG="p30851280_122140_Generic.zip"        # OUD BUNDLE PATCH 12.2.1.4.200204 (Patch) 
@@ -27,9 +27,9 @@
 # ORACLE_HOME_NAME="oud12.2.1.4.0"                    # Name of the Oracle Home directory
 # ORACLE_HOME="${ORACLE_BASE}/product/${ORACLE_HOME_NAME}"
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ----------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Default Values ----------------------------------------------------------
+# - Default Values -------------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -69,9 +69,9 @@ export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallb
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
-# - End of Default Values ---------------------------------------------------
+# - End of Default Values ------------------------------------------------------
 
-# - Initialization ----------------------------------------------------------
+# - Initialization -------------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
    echo " - ERROR: This script must not be run as root" 1>&2
@@ -102,11 +102,11 @@ cp ${ORADBA_RSP}/oud_install.rsp.tmpl /tmp/oud_install.rsp
 
 echo "inventory_loc=${ORACLE_INVENTORY}"   >/tmp/oraInst.loc
 echo "inst_group=oinstall"                 >>/tmp/oraInst.loc
-# - EOF Initialization ------------------------------------------------------
+# - EOF Initialization ---------------------------------------------------------
 
-# - Main --------------------------------------------------------------------
+# - Main -----------------------------------------------------------------------
 mkdir -p ${ORACLE_BASE}/product
-# - Install FWM Binaries ----------------------------------------------------
+# - Install FWM Binaries -------------------------------------------------------
 # - just required if you setup OUDSM
 if [ "${OUD_TYPE}" == "OUDSM12" ]; then
     echo " - Install Oracle FMW binaries ----------------------------------------"
@@ -139,7 +139,7 @@ if [ "${OUD_TYPE}" == "OUDSM12" ]; then
     fi
 fi
 
-# - Install OUD binaries ----------------------------------------------------
+# - Install OUD binaries -------------------------------------------------------
 echo " - Install Oracle OUD binaries ----------------------------------------"
 if [ -n "${OUD_BASE_PKG}" ]; then
     if get_software "${OUD_BASE_PKG}"; then          # Check and get binaries
@@ -246,4 +246,4 @@ if [ "${SLIM^^}" == "TRUE" ] && [ "${PATCH_LATER^^}" == "FALSE" ]; then
     rm -rf /tmp/OraInstall*
     rm -rf ${ORACLE_HOME}/.patch_storage            # remove patch storage
 fi
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

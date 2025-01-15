@@ -1,8 +1,7 @@
 #!/bin/bash
-# -----------------------------------------------------------------------------
-# Trivadis - Part of Accenture, Platform Factory - Data Platforms
-# Saegereistrasse 29, 8152 Glattbrugg, Switzerland
-# -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# OraDBA - Oracle Database Infrastructure and Security, 5630 Muri, Switzerland
+# ------------------------------------------------------------------------------
 # Name.......: 57_delete_database_env.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@oradba.ch
 # Editor.....: Stefan Oehrli
@@ -13,13 +12,13 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# -----------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 LOCAL_ORACLE_SID=${1:-""}               # Default name for Oracle database
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Default Values ------------------------------------------------------------
+# - Default Values -------------------------------------------------------------
 # source generic environment variables and functions
 ORADBA_INIT="$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 if [ -f "${ORADBA_INIT}" ]; then
@@ -39,9 +38,9 @@ export SCRIPT_BASE=$(dirname ${SCRIPT_BIN_DIR})
 export LOG_BASE=${LOG_BASE:-"/tmp"}                          # Use script directory as default logbase
 TIMESTAMP=$(date "+%Y.%m.%d_%H%M%S")
 readonly LOGFILE="$LOG_BASE/$(basename $SCRIPT_NAME .sh)_${LOCAL_ORACLE_SID}_$TIMESTAMP.log"
-# - EOF Default Values --------------------------------------------------------
+# - EOF Default Values ---------------------------------------------------------
 
-# - Initialization ------------------------------------------------------------
+# - Initialization -------------------------------------------------------------
 # Define a bunch of bash option see 
 # https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
 set -o nounset                              # stop script after 1st cmd failed
@@ -53,7 +52,7 @@ touch $LOGFILE 2>/dev/null
 exec &> >(tee -a "$LOGFILE")                # Open standard out at `$LOG_FILE` for write.  
 exec 2>&1  
 
-# - Main ----------------------------------------------------------------------
+# - Main -----------------------------------------------------------------------
 echo "INFO: Start to delete DB environment for SID ${LOCAL_ORACLE_SID} on ${HOST} at $(date)"
 
 # Check if DB environment exits
@@ -99,4 +98,4 @@ sed -i -e "/^${ORACLE_SID}/d" ${ORACLE_BASE}/local/dba/etc/sidtab
 rm ${ORACLE_BASE}/local/dba/etc/sid.${ORACLE_SID}.conf
 
 echo "INFO: Finish deleting the DB environment ${ORACLE_SID} on ${HOST} at $(date)"
-# --- EOF ---------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

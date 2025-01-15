@@ -16,15 +16,15 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -60,13 +60,13 @@ export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallb
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 export SLIMMING=${SLIMMING:-"false"}            # flag to enable SLIMMING setup
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
-# - Functions ---------------------------------------------------------------
+# - Functions ------------------------------------------------------------------
 function install_patch {
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Purpose....: function to install a DB patch using opatch apply 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
     PATCH_PKG=${1:-""}
     if [ -n "${PATCH_PKG}" ]; then
         if get_software "${PATCH_PKG}"; then         # Check and get binaries
@@ -97,10 +97,10 @@ function install_patch {
         echo " - No package specified. Skip patch installation."
     fi
 }
-# - EOF Functions -----------------------------------------------------------
+# - EOF Functions --------------------------------------------------------------
 
 
-# - Initialization ----------------------------------------------------------
+# - Initialization -------------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
    echo " - ERROR: This script must not be run as root" 1>&2
@@ -118,7 +118,7 @@ if [ ! -n "$(command -v perl)" ]; then
     export PATH=$PATH:$ORACLE_HOME/perl/bin
 fi
 
-# - EOF Initialization ------------------------------------------------------
+# - EOF Initialization ---------------------------------------------------------
 echo " - database patch task overview ---------------------------------------"
 echo " - DB_OPATCH_PKG         = ${DB_OPATCH_PKG}"
 echo " - DB_PATCH_PKG          = ${DB_PATCH_PKG}"
@@ -130,8 +130,8 @@ echo " - ORACLE_MAJOR_RELEASE  = ${ORACLE_MAJOR_RELEASE}"
 echo " - ORACLE_HOME           = ${ORACLE_HOME}"
 echo " - SLIMMING              = ${SLIMMING}"
 
-# - Main --------------------------------------------------------------------
-# - Install OPatch ----------------------------------------------------------
+# - Main -----------------------------------------------------------------------
+# - Install OPatch -------------------------------------------------------------
 echo " - Step 1: Install OPatch ---------------------------------------------"
 if [ -n "${DB_OPATCH_PKG}" ]; then
     if get_software "${DB_OPATCH_PKG}"; then           # Check and get binaries
@@ -148,7 +148,7 @@ else
     echo " - No OPatch package specified. Skip OPatch update."
 fi
 
-# - Install database patch --------------------------------------------------
+# - Install database patch -----------------------------------------------------
 echo " - Step 2: Install database patch (RU/PSU) ----------------------------"
 install_patch ${DB_PATCH_PKG}
 
@@ -211,4 +211,4 @@ else
     find ${ORACLE_INVENTORY} -type f -name *.log -exec rm {} \;
     find ${ORACLE_BASE}/product -type f -name *.log -exec rm {} \;
 fi
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

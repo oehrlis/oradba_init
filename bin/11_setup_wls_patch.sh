@@ -16,15 +16,15 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -53,13 +53,13 @@ export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallb
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 export SLIM=${SLIM:-"false"}                    # flag to enable SLIM setup
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
-# - Functions ---------------------------------------------------------------
+# - Functions ------------------------------------------------------------------
 function install_patch {
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Purpose....: function to install a DB patch using opatch apply 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
     PATCH_PKG=${1:-""}
     if [ -n "${PATCH_PKG}" ]; then
         if get_software "${PATCH_PKG}"; then         # Check and get binaries
@@ -89,9 +89,9 @@ function install_patch {
         echo " - No package specified. Skip patch installation."
     fi
 }
-# - EOF Functions -----------------------------------------------------------
+# - EOF Functions --------------------------------------------------------------
 
-# - Initialization ----------------------------------------------------------
+# - Initialization -------------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
    echo " - ERROR: This script must not be run as root" 1>&2
@@ -100,10 +100,10 @@ fi
 
 # fuser issue see MOS Note 2429708.1 OPatch Fails with Error "fuser could not be located"
 running_in_docker && export OPATCH_NO_FUSER=true
-# - EOF Initialization ------------------------------------------------------
+# - EOF Initialization ---------------------------------------------------------
 
-# - Main --------------------------------------------------------------------
-# - Install OPatch ----------------------------------------------------------
+# - Main -----------------------------------------------------------------------
+# - Install OPatch -------------------------------------------------------------
 echo " - Step 1: Install OPatch ---------------------------------------------"
 if [ -n "${WLS_OPATCH_PKG}" ]; then
     if get_software "${WLS_OPATCH_PKG}"; then       # Check and get binaries
@@ -123,15 +123,15 @@ else
     echo " - No OPatch package specified. Skip OPatch update."
 fi
 
-# - Install OUI patch -------------------------------------------------------
+# - Install OUI patch ----------------------------------------------------------
 echo " - Step 2: Install OUI patch ------------------------------------------"
 install_patch ${OUI_PATCH_PKG}
 
-# - Install FMW patch -------------------------------------------------------
+# - Install FMW patch ----------------------------------------------------------
 echo " - Step 3: Install FMW patch (RU/PSU) ---------------------------------"
 install_patch ${FMW_PATCH_PKG}
 
-# - Install Coherence patch -------------------------------------------------
+# - Install Coherence patch ----------------------------------------------------
 echo " - Step 4: Install Coherence patch ------------------------------------"
 if [ -n "${COHERENCE_PATCH_PKG}" ]; then
     if get_software "${COHERENCE_PATCH_PKG}"; then        # Check and get binaries
@@ -197,4 +197,4 @@ if [ "${SLIM^^}" == "TRUE" ]; then
     rm -rf /tmp/OraInstall*
     rm -rf ${ORACLE_HOME}/.patch_storage            # remove patch storage
 fi
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

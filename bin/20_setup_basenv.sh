@@ -16,15 +16,15 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -60,9 +60,9 @@ export SOFTWARE=${SOFTWARE:-"${OPT_DIR}/stage"} # local software stage folder
 export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallback
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
-# - Initialization ----------------------------------------------------------
+# - Initialization -------------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
    echo " - ERROR: This script must not be run as root" 1>&2
@@ -97,10 +97,10 @@ if [ -n "$TVDPERL_PKG" ]; then
     fi
 fi
 
-# - EOF Initialization ------------------------------------------------------
+# - EOF Initialization ---------------------------------------------------------
 
-# - Main --------------------------------------------------------------------
-# - Install Trivadis toolbox ------------------------------------------------
+# - Main -----------------------------------------------------------------------
+# - Install Trivadis toolbox ---------------------------------------------------
 echo " - Install Trivadis toolbox -------------------------------------------"
 if [ -n "${BASENV_PKG}" ]; then
     INSTALL_PATH=${SOFTWARE}
@@ -127,12 +127,12 @@ if [ -n "${BASENV_PKG}" ]; then
     fi
 fi
 
-# - Configure custom basenv folders -----------------------------------------
+# - Configure custom basenv folders --------------------------------------------
 
 # define the oradba url and package name
 export GITHUB_URL="https://codeload.github.com/oehrlis/oradba/zip/master"
 export ORADBA_PKG="oradba.zip" 
-# - Get oradba init scripts -----------------------------------------------
+# - Get oradba init scripts ----------------------------------------------------
 echo " - Get oradba scripts -------------------------------------------------"
 mkdir -p ${DOWNLOAD}                                    # create download folder
 curl -Lf ${GITHUB_URL} -o ${DOWNLOAD}/${ORADBA_PKG}
@@ -164,15 +164,15 @@ mkdir -p ${ORACLE_LOCAL}/oradba/etc
 mkdir -p ${ORACLE_LOCAL}/oradba/sql
 mkdir -p ${ORACLE_LOCAL}/oradba/rcv
 
-# - Configure stuff for none Docker environment -----------------------------
+# - Configure stuff for none Docker environment --------------------------------
 if ! running_in_docker; then
-    # - Install Trivadis TVD-Backup -----------------------------------------
+    # - Install Trivadis TVD-Backup --------------------------------------------
     if [ -n "${BACKUP_PKG}" ]; then
         if get_software "${BACKUP_PKG}"; then   # Check and get binaries
             echo " - extract ${SOFTWARE}/${BACKUP_PKG} to ${ORACLE_BASE}/local"
             tar -zxvf ${SOFTWARE}/${BACKUP_PKG} -C ${ORACLE_BASE}/local
 
-            # - create archive delete job -----------------------------------
+            # - create archive delete job --------------------------------------
             echo "<SHOW_ALL>show all;"                                              >${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv
             echo "<SET_GLOBAL_OPERATIONS>"                                          >>${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv
             echo "delete noprompt archivelog <ARCHIVE_RANGE> <ARCHIVE_PATTERN>;"    >>${ORACLE_BASE}/local/oradba/rcv/mnt_del_arc.rcv
@@ -185,7 +185,7 @@ if ! running_in_docker; then
         fi
     fi
 
-    # - Create houskeeping job -----------------------------------------------
+    # - Create houskeeping job -------------------------------------------------
     cp -v ${ORACLE_BASE}/local/dba/templates/etc/housekeep.conf.tpl ${ORACLE_BASE}/local/dba/etc/housekeep.conf
     cp -v ${ORACLE_BASE}/local/dba/templates/etc/housekeep_work.conf.tpl.unix ${ORACLE_BASE}/local/dba/etc/housekeep_work.conf
     echo " - Create housekeep config files. Please adapt ${ORACLE_BASE}/local/dba/etc/housekeep_work.conf"
@@ -193,7 +193,7 @@ if ! running_in_docker; then
     echo ""
     echo "00 01 * * * ${ORACLE_BASE}/local/dba/bin/housekeep.ksh >> ${ORACLE_BASE}/local/dba/log/housekeep.log 2>&1"
 
-    # - Configure autostart for none docker environments ---------------------
+    # - Configure autostart for none docker environments -----------------------
     echo " - Configure Oracle service for none Docker environments."
     cp -v ${ORACLE_BASE}/local/dba/templates/init.d/oracle.service ${ORACLE_BASE}/local/dba/etc/oracle.service
     cp -v ${ORACLE_BASE}/local/dba/templates/etc/oracle_start_stop.conf ${ORACLE_BASE}/local/dba/etc/oracle_start_stop.conf
@@ -215,4 +215,4 @@ if running_in_docker; then
         sed -i '/if \[ "`id -un`" = "grid" \]; then/,/export BE_INITIALSID/d' "$HOME/.bash_profile"
     fi
 fi
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

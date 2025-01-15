@@ -15,17 +15,17 @@
 # Reference..: --
 # License....: Licensed under the Universal Permissive License v 1.0 as
 #              shown at http://oss.oracle.com/licenses/upl.
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # - Set default values for environment variables if not yet defined.
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 export OUD_INSTANCE=${OUD_INSTANCE:-oud_docker}
 
@@ -37,11 +37,11 @@ export OUD_INSTANCE_BASE=${OUD_INSTANCE_BASE:-"$ORACLE_DATA/instances"}
 
 # OUD instance home directory
 export OUD_INSTANCE_HOME=${OUD_INSTANCE_BASE}/${OUD_INSTANCE}
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
-# - Script Variables --------------------------------------------------------
+# - Script Variables -----------------------------------------------------------
 # - Set script names for miscellaneous start, check and config scripts.
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
@@ -51,11 +51,11 @@ export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export CREATE_SCRIPT=${CREATE_SCRIPT:-"62_create_oud_instance.sh"}
 export CHECK_SCRIPT=${CHECK_SCRIPT:-"64_check_oud_instance.sh"}
-# - EOF Script Variables ----------------------------------------------------
+# - EOF Script Variables -------------------------------------------------------
 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # SIGINT handler
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 function int_oud() {
     echo " ---------------------------------------------------------------"
     echo " - SIGINT received, shutting down OUD instance!"
@@ -63,9 +63,9 @@ function int_oud() {
     ${OUD_INSTANCE_HOME}/OUD/bin/stop-ds >/dev/null 2>&1
 }
 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # SIGTERM handler
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 function term_oud() {
     echo " ---------------------------------------------------------------"
     echo " - SIGTERM received, shutting down OUD instance!"
@@ -73,9 +73,9 @@ function term_oud() {
     ${OUD_INSTANCE_HOME}/OUD/bin/stop-ds >/dev/null 2>&1
 }
 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # SIGKILL handler
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 function kill_oud() {
     echo " ---------------------------------------------------------------"
     echo " - SIGKILL received, shutting down OUD instance!"
@@ -169,4 +169,4 @@ tail -f ${OUD_INSTANCE_HOME}/OUD/logs/server.out &
 
 childPID=$!
 wait $childPID
-# --- EOF -------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

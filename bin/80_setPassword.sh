@@ -14,10 +14,10 @@
 # Reference..: Oracle docker github rebository
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ORACLE_PWD=$1
 ORACLE_SID="`grep $ORACLE_HOME /etc/oratab | cut -d: -f1`"
 ORACLE_PDB="`ls -dl $ORACLE_BASE/oradata/$ORACLE_SID/*/ | grep -v pdbseed | awk '{print $9}' | cut -d/ -f6`"
@@ -31,4 +31,4 @@ sqlplus / as sysdba << EOF
       ALTER USER PDBADMIN IDENTIFIED BY "$ORACLE_PWD";
       exit;
 EOF
-# --- EOF -------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

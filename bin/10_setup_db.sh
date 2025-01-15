@@ -17,16 +17,16 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -----------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 # DB_BASE_PKG="LINUX.X64_193000_db_home.zip"          # Oracle Database 19c (19.3)
 # DB_BASE2_PKG=""                                     # Second Oracle Database package used for Oracle < 12.2
 # DB_EXAMPLE_PKG="LINUX.X64_193000_examples.zip"      # Oracle Examples 19c (19.3)
-# DB_PATCH_PKG="p30557433_190000_Linux-x86-64.zip"    # DATABASE RELEASE UPDATE 19.6.0.0.0 (Patch)
-# DB_OJVM_PKG="p30484981_190000_Linux-x86-64.zip"     # OJVM RELEASE UPDATE 19.6.0.0.0 (Patch)
+# DB_PATCH_PKG="p36912597_190000_Linux-x86-64.zip"    # DATABASE RELEASE UPDATE 19.6.0.0.0 (Patch)
+# DB_OJVM_PKG="p36878697_190000_Linux-x86-64.zip"     # OJVM RELEASE UPDATE 19.6.0.0.0 (Patch)
 # DB_OPATCH_PKG="p6880880_190000_Linux-x86-64.zip"    # OPatch 12.2.0.1.17 for DB 19.x releases (APR 2019)
 # ORACLE_HOME_NAME="19.0.0.0"                         # Name of the Oracle Home directory
 # ORACLE_HOME="${ORACLE_BASE}/product/${ORACLE_HOME_NAME}"
@@ -34,9 +34,9 @@
 # ORACLE_EDITION="EE"                                 # Oracle edition EE or SE2
 # RESPONSE_FILE_VERSION="oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v19.0.0"
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ----------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Default Values ----------------------------------------------------------
+# - Default Values -------------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -85,9 +85,9 @@ export SOFTWARE_REPO=${SOFTWARE_REPO:-""}       # URL to software for curl fallb
 export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 export SLIMMING=${SLIMMING:-"false"}            # flag to enable SLIMMING setup
-# - End of Default Values ---------------------------------------------------
+# - End of Default Values ------------------------------------------------------
 
-# - Initialization ----------------------------------------------------------
+# - Initialization -------------------------------------------------------------
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
    echo " - ERROR: This script must not be run as root" 1>&2
@@ -141,9 +141,9 @@ else
 fi
 
 
-# - EOF Initialization ------------------------------------------------------
+# - EOF Initialization ---------------------------------------------------------
 
-# - Main --------------------------------------------------------------------
+# - Main -----------------------------------------------------------------------
 # Replace place holders in responce file
 echo " - Prepare response files ---------------------------------------------"
 cp ${ORADBA_RSP}/db_install.rsp.tmpl /tmp/db_install.rsp
@@ -170,7 +170,7 @@ sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"              /tmp/db_examples_ins
 sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"              /tmp/db_examples_install.rsp
 sed -i -e "s|^oracle.install.responseFileVersion.*|$RESPONSE_FILE_VERSION|" /tmp/db_examples_install.rsp
 
-# - Install database binaries -----------------------------------------------
+# - Install database binaries --------------------------------------------------
 # handle pre and post 18c
 echo " - Install Oracle DB binaries -----------------------------------------"
 if [ -n "${DB_BASE_PKG}" ]; then
@@ -228,7 +228,7 @@ else
     echo "Relink of Oracle Home for unified audit"
 fi
 
-# - Install database examples -----------------------------------------------
+# - Install database examples --------------------------------------------------
 echo " - Install Oracle DB examples -----------------------------------------"
 if [ -n "${DB_EXAMPLE_PKG}" ]; then
     if get_software "${DB_EXAMPLE_PKG}"; then           # Check and get binaries
@@ -313,4 +313,4 @@ if [ "${SLIMMING^^}" == "TRUE" ] && [ "${PATCH_LATER^^}" == "FALSE" ]; then
     rm -rf /tmp/OraInstall*
     rm -rf ${ORACLE_HOME}/.patch_storage        # remove patch storage
 fi
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

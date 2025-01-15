@@ -1,9 +1,9 @@
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --  Trivadis AG, Infrastructure Managed Services
 --  Saegereistrasse 29, 8152 Glattbrugg, Switzerland
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --  Name......: 81_create_tvd_hr.sql
---  Author....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
+--  Author....: Stefan Oehrli (oes) stefan.oehrli@oradba.ch
 --  Editor....: Stefan Oehrli
 --  Date......: 2018.12.10
 --  Revision..:  
@@ -12,10 +12,10 @@
 --  Reference.: SYS (or grant manually to a DBA)
 --  License...: Licensed under the Universal Permissive License v 1.0 as 
 --              shown at http://oss.oracle.com/licenses/upl.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --  Modified..:
 --  see git revision history for more information on changes/updates
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 connect / as sysdba
 
 SET ECHO OFF
@@ -35,7 +35,7 @@ DEFINE ttbs=TEMP
 
 SPOOL 81_create_tvd_hr.log
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- cleanup section 
 DECLARE
 vcount INTEGER :=0;
@@ -53,7 +53,7 @@ END IF;
 END;
 /
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- create user 
 CREATE USER tvd_hr IDENTIFIED BY &pass;
 
@@ -74,24 +74,24 @@ ALTER USER tvd_hr_sec TEMPORARY TABLESPACE &ttbs;
 
 GRANT CREATE SESSION, RESOURCE, EXECUTE_CATALOG_ROLE TO tvd_hr_sec;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- grants from sys schema
 GRANT execute ON sys.dbms_stats TO tvd_hr;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- create tvd_hr roles
 CREATE ROLE tvd_hr_ro;
 CREATE ROLE tvd_hr_rw;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- create tvd_hr schema objects
 ALTER SESSION SET CURRENT_SCHEMA=TVD_HR;
 ALTER SESSION SET NLS_LANGUAGE=American;
 ALTER SESSION SET NLS_TERRITORY=America;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- create tables, sequences and constraint
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Create the REGIONS table to hold region information for locations
 -- TVD_HR.LOCATIONS table has a foreign key to this table.
 
@@ -110,7 +110,7 @@ ADD ( CONSTRAINT reg_id_pk
        		 PRIMARY KEY (region_id)
     ) ;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Create the COUNTRIES table to hold country information for customers
 -- and company locations. 
 -- TVD_HR.LOCATIONS has a foreign key to this table.
@@ -132,7 +132,7 @@ ADD ( CONSTRAINT countr_reg_fk
           	  REFERENCES regions(region_id) 
     ) ;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Create the LOCATIONS table to hold address information for company departments.
 -- TVD_HR.DEPARTMENTS has a foreign key to this table.
 
@@ -167,7 +167,7 @@ CREATE SEQUENCE locations_seq
  NOCACHE
  NOCYCLE;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Create the DEPARTMENTS table to hold company department information.
 -- TVD_HR.EMPLOYEES and TVD_HR.JOB_HISTORY have a foreign key to this table.
 
@@ -201,7 +201,7 @@ CREATE SEQUENCE departments_seq
  NOCACHE
  NOCYCLE;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Create the JOBS table to hold the different names of job roles within the company.
 -- TVD_HR.EMPLOYEES has a foreign key to this table.
 
@@ -222,7 +222,7 @@ ADD ( CONSTRAINT job_id_pk
       		 PRIMARY KEY(job_id)
     ) ;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Create the EMPLOYEES table to hold the employee personnel 
 -- information for the company.
 -- TVD_HR.EMPLOYEES has a self referencing foreign key to this table.
@@ -281,7 +281,7 @@ CREATE SEQUENCE employees_seq
  NOCACHE
  NOCYCLE;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Create the JOB_HISTORY table to hold the history of jobs that 
 -- employees have held in the past.
 -- TVD_HR.JOBS, TVD_HR_DEPARTMENTS, and TVD_HR.EMPLOYEES have a foreign key to this table.
@@ -318,7 +318,7 @@ ADD ( CONSTRAINT jhist_emp_id_st_date_pk
                      REFERENCES departments
     ) ;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Create the EMP_DETAILS_VIEW that joins the employees, jobs, 
 -- departments, jobs, countries, and locations table to provide details
 -- about employees.
@@ -375,12 +375,12 @@ WITH READ ONLY;
 
 COMMIT;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- populate tables
 SET VERIFY OFF
 ALTER SESSION SET NLS_LANGUAGE=American; 
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- insert data into the REGIONS table
 
 Prompt ******  Populating REGIONS table ....
@@ -389,7 +389,7 @@ INSERT INTO regions VALUES ( 2, 'Americas' );
 INSERT INTO regions VALUES ( 3, 'Asia' );
 INSERT INTO regions VALUES ( 4, 'Middle East and Africa' );
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- insert data into the COUNTRIES table
 
 Prompt ******  Populating COUNTIRES table ....
@@ -419,7 +419,7 @@ INSERT INTO countries VALUES ( 'NG', 'Nigeria'                  , 4 );
 INSERT INTO countries VALUES ( 'AR', 'Argentina'                , 2 );
 INSERT INTO countries VALUES ( 'BE', 'Belgium'                  , 1 );
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- insert data into the LOCATIONS table
 
 Prompt ******  Populating LOCATIONS table ....
@@ -447,7 +447,7 @@ INSERT INTO locations VALUES ( 3000 , 'Murtenstrasse 921' , '3095' , 'Bern' , 'B
 INSERT INTO locations VALUES ( 3100 , 'Pieter Breughelstraat 837' , '3029SK' , 'Utrecht' , 'Utrecht' , 'NL');
 INSERT INTO locations VALUES ( 3200 , 'Mariano Escobedo 9991' , '11932' , 'Mexico City' , 'Distrito Federal,' , 'MX');
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- insert data into the DEPARTMENTS table
 
 Prompt ******  Populating DEPARTMENTS table ....
@@ -466,7 +466,7 @@ INSERT INTO departments VALUES ( 61 , 'IT Support'              , NULL, 3000);
 INSERT INTO departments VALUES ( 62 , 'IT Helpdesk'             , NULL, 3000);
 INSERT INTO departments VALUES ( 70 , 'Human Resources'         , 700, 3000);
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- insert data into the JOBS table
 
 Prompt ******  Populating JOBS table ....
@@ -487,37 +487,37 @@ INSERT INTO jobs VALUES ( 'IT_ADM',     'IT Administrator', 4000, 10000);
 INSERT INTO jobs VALUES ( 'HR_MGR',     'Human Resources Manager', 6000, 10000);
 INSERT INTO jobs VALUES ( 'HR_REP',     'Human Resources Representative', 4000, 9000);
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- insert data into the EMPLOYEES table
 Prompt ******  Populating EMPLOYEES table ....
-INSERT INTO employees VALUES ( 100, 'Ben',      'King',         'ben.king@trivadislabs.com',            '515.123.4567', TO_DATE('17.06.03', 'dd-MM-yyyy'),      'SM_PRES',      24000, NULL, NULL, 10);
-INSERT INTO employees VALUES ( 200, 'Jim',      'Clark',        'jim.clark@trivadislabs.com',           '515.123.4568', TO_DATE('21.09.05', 'dd-MM-yyyy'),      'AC_MGR',       17000, NULL, 100, 20);
-INSERT INTO employees VALUES ( 201, 'John',     'Miller',       'john.miller@trivadislabs.com',         '515.123.4569', TO_DATE('13.01.01', 'dd-MM-yyyy'),      'AC_CLERK',     17000, NULL, 200, 20);
-INSERT INTO employees VALUES ( 300, 'Ernst',    'Blofeld',      'ernst.blofeld@trivadislabs.com',       '590.423.4567', TO_DATE('03.01.06', 'dd-MM-yyyy'),      'RD_MGR',       9000, NULL, 100, 30);
-INSERT INTO employees VALUES ( 301, 'Ford',     'Prefect',      'ford.prefect@trivadislabs.com',          '590.423.4568', TO_DATE('21.05.07', 'dd-MM-yyyy'),      'RD_CLERK',     6000, NULL, 300, 30);
-INSERT INTO employees VALUES ( 302, 'Douglas',  'Adams',        'douglas.adams@trivadislabs.com',       '590.423.4569', TO_DATE('25.06.05', 'dd-MM-yyyy'),      'RD_CLERK',     4800, NULL, 300, 30);
-INSERT INTO employees VALUES ( 303, 'Paul',     'Smith',        'paul.smith@trivadislabs.com',          '590.423.4560', TO_DATE('05.02.06', 'dd-MM-yyyy'),      'RD_ENG',       4800, NULL, 300, 30);
-INSERT INTO employees VALUES ( 304, 'James',    'Scott',        'james.scott@trivadislabs.com',         '590.423.5567', TO_DATE('07.02.07', 'dd-MM-yyyy'),      'RD_ENG',       4200, NULL, 300, 30);
-INSERT INTO employees VALUES ( 400, 'Eve',      'Moneypenny',   'eve.moneypenny@trivadislabs.com',      '515.124.4569', TO_DATE('17.08.02', 'dd-MM-yyyy'),      'SA_MGR',       12008, 0.3, 100, 40);
-INSERT INTO employees VALUES ( 401, 'Paul',     'Ward',         'paul.ward@trivadislabs.com',           '515.124.4169', TO_DATE('16.08.02', 'dd-MM-yyyy'),      'SA_REP',       9000, 0.3, 400, 40);
-INSERT INTO employees VALUES ( 402, 'Arthur',   'Dent',         'arthur.dent@trivadislabs.com',         '515.124.4269', TO_DATE('28.09.05', 'dd-MM-yyyy'),      'SA_REP',       8200, 0.3, 400, 40);
-INSERT INTO employees VALUES ( 403, 'Monica',   'Blake',        'monica.blake@trivadislabs.com',        '515.124.4369', TO_DATE('30.09.05', 'dd-MM-yyyy'),      'SA_REP',       7700, 0.2, 400, 40);
-INSERT INTO employees VALUES ( 500, 'Felix',    'Leitner',      'felix.leitner@trivadislabs.com',       '515.124.4567', TO_DATE('07.12.07', 'dd-MM-yyyy'),      'OP_MGR',       6900, NULL, 100, 50);
-INSERT INTO employees VALUES ( 501, 'Andy',     'Renton',       'andy.renton@trivadislabs.com',         '515.127.4561', TO_DATE('07.12.02', 'dd-MM-yyyy'),      'OP_AGENT',     11000, NULL, 500, 50);
-INSERT INTO employees VALUES ( 502, 'Jason',    'Walters',      'jason .walters@trivadislabs.com',      '515.127.4562', TO_DATE('18.05.03', 'dd-MM-yyyy'),      'OP_AGENT',     3100, NULL, 500, 50);
-INSERT INTO employees VALUES ( 503, 'James',    'Bond',         'james.bond@trivadislabs.com',          '515.127.4563', TO_DATE('24.12.05', 'dd-MM-yyyy'),      'OP_AGENT',     2900, NULL, 500, 50);
-INSERT INTO employees VALUES ( 600, 'Ian',      'Fleming',      'ian.fleming@trivadislabs.com',         '515.127.4564', TO_DATE('24.07.05', 'dd-MM-yyyy'),      'IT_MGR',       2800, NULL, 100, 60);
-INSERT INTO employees VALUES ( 601, 'John',     'Gartner',      'john.gartner@trivadislabs.com',        '515.127.4565', TO_DATE('15.11.06', 'dd-MM-yyyy'),      'IT_DEV',       2600, NULL, 600, 60);
-INSERT INTO employees VALUES ( 602, 'Eugen',    'Tanner',       'eugen.tanner@trivadislabs.com',        '515.127.4566', TO_DATE('10.08.07', 'dd-MM-yyyy'),      'IT_ADM',       2500, NULL, 600, 60);
-INSERT INTO employees VALUES ( 700, 'Honey',    'Rider',        'honey.rider@trivadislabs.com',         '650.123.1234', TO_DATE('18.07.04', 'dd-MM-yyyy'),      'HR_MGR',       8000, NULL, 100, 70);
-INSERT INTO employees VALUES ( 701, 'Vesper',   'Lynd',         'vesper.lynd@trivadislabs.com',         '650.123.2234', TO_DATE('10.04.05', 'dd-MM-yyyy'),      'HR_REP',       8200, NULL, 700, 70);
+INSERT INTO employees VALUES ( 100, 'Ben',      'King',         'ben.king@oradba.ch',            '515.123.4567', TO_DATE('17.06.03', 'dd-MM-yyyy'),      'SM_PRES',      24000, NULL, NULL, 10);
+INSERT INTO employees VALUES ( 200, 'Jim',      'Clark',        'jim.clark@oradba.ch',           '515.123.4568', TO_DATE('21.09.05', 'dd-MM-yyyy'),      'AC_MGR',       17000, NULL, 100, 20);
+INSERT INTO employees VALUES ( 201, 'John',     'Miller',       'john.miller@oradba.ch',         '515.123.4569', TO_DATE('13.01.01', 'dd-MM-yyyy'),      'AC_CLERK',     17000, NULL, 200, 20);
+INSERT INTO employees VALUES ( 300, 'Ernst',    'Blofeld',      'ernst.blofeld@oradba.ch',       '590.423.4567', TO_DATE('03.01.06', 'dd-MM-yyyy'),      'RD_MGR',       9000, NULL, 100, 30);
+INSERT INTO employees VALUES ( 301, 'Ford',     'Prefect',      'ford.prefect@oradba.ch',          '590.423.4568', TO_DATE('21.05.07', 'dd-MM-yyyy'),      'RD_CLERK',     6000, NULL, 300, 30);
+INSERT INTO employees VALUES ( 302, 'Douglas',  'Adams',        'douglas.adams@oradba.ch',       '590.423.4569', TO_DATE('25.06.05', 'dd-MM-yyyy'),      'RD_CLERK',     4800, NULL, 300, 30);
+INSERT INTO employees VALUES ( 303, 'Paul',     'Smith',        'paul.smith@oradba.ch',          '590.423.4560', TO_DATE('05.02.06', 'dd-MM-yyyy'),      'RD_ENG',       4800, NULL, 300, 30);
+INSERT INTO employees VALUES ( 304, 'James',    'Scott',        'james.scott@oradba.ch',         '590.423.5567', TO_DATE('07.02.07', 'dd-MM-yyyy'),      'RD_ENG',       4200, NULL, 300, 30);
+INSERT INTO employees VALUES ( 400, 'Eve',      'Moneypenny',   'eve.moneypenny@oradba.ch',      '515.124.4569', TO_DATE('17.08.02', 'dd-MM-yyyy'),      'SA_MGR',       12008, 0.3, 100, 40);
+INSERT INTO employees VALUES ( 401, 'Paul',     'Ward',         'paul.ward@oradba.ch',           '515.124.4169', TO_DATE('16.08.02', 'dd-MM-yyyy'),      'SA_REP',       9000, 0.3, 400, 40);
+INSERT INTO employees VALUES ( 402, 'Arthur',   'Dent',         'arthur.dent@oradba.ch',         '515.124.4269', TO_DATE('28.09.05', 'dd-MM-yyyy'),      'SA_REP',       8200, 0.3, 400, 40);
+INSERT INTO employees VALUES ( 403, 'Monica',   'Blake',        'monica.blake@oradba.ch',        '515.124.4369', TO_DATE('30.09.05', 'dd-MM-yyyy'),      'SA_REP',       7700, 0.2, 400, 40);
+INSERT INTO employees VALUES ( 500, 'Felix',    'Leitner',      'felix.leitner@oradba.ch',       '515.124.4567', TO_DATE('07.12.07', 'dd-MM-yyyy'),      'OP_MGR',       6900, NULL, 100, 50);
+INSERT INTO employees VALUES ( 501, 'Andy',     'Renton',       'andy.renton@oradba.ch',         '515.127.4561', TO_DATE('07.12.02', 'dd-MM-yyyy'),      'OP_AGENT',     11000, NULL, 500, 50);
+INSERT INTO employees VALUES ( 502, 'Jason',    'Walters',      'jason .walters@oradba.ch',      '515.127.4562', TO_DATE('18.05.03', 'dd-MM-yyyy'),      'OP_AGENT',     3100, NULL, 500, 50);
+INSERT INTO employees VALUES ( 503, 'James',    'Bond',         'james.bond@oradba.ch',          '515.127.4563', TO_DATE('24.12.05', 'dd-MM-yyyy'),      'OP_AGENT',     2900, NULL, 500, 50);
+INSERT INTO employees VALUES ( 600, 'Ian',      'Fleming',      'ian.fleming@oradba.ch',         '515.127.4564', TO_DATE('24.07.05', 'dd-MM-yyyy'),      'IT_MGR',       2800, NULL, 100, 60);
+INSERT INTO employees VALUES ( 601, 'John',     'Gartner',      'john.gartner@oradba.ch',        '515.127.4565', TO_DATE('15.11.06', 'dd-MM-yyyy'),      'IT_DEV',       2600, NULL, 600, 60);
+INSERT INTO employees VALUES ( 602, 'Eugen',    'Tanner',       'eugen.tanner@oradba.ch',        '515.127.4566', TO_DATE('10.08.07', 'dd-MM-yyyy'),      'IT_ADM',       2500, NULL, 600, 60);
+INSERT INTO employees VALUES ( 700, 'Honey',    'Rider',        'honey.rider@oradba.ch',         '650.123.1234', TO_DATE('18.07.04', 'dd-MM-yyyy'),      'HR_MGR',       8000, NULL, 100, 70);
+INSERT INTO employees VALUES ( 701, 'Vesper',   'Lynd',         'vesper.lynd@oradba.ch',         '650.123.2234', TO_DATE('10.04.05', 'dd-MM-yyyy'),      'HR_REP',       8200, NULL, 700, 70);
 
 -- enable integrity constraint to DEPARTMENTS
 ALTER TABLE departments ENABLE CONSTRAINT dept_mgr_fk;
 
 COMMIT;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- create indexes
 CREATE INDEX emp_department_ix
        ON employees (department_id);
@@ -554,9 +554,9 @@ CREATE INDEX loc_country_ix
 
 COMMIT;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- create procedural objects
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- procedure and statement trigger to allow dmls during business hours:
 CREATE OR REPLACE PROCEDURE secure_dml
 IS
@@ -578,7 +578,7 @@ END secure_employees;
 
 ALTER TRIGGER secure_employees DISABLE;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- procedure to add a row to the JOB_HISTORY table and row trigger 
 -- to call the procedure when data is updated in the job_id or 
 -- department_id columns in the EMPLOYEES table:
@@ -608,7 +608,7 @@ END;
 
 COMMIT;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- add comments to tables and columns
 COMMENT ON TABLE regions 
 IS 'Regions table that contains region numbers and names. Contains 4 rows; references with the Countries table.'
@@ -648,7 +648,7 @@ COMMENT ON COLUMN locations.country_id
 IS 'Country where an office, warehouse, or production site of a company is
 located. Foreign key to country_id column of the countries table.';
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 COMMENT ON TABLE departments
 IS 'Departments table that shows details of departments where employees 
 work. Contains 27 rows; references with locations, employees, and job_history tables.';
@@ -667,7 +667,7 @@ IS 'Manager_id of a department. Foreign key to employee_id column of employees t
 COMMENT ON COLUMN departments.location_id
 IS 'Location id where a department is located. Foreign key to location_id column of locations table.';
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 COMMENT ON TABLE job_history
 IS 'Table that stores job history of the employees. If an employee 
 changes departments within the job or changes jobs within the department, 
@@ -696,7 +696,7 @@ job_id column in the jobs table. A not null column.';
 COMMENT ON COLUMN job_history.department_id
 IS 'Department id in which the employee worked in the past; foreign key to deparment_id column in the departments table';
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 COMMENT ON TABLE countries
 IS 'country table. Contains 25 rows. References with locations table.';
 
@@ -709,7 +709,7 @@ IS 'Country name';
 COMMENT ON COLUMN countries.region_id
 IS 'Region ID for the country. Foreign key to region_id column in the departments table.';
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 COMMENT ON TABLE jobs
 IS 'jobs table with job titles and salary ranges. Contains 19 rows.
 References with employees and job_history table.';
@@ -726,7 +726,7 @@ IS 'Minimum salary for a job title.';
 COMMENT ON COLUMN jobs.max_salary
 IS 'Maximum salary for a job title';
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 COMMENT ON TABLE employees
 IS 'employees table. Contains 107 rows. References with departments, 
 jobs, job_history tables. Contains a self reference.';
@@ -772,7 +772,7 @@ column of the departments table';
 
 COMMIT;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- grant ro/rw on TVD_HR to TVD_HR role 
 -- GRANT READ ON tvd_hr.employees TO tvd_hr_ro;
 -- GRANT READ ON tvd_hr.jobs TO tvd_hr_ro;
@@ -797,7 +797,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON tvd_hr.job_history TO tvd_hr_rw;
 GRANT SELECT,INSERT,UPDATE,DELETE ON tvd_hr.locations TO tvd_hr_rw;
 GRANT SELECT,INSERT,UPDATE,DELETE ON tvd_hr.departments TO tvd_hr_rw;
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- gather schema statistics
 EXECUTE dbms_stats.gather_schema_stats( -
         'TVD_HR'                        ,       -
@@ -805,5 +805,5 @@ EXECUTE dbms_stats.gather_schema_stats( -
         cascade => TRUE                 ,       -
         block_sample => TRUE            );
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- create VPD stuff

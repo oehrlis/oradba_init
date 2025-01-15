@@ -12,12 +12,12 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -32,7 +32,7 @@ export ORACLE_DATA=${ORACLE_DATA:-"/u01"}       # Oracle data folder eg volume f
 export ORACLE_ARCH=${ORACLE_ARCH:-"/u02"}       # Oracle arch folder eg volume for docker
 export MOUNT_POINTS="${ORACLE_ROOT} ${ORACLE_DATA} ${ORACLE_ARCH}" # list of mount points
 export VOLUME_GROUP="vgora"
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
 # Make sure only root can run our script
 if [ $EUID -ne 0 ]; then
@@ -104,4 +104,4 @@ elif [ ! -z "${VG_ORA}" ]; then
 else
     echo "INFO: No additional disk device nor vgora found"
 fi
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

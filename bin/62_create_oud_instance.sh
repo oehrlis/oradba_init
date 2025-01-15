@@ -13,17 +13,17 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...: 
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
-# - Customization -------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# - Customization --------------------------------------------------------------
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
-# - End of Customization ------------------------------------------------------
+# - End of Customization -------------------------------------------------------
 
-# - Script Variables --------------------------------------------------------
+# - Script Variables -----------------------------------------------------------
 # - Set script names for miscellaneous start, check and config scripts.
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
@@ -32,11 +32,11 @@ source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export ORADBA_BASE="$(dirname ${ORADBA_BIN})"
 export CONFIG_SCRIPT=${CONFIG_SCRIPT:-"63_config_oud_instance.sh"}
-# - EOF Script Variables ----------------------------------------------------
+# - EOF Script Variables -------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # - Set default values for environment variables if not yet defined. 
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Default name for OUD instance
 export OUD_INSTANCE=${OUD_INSTANCE:-oud_docker}
 
@@ -72,10 +72,10 @@ export OUD_CUSTOM=${OUD_CUSTOM:-'FALSE'}                # Flag to create custom 
 
 # default folder for DB instance init scripts
 export INSTANCE_INIT=${INSTANCE_INIT:-"${OUD_INSTANCE_ADMIN}/scripts"}
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 function gen_password {
 # Purpose....: generate a password string
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
     Length=${1:-12}
 
     # make sure, that the password length is not shorter than 4 characters
@@ -298,4 +298,4 @@ fi
 if [ -d "${INSTANCE_INIT}/setup" ] && [ -d "${OUD_INSTANCE_ADMIN}/create" ]; then
     cp -vr ${INSTANCE_INIT}/setup/* ${OUD_INSTANCE_ADMIN}/create
 fi
-# --- EOF -------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

@@ -12,12 +12,12 @@
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Modified...:
 # see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 # source genric environment variables and functions
 source "$(dirname ${BASH_SOURCE[0]})/00_setup_oradba_init.sh"
 
@@ -40,7 +40,7 @@ export DOWNLOAD=${DOWNLOAD:-"/tmp/download"}    # temporary download location
 export CLEANUP=${CLEANUP:-true}                 # Flag to set yum clean up
 export DEFAULT_PASSWORD=${default_password:-"LAB01schulung"}
 
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 
 # Make sure only root can run our script
 if [ $EUID -ne 0 ]; then
@@ -170,7 +170,7 @@ else
     echo " - yum cache is not cleaned up"
 fi
 
-# - add PDB OS user ---------------------------------------------------------
+# - add PDB OS user ------------------------------------------------------------
 # add an restricted group
 getent group restricted || groupadd restricted
 
@@ -183,7 +183,7 @@ for i in oracdb orapdb orasec; do
     fi
 done
 
-# - EOF add PDB OS user -----------------------------------------------------
+# - EOF add PDB OS user --------------------------------------------------------
 
 # create a bunch of other directories
 mkdir -vp ${ORACLE_BASE}/archive
@@ -201,4 +201,4 @@ ln -sf ${ORACLE_BASE}/etc/oratab /etc/oratab
 
 # change owner of ORACLE_BASE and ORACLE_INVENTORY
 chown -vR oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------
