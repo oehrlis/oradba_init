@@ -25,29 +25,41 @@
 
 export ORACLE_SID=$(grep $ORACLE_HOME /etc/oratab | grep -iv '^#' |cut -d: -f1|head -1)
 export POSITIVE_RETURN="READ WRITE"
+export STANDBY_RETURN="MOUNTED READ ONLY"
 export ORAENV_ASK=NO
-. oraenv
+. oraenv > /dev/null 2>&1
 # - EOF Environment Variables -------------------------------------------
 
-# Check Oracle DB status and store it in status
-status=`$ORACLE_HOME/bin/sqlplus -s / as sysdba << EOF
+
+# - Check Oracle DB status --------------------------------------------------
+status_and_role=`$ORACLE_HOME/bin/sqlplus -s / as sysdba << EOF
    set heading off;
    set pagesize 0;
-   SELECT open_mode FROM v\\$database;
+   SELECT open_mode || ',' || database_role FROM v\\$database;
    exit;
 EOF`
 
 # Store return code from SQL*Plus
 ret=$?
 
-# SQL Plus execution was successful and PDB is open
-if [ $ret -eq 0 ] && [ "$status" = "$POSITIVE_RETURN" ]; then
-   exit 0;
-# PDB is not open
-elif [ "$status" != "$POSITIVE_RETURN" ]; then
-   exit 1;
-# SQL Plus execution failed
+# Parse the output into variables
+status=$(echo $status_and_role | cut -d, -f1)
+role=$(echo $status_and_role | cut -d, -f2)
+
+# Determine the appropriate action based on open_mode and database_role
+if [ $ret -eq 0 ]; then
+   if [ "$role" = "PRIMARY" ] && [ "$status" = "$POSITIVE_RETURN" ]; then
+      echo "role is primary"
+      exit 0
+   elif [ "$role" = "PHYSICAL STANDBY" ] && [[ "$STANDBY_RETURN" =~ $status ]]; then
+      echo "role is physical standby"
+      exit 0
+   else
+      echo "Unknown state: role=$role, status=$status"
+      exit 1
+   fi
 else
+   echo "SQL*Plus execution failed"
    exit 2
 fi
 # --- EOF -------------------------------------------------------------------
