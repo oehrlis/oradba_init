@@ -1,12 +1,11 @@
 #!/bin/bash
-# ---------------------------------------------------------------------------
-# Trivadis - Part of Accenture, Platform Factory - Data Platforms
-# Saegereistrasse 29, 8152 Glattbrugg, Switzerland
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# OraDBA - Oracle Database Infrastructure and Security, 5630 Muri, Switzerland
+# ------------------------------------------------------------------------------
 # Name.......: 54_check_database.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
-# Date.......: 2017.12.04
+# Date.......: 2025.01.15
 # Revision...: 
 # Purpose....: check the status of the Oracle database for docker HEALTHCHECK 
 # Notes......: Script does check the DB open mode using sqlplus and return and  
