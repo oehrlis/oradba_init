@@ -343,8 +343,20 @@ fi;
 echo "---------------------------------------------------------------"
 echo " - Tail output of alert log from ${ORACLE_SID}:"
 echo "---------------------------------------------------------------"
-echo " - The following output is now a tail of the alert.log:"
-tail -f $ORACLE_BASE/diag/rdbms/*/*/trace/alert*.log &
-childPID=$!
-wait $childPID
+ALERT_LOG_FILE=$ORACLE_BASE/diag/rdbms/${ORACLE_SID,,}/${ORACLE_SID}/trace/alert_${ORACLE_SID}.log
+if [ -f ${ALERT_LOG_FILE} ]; then
+    echo " - The following output is now a tail of the alert.log:"
+    tail -f ${ALERT_LOG_FILE} &
+    childPID=$!
+    wait $childPID
+elif [[ "${NO_DATABASE,,}" == "true" ]]; then
+    echo " - No database created, no alert log available."
+    echo " - Create dummy file."
+    touch ${ALERT_LOG_FILE} &
+    tail -f ${ALERT_LOG_FILE} &
+    childPID=$!
+    wait $childPID
+else
+    echo " - No alert log available."
+fi
 # --- EOF ----------------------------------------------------------------------
