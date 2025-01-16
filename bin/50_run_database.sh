@@ -101,7 +101,7 @@ function move_files {
     fi
     
     # move init.ora, spfile and password file to volume
-    for i in spfile${ORACLE_SID}.ora init${ORACLE_SID}.ora orapw${ORACLE_SID}; do
+    for i in spfile${ORACLE_SID}.ora init${ORACLE_SID}.ora orapw${ORACLE_SID} dr1${ORACLE_SID}.dat dr2${ORACLE_SID}.dat; do
         if [ -f ${ORACLE_HOME}/dbs/${i} ]  && [ ! -f ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i} ]; then
             mv -v ${ORACLE_HOME}/dbs/${i} ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i}
         fi
@@ -151,7 +151,7 @@ function sym_link_files {
     # check if we do have orabasehome and if read/write or read-only Oracle home
     if [ -z $(command -v ${ORACLE_HOME}/bin/orabasehome) ] || [ $(${ORACLE_HOME}/bin/orabasehome) == "${ORACLE_HOME}" ]; then 
         echo " - using read/write Oracle home. Create softlinks in \${ORACLE_HOME}/dbs."
-        for i in spfile${ORACLE_SID}.ora init${ORACLE_SID}.ora orapw${ORACLE_SID}; do
+        for i in spfile${ORACLE_SID}.ora init${ORACLE_SID}.ora orapw${ORACLE_SID} dr1${ORACLE_SID}.dat dr2${ORACLE_SID}.dat; do
             if [ ! -L ${ORACLE_HOME}/dbs/${i} ] && [ -f ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i} ]; then
                 ln -s -v ${ORACLE_DATA}/admin/${ORACLE_SID}/pfile/${i} ${ORACLE_HOME}/dbs/${i}
             fi
@@ -288,6 +288,8 @@ else
     # Remove database config files, if they exist
     rm -f ${ORACLE_HOME}/dbs/spfile${ORACLE_SID}.ora
     rm -f ${ORACLE_HOME}/dbs/orapw${ORACLE_SID}
+    rm -f ${ORACLE_HOME}/dbs/dr1${ORACLE_SID}.dat
+    rm -f ${ORACLE_HOME}/dbs/dr2${ORACLE_SID}.dat
     rm -f ${ORACLE_HOME}/network/admin/sqlnet.ora
     rm -f ${ORACLE_HOME}/network/admin/listener.ora
     rm -f ${ORACLE_HOME}/network/admin/tnsnames.ora
