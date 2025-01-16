@@ -29,16 +29,33 @@ if [ "$ORACLE_HOME" == "" ]; then
   echo "$script_name: ERROR - ORACLE_HOME is not set. Please set ORACLE_HOME and PATH before invoking this script."
   exit 1;
 fi
-
 # - EOF Initialization ---------------------------------------------------------
 
 # - Main -----------------------------------------------------------------------
 # Start Listener
 $ORACLE_HOME/bin/lsnrctl start
 
-# Start database
+# Start database in mount mode
 $ORACLE_HOME/bin/sqlplus / as sysdba << EOF
-   STARTUP;
-   exit;
+  STARTUP;
+  exit;
 EOF
+
+db_role=$($ORACLE_HOME/bin/sqlplus -s / as sysdba <<EOF
+set heading off feedback off verify off echo off
+SELECT database_role FROM v\$database;
+exit;
+EOF
+)
+
+# Trim whitespace from db_role
+db_role=$(echo $db_role | xargs)
+
+# If the database role is PHYSICAL STANDBY, close the database
+if [ "$db_role" == "PHYSICAL STANDBY" ]; then
+  $ORACLE_HOME/bin/sqlplus / as sysdba <<EOF
+  ALTER DATABASE CLOSE;
+  exit;
+EOF
+fi
 # --- EOF ----------------------------------------------------------------------
