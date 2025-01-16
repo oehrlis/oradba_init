@@ -55,8 +55,8 @@ export TNS_ADMIN=${TNS_ADMIN:-${ORACLE_BASE}/network/admin}
 
 # Default Values DB config
 export CONTAINER=${CONTAINER:-${LOCAL_CONTAINER}}                       # Check whether CONTAINER is passed on
-export DB_MASTER=""                                                     # Flag to clone database from master
-export NO_DATABASE="FALSE"                                              # Flag to create container without a database
+export DB_MASTER=${DB_MASTER:-""}                                       # Flag to clone database from master
+export NO_DATABASE=${NO_DATABASE:-"FALSE"}                              # Flag to create container without a database
 export ORACLE_VERSION="$(${ORACLE_HOME}/bin/sqlplus -V 2>/dev/null|grep -ie 'Release\|Version'|sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
 export ORACLE_RELEASE="$(${ORACLE_HOME}/bin/sqlplus -V 2>/dev/null|grep -ie 'Release'|tr '\n' ' ' |sed 's/^.*\([0-9]\{2\}\.[0-9]\.[0-9]\).*$/\1/'|tail -1)"
 export ORACLE_PWD=${ORACLE_PWD:-""}                                     # Default admin password
