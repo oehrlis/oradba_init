@@ -148,7 +148,7 @@ if [ -f "/usr/bin/ol_yum_configure.sh" ]; then
 fi
 
 # install basic utilities
-yum install -y zip unzip gzip tar which pwgen
+yum install -y zip unzip gzip tar which pwgen hostname
 yum install -y make passwd elfutils-libelf-devel rlwrap
 # install the oracle preinstall stuff
 for i in $(yum list available oracle-database-preinstall*|grep -iv 23c|grep -i $(uname -p)|cut -d' ' -f1); do
