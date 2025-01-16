@@ -113,7 +113,7 @@ if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "f
     sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_RESPONSE}
     sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                      ${ORADBA_RESPONSE}
     sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_TEMPLATE}
+    sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_RESPONSE}
     sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_RESPONSE}
     sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                        ${ORADBA_RESPONSE}
     sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                        ${ORADBA_RESPONSE}
@@ -127,7 +127,7 @@ if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "f
     # However, bigger environment can and should use more of the available memory
     # This is due to Github Issue #307
     if [ `nproc` -gt 8 ]; then
-    sed -i -e "s|totalMemory=2048||g" ${ORADBA_RESPONSE}
+        sed -i -e "s|totalMemory=2048||g" ${ORADBA_RESPONSE}
     fi;
 
     # update listener.ora in general just for the Docker listener.ora
@@ -156,30 +156,28 @@ if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "f
         exit;
 EOF
 
-    echo "INFO: Create DB environment for ${ORACLE_SID} ---------------------"
-    ${ORADBA_BIN}/${DB_ENV_SCRIPT} ${ORACLE_SID}
-
-    # Execute custom provided setup scripts
-    ${ORADBA_BIN}/${DB_CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
-
-    # update oratab
-    if [ $(grep -c "^${ORACLE_SID}" $ORATAB) -gt 0 ]; then
-        echo "INFO: Update ${ORACLE_SID} in oratab $ORATAB"
-        sed -i "s|^${ORACLE_SID}.*|${ORACLE_SID}:${ORACLE_HOME}:Y|" $ORATAB
-    else
-        echo "INFO: Add ${ORACLE_SID} to oratab $ORATAB"
-        echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >>$ORATAB
-    fi
 elif [ -n "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "false" ]]; }; then
     echo "INFO: Create ${ORACLE_SID} using DB Master ${DB_MASTER}"
     # create DB using rman duplicate
     ${ORADBA_BIN}/${DB_CLONE_SCRIPT} ${ORACLE_SID} ${DB_MASTER}
 elif [[ "${NO_DATABASE,,}" == "true" ]]; then
     echo "INFO: Skipping database creation as NO_DATABASE is set to true"
-    echo "INFO: Create DB environment for ${ORACLE_SID} ---------------------"
-    ${ORADBA_BIN}/${DB_ENV_SCRIPT} ${ORACLE_SID}
 fi
 
+echo "INFO: Create DB environment for ${ORACLE_SID} ---------------------"
+${ORADBA_BIN}/${DB_ENV_SCRIPT} ${ORACLE_SID}
+
+# Execute custom provided setup scripts
+${ORADBA_BIN}/${DB_CONFIG_SCRIPT} ${INSTANCE_INIT}/setup
+
+# update oratab
+if [ $(grep -c "^${ORACLE_SID}" $ORATAB) -gt 0 ]; then
+    echo "INFO: Update ${ORACLE_SID} in oratab $ORATAB"
+    sed -i "s|^${ORACLE_SID}.*|${ORACLE_SID}:${ORACLE_HOME}:Y|" $ORATAB
+else
+    echo "INFO: Add ${ORACLE_SID} to oratab $ORATAB"
+    echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >>$ORATAB
+fi
 # adjust basenv
 MY_ORACLE_SID=${ORACLE_SID}
 # set environment BasEnv and database
