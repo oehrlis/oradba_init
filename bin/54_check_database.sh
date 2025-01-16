@@ -24,7 +24,7 @@
 
 export ORACLE_SID=$(grep $ORACLE_HOME /etc/oratab | grep -iv '^#' |cut -d: -f1|head -1)
 export POSITIVE_RETURN="READ WRITE"
-export STANDBY_RETURN="MOUNTED READ ONLY"
+export STANDBY_RETURN="MOUNTED;READ ONLY;READ ONLY WITH APPLY"
 export ORAENV_ASK=NO
 . oraenv > /dev/null 2>&1
 # - EOF Environment Variables --------------------------------------------------
