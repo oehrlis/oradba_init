@@ -189,6 +189,7 @@ done
 mkdir -vp ${ORACLE_ROOT}/oradata
 mkdir -vp ${ORACLE_DATA}/oradata
 mkdir -vp ${ORACLE_ARCH}/oradata
+mkdir -vp ${ORACLE_ROOT}/fast_recovery_area
 mkdir -vp ${ORACLE_ARCH}/fast_recovery_area
 mkdir -vp ${ORACLE_BASE}/archive
 mkdir -vp ${ORACLE_BASE}/audit
@@ -208,5 +209,6 @@ chown -vR oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
 chown -vR oracle:oinstall ${ORACLE_ROOT}/oradata
 chown -vR oracle:oinstall ${ORACLE_DATA}/oradata
 chown -vR oracle:oinstall ${ORACLE_ARCH}/oradata
+chown -vR oracle:oinstall ${ORACLE_ROOT}/fast_recovery_area
 chown -vR oracle:oinstall ${ORACLE_ARCH}/fast_recovery_area
 # --- EOF ----------------------------------------------------------------------
