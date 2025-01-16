@@ -89,7 +89,7 @@ echo " - ORACLE_CHARACTERSET   : ${ORACLE_CHARACTERSET}"
 echo " - DB_MASTER             : ${DB_MASTER}"
 
 # run create DB with dbca if DB_MASTER is undefined
-if [ -z "$DB_MASTER" ]; then
+if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "false" ]]; }; then
     echo "INFO: Create ${ORACLE_SID} using dbca"
     # write password file
     mkdir -p ${ORACLE_SID_ADMIN_ETC}
@@ -170,10 +170,14 @@ EOF
         echo "INFO: Add ${ORACLE_SID} to oratab $ORATAB"
         echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >>$ORATAB
     fi
-else
+elif [ -n "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "false" ]]; }; then
     echo "INFO: Create ${ORACLE_SID} using DB Master ${DB_MASTER}"
     # create DB using rman duplicate
     ${ORADBA_BIN}/${DB_CLONE_SCRIPT} ${ORACLE_SID} ${DB_MASTER}
+elif [[ "${NO_DATABASE,,}" == "true" ]]; then
+    echo "INFO: Skipping database creation as NO_DATABASE is set to true"
+    echo "INFO: Create DB environment for ${ORACLE_SID} ---------------------"
+    ${ORADBA_BIN}/${DB_ENV_SCRIPT} ${ORACLE_SID}
 fi
 
 # adjust basenv
