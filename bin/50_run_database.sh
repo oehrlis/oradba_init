@@ -314,6 +314,15 @@ if [ $(grep -ic ${ORACLE_SID} /etc/oratab) -eq 0 ]; then
     echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >/etc/oratab
 fi
 
+# fix some basenv stuff
+if [ -f ${ORACLE_BASE}/local/dba/etc/sidtab ]; then
+    sed -i 's/30/10/' ${ORACLE_BASE}/local/dba/etc/sidtab
+fi
+
+if [ -f /home/oracle/.bash_profile ]; then
+    sed -i '/if \[ "`id -un`" = "grid" \]; then/,/export BE_INITIALSID/d' /home/oracle/.bash_profile
+fi
+
 # Check whether database is up and running
 ${ORADBA_BIN}/${CHECK_SCRIPT}
 
