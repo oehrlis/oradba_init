@@ -343,7 +343,8 @@ fi;
 echo "---------------------------------------------------------------"
 echo " - Tail output of alert log from ${ORACLE_SID}:"
 echo "---------------------------------------------------------------"
-ALERT_LOG_FILE=$ORACLE_BASE/diag/rdbms/${ORACLE_SID,,}/${ORACLE_SID}/trace/alert_${ORACLE_SID}.log
+TRACE_DIR=$ORACLE_BASE/diag/rdbms/${ORACLE_SID,,}/${ORACLE_SID}/trace
+ALERT_LOG_FILE=$TRACE_DIR/alert_${ORACLE_SID}.log
 if [ -f ${ALERT_LOG_FILE} ]; then
     echo " - The following output is now a tail of the alert.log:"
     tail -f ${ALERT_LOG_FILE} &
@@ -352,6 +353,7 @@ if [ -f ${ALERT_LOG_FILE} ]; then
 elif [[ "${NO_DATABASE,,}" == "true" ]]; then
     echo " - No database created, no alert log available."
     echo " - Create dummy file."
+    mkdir -pv $TRACE_DIR
     touch ${ALERT_LOG_FILE} &
     tail -f ${ALERT_LOG_FILE} &
     childPID=$!
