@@ -186,6 +186,10 @@ done
 # - EOF add PDB OS user --------------------------------------------------------
 
 # create a bunch of other directories
+mkdir -vp ${ORACLE_ROOT}/oradata
+mkdir -vp ${ORACLE_DATA}/oradata
+mkdir -vp ${ORACLE_ARCH}/oradata
+mkdir -vp ${ORACLE_ARCH}/fast_recovery_area
 mkdir -vp ${ORACLE_BASE}/archive
 mkdir -vp ${ORACLE_BASE}/audit
 mkdir -vp ${ORACLE_BASE}/cfgtoollogs
@@ -201,4 +205,8 @@ ln -sf ${ORACLE_BASE}/etc/oratab /etc/oratab
 
 # change owner of ORACLE_BASE and ORACLE_INVENTORY
 chown -vR oracle:oinstall ${ORACLE_BASE} ${ORACLE_INVENTORY} ${SOFTWARE}
+chown -vR oracle:oinstall ${ORACLE_ROOT}/oradata
+chown -vR oracle:oinstall ${ORACLE_DATA}/oradata
+chown -vR oracle:oinstall ${ORACLE_ARCH}/oradata
+chown -vR oracle:oinstall ${ORACLE_ARCH}/fast_recovery_area
 # --- EOF ----------------------------------------------------------------------
