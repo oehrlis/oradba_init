@@ -158,8 +158,8 @@ else
 fi
 
 mv ${ORACLE_LOCAL}/oradba-master ${ORACLE_LOCAL}/oradba             # get rid of master folder
-mv ${ORACLE_LOCAL}/oradba/README.md ${ORACLE_LOCAL}/oradba/doc      # move documentation
-rm ${ORACLE_LOCAL}/oradba/.gitignore                                # remove gitignore
+if [ -f ${ORACLE_LOCAL}/oradba/.gitignore ]; then rm -rf ${ORACLE_LOCAL}/oradba/.gitignore; fi # remove gitignore
+if [ -f ${ORACLE_LOCAL}/oradba/README.md ]; then mv ${ORACLE_LOCAL}/oradba/README.md ${ORACLE_LOCAL}/oradba/doc; fi # move doc
 rm -rf ${DOWNLOAD}                                                  # clean up
 
 mkdir -p ${ORACLE_LOCAL}/oradba/bin
