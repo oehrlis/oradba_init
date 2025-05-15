@@ -33,6 +33,7 @@ export BASENV_PKG=${BASENV_PKG:-"basenv-21.05.final.b.zip"}
 export BASENV_ORADBA=${BASENV_ORADBA:-"basenv-20.05.final.b.zip"}
 export BACKUP_PKG=${BACKUP_PKG:-"tvdbackup-se-21.05.final.a.tar.gz"}
 export TVDPERL_PKG=${TVDPERL_PKG:-""}
+export PROCESSOR=$(uname -m)
 
 # define oradba specific variables
 export ORADBA_BIN="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
@@ -63,6 +64,7 @@ export CLEANUP=${CLEANUP:-"true"}               # Flag to set yum clean up
 # - EOF Environment Variables --------------------------------------------------
 
 # - Initialization -------------------------------------------------------------
+
 # Make sure root does not run our script
 if [ ! $EUID -ne 0 ]; then
    echo " - ERROR: This script must not be run as root" 1>&2
@@ -97,6 +99,7 @@ if [ -n "$TVDPERL_PKG" ]; then
     fi
 fi
 
+mkdir -p ${DOWNLOAD}
 # - EOF Initialization ---------------------------------------------------------
 
 # - Main -----------------------------------------------------------------------
