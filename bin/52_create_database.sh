@@ -192,21 +192,24 @@ if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "f
     sed -i -e "s|###DEFAULT_DOMAIN###|$DOMAIN|g"                        ${ORADBA_TEMPLATE}
     sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_TEMPLATE}
 
-    # Replace place holders in response file
-    cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                      ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                      ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                        ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                        ${ORADBA_RESPONSE}
-    sed -i -e "s|###CONTAINER###|$CONTAINER|g"                          ${ORADBA_RESPONSE}
-    sed -i -e "s|###TEMPLATE###|${ORADBA_TEMPLATE}|g"                   ${ORADBA_RESPONSE}
-    sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_RESPONSE}
-
+    if [ ! -z "${ORADBA_RESPONSE}" ] && [ ! "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
+        # Replace place holders in response file
+        cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g"                      ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g"                      ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_PDB###|$ORACLE_PDB|g"                        ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_PWD###|$ORACLE_PWD|g"                        ${ORADBA_RESPONSE}
+        sed -i -e "s|###CONTAINER###|$CONTAINER|g"                          ${ORADBA_RESPONSE}
+        sed -i -e "s|###TEMPLATE###|${ORADBA_TEMPLATE}|g"                   ${ORADBA_RESPONSE}
+        sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_RESPONSE}
+    else
+        echo "INFO: Response file ${ORADBA_RESPONSE} not set, using dbca parameters only"
+    fi
     # If there is greater than 8 CPUs default back to dbca memory calculations
     # dbca will automatically pick 40% of available memory for Oracle DB
     # The minimum of 2G is for small environments to guarantee that Oracle has enough memory to function
