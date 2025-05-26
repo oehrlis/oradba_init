@@ -143,7 +143,9 @@ if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
     fi
     #-responseFile ${ORADBA_RESPONSE}
     if [ ! -z "${ORACLE_MEMORY}" ]; then
-            DBCA_PARAMETERS+=" -totalMemory ${ORACLE_MEMORY}"
+            DBCA_PARAMETERS+=" -totalMemory ${ORACLE_MEMORY} -memoryMgmtType AUTO_SGA"
+    else
+            DBCA_PARAMETERS+=" -totalMemory 1024 -memoryMgmtType AUTO_SGA"
     fi
 else
     DBCA_PARAMETERS="-responseFile ${ORACLE_RSP_FILE}"
