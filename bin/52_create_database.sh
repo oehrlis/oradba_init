@@ -18,9 +18,10 @@
 # see git revision history for more information on changes/updates
 # ------------------------------------------------------------------------------
 # - Customization --------------------------------------------------------------
-LOCAL_ORACLE_SID=${1:-"SDBM"}                                           # Default name for Oracle database
+LOCAL_ORACLE_SID=${1:-"CDB01"}                                          # Default name for Oracle database
 LOCAL_ORACLE_PDB=${2:-"PDB1"}                                           # Check whether ORACLE_PDB is passed on
-LOCAL_CONTAINER=${3:-"false"}                                           # Check whether CONTAINER is passed on
+LOCAL_CONTAINER=${3:-"true"}                                            # Check whether CONTAINER is passed on
+LOCAL_OMF=${4:-"true"}                                                  # Check whether CONTAINER is passed on
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
 # - End of Customization -------------------------------------------------------
 
@@ -56,7 +57,7 @@ if [ -z ${ORACLE_PWD} ]; then
     echo " ------------------------------------------------------------------------"
     echo " -  Oracle Database Server auto generated password:"
     echo " -  ----> User        : SYS, SYSTEM AND PDBADMIN"
-    echo " -  ----> Password    : ${ORACLE_PWD}"
+    #echo " -  ----> Password    : ${ORACLE_PWD}"
     echo " ------------------------------------------------------------------------"
 fi 
 
@@ -64,6 +65,90 @@ fi
 if [ ! -d "${INSTANCE_INIT}/setup" ]; then
     INSTANCE_INIT="${ORACLE_SID_ADMIN}/scripts"
 fi
+
+if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
+    # If ORACLE_RSP_FILE is not set, use values from environment variables
+
+    # - Set default values for database creation --------------------------------
+    DBCA_PARAMETERS="-responseFile NO_VALUE" # dbca parameters
+    # - Set global database name based on ORACLE_DBNAME or ORACLE_SID
+    if [ ! -z "${ORACLE_DBNAME}" ]; then
+        DBCA_PARAMETERS+=" -gdbname ${ORACLE_DBNAME}"
+    fi
+    if [ ! -z "${ORACLE_SID}" ]; then
+        DBCA_PARAMETERS+=" -sid ${ORACLE_SID}"
+    fi
+    # set database character set
+    if [ ! -z "${ORACLE_CHARACTERSET}" ]; then
+        DBCA_PARAMETERS+=" -characterSet ${ORACLE_CHARACTERSET}"
+    fi
+    if [ ! -z "${ORACLE_PDB}" ]; then
+            DBCA_PARAMETERS+=" -pdbName ${ORACLE_PDB}"
+    fi
+    if [ ! -z "${ORACLE_PWD}" ]; then
+        DBCA_PARAMETERS+=" -sysPassword ${ORACLE_PWD} -systemPassword ${ORACLE_PWD} -pdbAdminPassword ${ORACLE_PWD}"
+    else
+        echo "ERR  : ORACLE_PWD is not set, cannot create database without password"
+        exit 1
+    fi
+    if [ ! -z "${CONTAINER}" ]; then
+        if [[ "${CONTAINER,,}" == "true" ]]; then
+            CONTAINER="true"
+            DBCA_PARAMETERS+=" -createAsContainerDatabase true"
+        else
+            CONTAINER="false"
+            DBCA_PARAMETERS+=" -createAsContainerDatabase false"
+        fi
+    else
+        CONTAINER="false"
+        DBCA_PARAMETERS+=" -createAsContainerDatabase false"
+    fi
+    if [ ! -z "${ORADBA_TEMPLATE}" ]; then
+        DBCA_PARAMETERS+=" -templateName ${ORADBA_TEMPLATE}"
+    else
+        DBCA_PARAMETERS+=" -templateName General_Purpose.dbc"
+    fi
+
+    if [ ! -z "${ORACLE_DATA}" ]; then
+        CREATE_FILE_DESTINATION="${ORACLE_DATA}/oradata"
+        if [ ! -d "${CREATE_FILE_DESTINATION}" ]; then
+            echo "INFO: Create data directory ${CREATE_FILE_DESTINATION}"
+            mkdir -p ${CREATE_FILE_DESTINATION}
+        fi
+        DBCA_PARAMETERS+=" -datafileDestination ${CREATE_FILE_DESTINATION}"
+    fi
+    if [ ! -z "${OMF}" ]; then
+        if [[ "${OMF,,}" == "true" ]]; then
+            DBCA_PARAMETERS+=" -useOMF true"
+        else
+            DBCA_PARAMETERS+=" -useOMF false"
+        fi
+    else
+        DBCA_PARAMETERS+=" -useOMF false"
+    fi
+
+    if [ ! -z "${ORACLE_ARCH}" ]; then
+        CREATE_ARCHIVE_DESTINATION="${ORACLE_ARCH}/fast_recovery_area"
+        if [ ! -d "${CREATE_ARCHIVE_DESTINATION}" ]; then
+            echo "INFO: Create archive directory ${CREATE_ARCHIVE_DESTINATION}"
+            mkdir -p ${CREATE_ARCHIVE_DESTINATION}
+        fi
+        DBCA_PARAMETERS+=" -recoveryAreaDestination ${ORACLE_ARCH}"
+    fi
+
+    if [ ! -z "${NUMBER_PDBS}" ]; then
+        DBCA_PARAMETERS+=" -numberOfPDBs ${NUMBER_PDBS}"
+    else
+        DBCA_PARAMETERS+=" -numberOfPDBs 1"
+    fi
+    #-responseFile ${ORADBA_RESPONSE}
+    if [ ! -z "${ORACLE_MEMORY}" ]; then
+            DBCA_PARAMETERS+=" -totalMemory ${ORACLE_MEMORY}"
+    fi
+else
+    DBCA_PARAMETERS="-responseFile ${ORACLE_RSP_FILE}"
+fi
+# - End of dbca parameters -----------------------------------------------------
 
 # inform what's done next...
 echo " - Create database instance ${ORACLE_SID} using:"
@@ -87,6 +172,7 @@ echo " - DB RESPONSE           : ${ORADBA_RESPONSE}"
 echo " - DB TEMPLATE           : ${ORADBA_TEMPLATE}"
 echo " - ORACLE_CHARACTERSET   : ${ORACLE_CHARACTERSET}"
 echo " - DB_MASTER             : ${DB_MASTER}"
+echo " - DBCA_PARAMETERS       : ${DBCA_PARAMETERS}"
 
 # run create DB with dbca if DB_MASTER is undefined
 if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "false" ]]; }; then
@@ -94,7 +180,7 @@ if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "f
     # write password file
     mkdir -p ${ORACLE_SID_ADMIN_ETC}
     echo "${ORACLE_PWD}" > "${ORACLE_BASE}/admin/${ORACLE_SID}/etc/${ORACLE_SID}_password.txt"
-    echo " - ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ${ORACLE_PWD}";
+    #echo " - ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ${ORACLE_PWD}";
 
     # Replace place holders in response file
     cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}
@@ -135,7 +221,7 @@ if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "f
 
     # Start LISTENER and run DBCA
     $ORACLE_HOME/bin/lsnrctl status > /dev/null 2>&1 || $ORACLE_HOME/bin/lsnrctl start
-    $ORACLE_HOME/bin/dbca -silent -createDatabase -responseFile ${ORADBA_RESPONSE} 
+    $ORACLE_HOME/bin/dbca -silent -createDatabase ${DBCA_PARAMETERS}
 
     # remove passwords from response file
     sed -i -e "s|${ORACLE_PWD}|ORACLE_PASSWORD|g" ${ORADBA_RESPONSE}
