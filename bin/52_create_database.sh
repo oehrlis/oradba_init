@@ -105,10 +105,11 @@ if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
         CONTAINER="false"
         DBCA_PARAMETERS+=" -createAsContainerDatabase false"
     fi
-    if [ ! -z "${ORADBA_TEMPLATE}" ]; then
-        DBCA_PARAMETERS+=" -templateName ${ORADBA_TEMPLATE}"
-    else
+
+    if [ -z "${ORADBA_DBC_FILE}" ] || [ "${ORADBA_DBC_FILE}" == "NO_VALUE" ]; then
         DBCA_PARAMETERS+=" -templateName New_Database.dbt"
+    else
+        DBCA_PARAMETERS+=" -templateName ${ORADBA_TEMPLATE}"
     fi
 
     if [ ! -z "${ORACLE_DATA}" ]; then
@@ -147,7 +148,7 @@ if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
     if [ ! -z "${ORACLE_MEMORY}" ]; then
             DBCA_PARAMETERS+=" -totalMemory ${ORACLE_MEMORY} -memoryMgmtType AUTO_SGA"
     else
-            DBCA_PARAMETERS+=" -totalMemory 1024 -memoryMgmtType AUTO_SGA"
+            DBCA_PARAMETERS+=" -totalMemory 1280 -memoryMgmtType AUTO_SGA"
     fi
     if [ ! -z "${OPTIONS}" ]; then
         DBCA_PARAMETERS+=" -dbOptions ${OPTIONS}"
