@@ -136,7 +136,7 @@ if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
             echo "INFO: Create archive directory ${CREATE_ARCHIVE_DESTINATION}"
             mkdir -p ${CREATE_ARCHIVE_DESTINATION}
         fi
-        DBCA_PARAMETERS+=" -recoveryAreaDestination ${CREATE_ARCHIVE_DESTINATION} -enableArchive true -recoveryAreaSize 10000"
+        DBCA_PARAMETERS+=" -recoveryAreaDestination ${CREATE_ARCHIVE_DESTINATION} -enableArchive true -recoveryAreaSize 15000"
     fi
 
     if [ ! -z "${NUMBER_PDBS}" ]; then
