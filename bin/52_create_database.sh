@@ -22,7 +22,8 @@ LOCAL_ORACLE_SID=${1:-"CDB01"}                                          # Defaul
 LOCAL_ORACLE_PDB=${2:-"PDB1"}                                           # Check whether ORACLE_PDB is passed on
 LOCAL_CONTAINER=${3:-"true"}                                            # Check whether CONTAINER is passed on
 LOCAL_OMF=${4:-"true"}                                                  # Check whether CONTAINER is passed on
-LOCAL_OPTIONS=${5:-"JSERVER:true,ORACLE_TEXT:true,APEX:false,CWMLITE:false,SAMPLE_SCHEMA:false,SPATIAL:false,MDSCAT:true,IMDB:false,DV:false,OLS:false"} # Check whether additional options are passed on
+LOCAL_OPTIONS=${5:-"JSERVER:true,ORACLE_TEXT:true,MDSCAT:true,APEX:false,CWMLITE:false,DV:false,IMDB:false,OLS:false,SAMPLE_SCHEMA:false,SPATIAL:false
+"} # Check whether additional options are passed on
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
 # - End of Customization -------------------------------------------------------
 
@@ -134,7 +135,7 @@ if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
             echo "INFO: Create archive directory ${CREATE_ARCHIVE_DESTINATION}"
             mkdir -p ${CREATE_ARCHIVE_DESTINATION}
         fi
-        DBCA_PARAMETERS+=" -recoveryAreaDestination ${CREATE_ARCHIVE_DESTINATION} -enableArchive true"
+        DBCA_PARAMETERS+=" -recoveryAreaDestination ${CREATE_ARCHIVE_DESTINATION} -enableArchive true -recoveryAreaSize 10000"
     fi
 
     if [ ! -z "${NUMBER_PDBS}" ]; then
@@ -190,16 +191,19 @@ if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "f
     echo "${ORACLE_PWD}" > "${ORACLE_BASE}/admin/${ORACLE_SID}/etc/${ORACLE_SID}_password.txt"
     #echo " - ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN: ${ORACLE_PWD}";
 
-    # Replace place holders in response file
-    cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}
-    sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_TEMPLATE}
-    sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_TEMPLATE}
-    sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_TEMPLATE}
-    sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_TEMPLATE}
-    sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_TEMPLATE}
-    sed -i -e "s|###DEFAULT_DOMAIN###|$DOMAIN|g"                        ${ORADBA_TEMPLATE}
-    sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_TEMPLATE}
-
+    if [ ! -z "${ORADBA_DBC_FILE}" ] && [ ! "${ORADBA_DBC_FILE}" == "NO_VALUE" ]; then
+        # Replace place holders in response file
+        cp -v ${ORADBA_RSP}/${ORADBA_DBC_FILE} ${ORADBA_TEMPLATE}
+        sed -i -e "s|###ORACLE_DATA###|$ORACLE_DATA|g"                      ${ORADBA_TEMPLATE}
+        sed -i -e "s|###ORACLE_ARCH###|$ORACLE_ARCH|g"                      ${ORADBA_TEMPLATE}
+        sed -i -e "s|###ORACLE_DBNAME###|$ORACLE_DBNAME|g"                  ${ORADBA_TEMPLATE}
+        sed -i -e "s|###ORACLE_DB_UNIQUE_NAME###|$ORACLE_DB_UNIQUE_NAME|g"  ${ORADBA_TEMPLATE}
+        sed -i -e "s|###ORACLE_SID###|$ORACLE_SID|g"                        ${ORADBA_TEMPLATE}
+        sed -i -e "s|###DEFAULT_DOMAIN###|$DOMAIN|g"                        ${ORADBA_TEMPLATE}
+        sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_TEMPLATE}
+    else
+        echo "INFO: Response file ${ORADBA_DBC_FILE} not set, using dbca parameters only"
+    fi
     if [ ! -z "${ORADBA_RESPONSE}" ] && [ ! "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
         # Replace place holders in response file
         cp -v ${ORADBA_RSP}/${ORADBA_RSP_FILE} ${ORADBA_RESPONSE}
