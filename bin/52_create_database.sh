@@ -22,6 +22,7 @@ LOCAL_ORACLE_SID=${1:-"CDB01"}                                          # Defaul
 LOCAL_ORACLE_PDB=${2:-"PDB1"}                                           # Check whether ORACLE_PDB is passed on
 LOCAL_CONTAINER=${3:-"true"}                                            # Check whether CONTAINER is passed on
 LOCAL_OMF=${4:-"true"}                                                  # Check whether CONTAINER is passed on
+LOCAL_OPTIONS=${5:-"JSERVER:true,ORACLE_TEXT:true,APEX:false,CWMLITE:false,SPATIAL:false,MDSCAT:true,IMDB:false,DV:false,OLS:false"} # Check whether additional options are passed on
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
 # - End of Customization -------------------------------------------------------
 
@@ -106,7 +107,7 @@ if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
     if [ ! -z "${ORADBA_TEMPLATE}" ]; then
         DBCA_PARAMETERS+=" -templateName ${ORADBA_TEMPLATE}"
     else
-        DBCA_PARAMETERS+=" -templateName General_Purpose.dbc"
+        DBCA_PARAMETERS+=" -templateName New_Database.dbt"
     fi
 
     if [ ! -z "${ORACLE_DATA}" ]; then
@@ -147,9 +148,14 @@ if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
     else
             DBCA_PARAMETERS+=" -totalMemory 1024 -memoryMgmtType AUTO_SGA"
     fi
+    if [ ! -z "${OPTIONS}" ]; then
+        DBCA_PARAMETERS+=" -dbOptions ${OPTIONS}"
+    fi
 else
     DBCA_PARAMETERS="-responseFile ${ORACLE_RSP_FILE}"
 fi
+
+
 # - End of dbca parameters -----------------------------------------------------
 
 # inform what's done next...
@@ -209,17 +215,18 @@ if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "f
         sed -i -e "s|###CONTAINER###|$CONTAINER|g"                          ${ORADBA_RESPONSE}
         sed -i -e "s|###TEMPLATE###|${ORADBA_TEMPLATE}|g"                   ${ORADBA_RESPONSE}
         sed -i -e "s|###ORACLE_CHARACTERSET###|$ORACLE_CHARACTERSET|g"      ${ORADBA_RESPONSE}
+
+        # If there is greater than 8 CPUs default back to dbca memory calculations
+        # dbca will automatically pick 40% of available memory for Oracle DB
+        # The minimum of 2G is for small environments to guarantee that Oracle has enough memory to function
+        # However, bigger environment can and should use more of the available memory
+        # This is due to Github Issue #307
+        if [ `nproc` -gt 8 ]; then
+            sed -i -e "s|totalMemory=2048||g" ${ORADBA_RESPONSE}
+        fi;
     else
         echo "INFO: Response file ${ORADBA_RESPONSE} not set, using dbca parameters only"
     fi
-    # If there is greater than 8 CPUs default back to dbca memory calculations
-    # dbca will automatically pick 40% of available memory for Oracle DB
-    # The minimum of 2G is for small environments to guarantee that Oracle has enough memory to function
-    # However, bigger environment can and should use more of the available memory
-    # This is due to Github Issue #307
-    if [ `nproc` -gt 8 ]; then
-        sed -i -e "s|totalMemory=2048||g" ${ORADBA_RESPONSE}
-    fi;
 
     # update listener.ora in general just for the Docker listener.ora
     sed -i -e "s|<HOSTNAME>|${HOST}|g" ${TNS_ADMIN}/listener.ora
