@@ -128,12 +128,12 @@ if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
     fi
 
     if [ ! -z "${ORACLE_ARCH}" ]; then
-        CREATE_ARCHIVE_DESTINATION="${ORACLE_ARCH}/fast_recovery_area"
+        CREATE_ARCHIVE_DESTINATION="${ORACLE_ARCH}/fast_recovery_area/${ORACLE_SID}"
         if [ ! -d "${CREATE_ARCHIVE_DESTINATION}" ]; then
             echo "INFO: Create archive directory ${CREATE_ARCHIVE_DESTINATION}"
             mkdir -p ${CREATE_ARCHIVE_DESTINATION}
         fi
-        DBCA_PARAMETERS+=" -recoveryAreaDestination ${ORACLE_ARCH}"
+        DBCA_PARAMETERS+=" -recoveryAreaDestination ${CREATE_ARCHIVE_DESTINATION} -enableArchive true"
     fi
 
     if [ ! -z "${NUMBER_PDBS}" ]; then
