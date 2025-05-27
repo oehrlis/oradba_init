@@ -22,7 +22,7 @@ LOCAL_ORACLE_SID=${1:-"CDB01"}                                          # Defaul
 LOCAL_ORACLE_PDB=${2:-"PDB1"}                                           # Check whether ORACLE_PDB is passed on
 LOCAL_CONTAINER=${3:-"true"}                                            # Check whether CONTAINER is passed on
 LOCAL_OMF=${4:-"true"}                                                  # Check whether CONTAINER is passed on
-LOCAL_OPTIONS=${5:-"JSERVER:true,ORACLE_TEXT:true,APEX:false,CWMLITE:false,SPATIAL:false,MDSCAT:true,IMDB:false,DV:false,OLS:false"} # Check whether additional options are passed on
+LOCAL_OPTIONS=${5:-"JSERVER:true,ORACLE_TEXT:true,APEX:false,CWMLITE:false,SAMPLE_SCHEMA:false,SPATIAL:false,MDSCAT:true,IMDB:false,DV:false,OLS:false"} # Check whether additional options are passed on
 ORADBA_BIN=$(dirname ${BASH_SOURCE[0]})
 # - End of Customization -------------------------------------------------------
 
