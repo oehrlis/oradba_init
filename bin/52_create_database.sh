@@ -80,6 +80,10 @@ if [ -z "${ORACLE_RSP_FILE}" ] || [ "${ORADBA_RSP_FILE}" == "NO_VALUE" ]; then
     if [ ! -z "${ORACLE_SID}" ]; then
         DBCA_PARAMETERS+=" -sid ${ORACLE_SID}"
     fi
+    if [ ! -z "${ORACLE_SID}" ] && [ ! -z "${ORACLE_DBNAME}" ]; then
+        DBCA_PARAMETERS+=" -initParams db_unique_name=${ORACLE_SID},db_name=${ORACLE_DBNAME}"
+    fi
+    
     # set database character set
     if [ ! -z "${ORACLE_CHARACTERSET}" ]; then
         DBCA_PARAMETERS+=" -characterSet ${ORACLE_CHARACTERSET}"
