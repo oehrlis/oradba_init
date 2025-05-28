@@ -182,7 +182,7 @@ echo " - DB RESPONSE           : ${ORADBA_RESPONSE}"
 echo " - DB TEMPLATE           : ${ORADBA_TEMPLATE}"
 echo " - ORACLE_CHARACTERSET   : ${ORACLE_CHARACTERSET}"
 echo " - DB_MASTER             : ${DB_MASTER}"
-echo " - DBCA_PARAMETERS       : ${DBCA_PARAMETERS}"
+echo " - DBCA_PARAMETERS       : ${DBCA_PARAMETERS}" | sed 's/\${ORACLE_PWD}/****/g'
 
 # run create DB with dbca if DB_MASTER is undefined
 if [ -z "$DB_MASTER" ] && { [ -z "$NO_DATABASE" ] || [[ "${NO_DATABASE,,}" == "false" ]]; }; then
